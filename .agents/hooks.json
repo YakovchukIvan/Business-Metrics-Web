@@ -1,0 +1,24 @@
+{
+  "profilelens-guardrails": {
+    "enabled": true,
+    "PreToolUse": [
+      {
+        "matcher": ".*run_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "C:\\PROGRA~1\\Git\\bin\\bash.exe C:\\Users\\Komp\\Documents\\GitHub\\Business-Metrics-Web\\.agents\\hooks\\pre_command.sh",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "type": "command",
+        "command": "C:\\PROGRA~1\\Git\\bin\\bash.exe C:\\Users\\Komp\\Documents\\GitHub\\Business-Metrics-Web\\.agents\\hooks\\on_stop.sh",
+        "timeout": 30
+      }
+    ]
+  }
+}
