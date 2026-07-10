@@ -18,7 +18,11 @@
     "lint:frontend": "npm --prefix frontend run lint",
     "lint:all": "concurrently \"npm run lint:backend\" \"npm run lint:frontend\"",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
-    "prepare": "husky"
+    "prepare": "husky",
+    "typecheck:backend": "npm --prefix backend run typecheck",
+    "typecheck:frontend": "npm --prefix frontend run typecheck",
+    "check:backend": "npm --prefix backend run lint && npm --prefix backend run typecheck",
+    "check:frontend": "npm --prefix frontend run lint && npm --prefix frontend run typecheck && npm --prefix frontend run build"
   },
   "devDependencies": {
     "concurrently": "^9.0.0",
