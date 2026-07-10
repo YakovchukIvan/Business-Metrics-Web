@@ -1,14 +1,30 @@
 #!/bin/sh
 
+echo "🔍 Running pre-push checks..."
+
+set -e
+
 changed=$(git diff --name-only HEAD @{u})
 
+ran_any=false
+
 if echo "$changed" | grep -q "^backend/"; then
-    npm --prefix backend run lint
-    npm --prefix backend run typecheck
+  echo "📦 Backend changes detected — running lint & typecheck..."
+  npm --prefix backend run lint
+  npm --prefix backend run typecheck
+  ran_any=true
 fi
 
 if echo "$changed" | grep -q "^frontend/"; then
-    npm --prefix frontend run lint
-    npm --prefix frontend run typecheck
-    npm --prefix frontend run build
+  echo "🎨 Frontend changes detected — running lint, typecheck & build..."
+  npm --prefix frontend run lint
+  npm --prefix frontend run typecheck
+  npm --prefix frontend run build
+  ran_any=true
 fi
+
+if [ "$ran_any" = false ]; then
+  echo "ℹ️  No backend/frontend changes in this push — skipping checks."
+fi
+
+echo "✅ Pre-push checks passed!"
