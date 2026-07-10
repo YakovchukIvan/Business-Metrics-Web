@@ -1,0 +1,7 @@
+#!/bin/sh
+
+echo "🔍 Running pre-commit checks..."
+
+npx lint-staged || exit 1
+
+echo "✅ Pre-commit passed!"

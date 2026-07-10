@@ -4,7 +4,7 @@ import { AppService } from './app.service';
 import { HealthModule } from './modules/health/health.module';
 
 @Module({
-  imports: [HealthModule ],
+  imports: [HealthModule],
   controllers: [AppController],
   providers: [AppService],
 })

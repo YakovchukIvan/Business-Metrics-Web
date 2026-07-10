@@ -1,0 +1,21 @@
+#!/bin/sh
+
+echo "🚀 Running pre-push checks..."
+
+echo "▶ Backend lint..."
+cd backend && npm run lint || exit 1
+cd ..
+
+echo "▶ Frontend lint..."
+cd frontend && npm run lint || exit 1
+cd ..
+
+echo "▶ Backend tsc..."
+cd backend && npx tsc --noEmit || exit 1
+cd ..
+
+echo "▶ Frontend build..."
+cd frontend && npm run build || exit 1
+cd ..
+
+echo "✅ Pre-push passed!"
