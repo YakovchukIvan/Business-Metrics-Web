@@ -18,7 +18,7 @@ Reference: `profilelens-backend-tasks.md` for full task descriptions.
 
 ## TASK-2 — Config module (Zod) + Common layer
 
-- [x] ConfigModule with Zod schema validation & global Common filters/interceptors/pipes/guards — done on 2026-07-11
+- [ ] Not started
 
 ## TASK-3 — CacheModule
 
@@ -49,5 +49,3 @@ Reference: `profilelens-backend-tasks.md` for full task descriptions.
 - [ ] Not started
 
 ---
-
-_Last updated: 2026-07-11 — Completed TASK-2 Config module + Common layer_

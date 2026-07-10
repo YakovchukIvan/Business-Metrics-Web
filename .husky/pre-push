@@ -1,3 +1,5 @@
+#!/bin/sh
+
 changed=$(git diff --name-only HEAD @{u})
 
 if echo "$changed" | grep -q "^backend/"; then
