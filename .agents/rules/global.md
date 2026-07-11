@@ -17,3 +17,17 @@
 ## 3. Commits (applies to the whole monorepo — single source of truth)
 
 Conventional Commits: `<type>(<scope>): <description>`. Common types: `feat`, `fix`, `docs`, `refactor`, `test`, `build`, `chore`. One logical change per commit — do not bundle unrelated changes. Never commit `.env` — only `.env.example`.
+
+## 4. Safety & Permissions
+
+- **File Deletion:** Always ask the user for permission in the chat before deleting any files from the repository.
+- **Package Management:** Always ask the user for permission in the chat before downloading (installing) or deleting (uninstalling) any packages or dependencies (e.g., via npm, pip, yarn, etc.).
+
+## 5. Execution Intent (CRITICAL)
+
+- **Analyze first, execute later:** If the user's message is just a statement, a question, or a request for advice/analysis — DO NOT execute anything (no file edits, no commands). Provide analysis and options instead.
+- **Explicit execution only:** ONLY execute actions when the user explicitly uses words like "зроби", "реалізуй", "створи" or explicitly says "do it this way". If you are unsure, ask first.
+
+## 6. Changelog Workflow
+
+- Whenever you complete a request that involved modifying files or running commands, you MUST write a brief summary of what was done to `.agents/changelog/current_task.txt`. Do this by overwriting the file. The system's `on_stop` hook will automatically append this summary with a timestamp to `.agents/changelog/history.md`.

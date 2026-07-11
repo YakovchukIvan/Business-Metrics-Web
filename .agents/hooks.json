@@ -3,12 +3,45 @@
     "enabled": true,
     "PreToolUse": [
       {
-        "matcher": ".*run_command",
+        "matcher": "run_command",
         "hooks": [
           {
             "type": "command",
-            "command": "C:\\PROGRA~1\\Git\\bin\\bash.exe C:\\Users\\Komp\\Documents\\GitHub\\Business-Metrics-Web\\.agents\\hooks\\pre_command.sh",
+            "command": "node hooks/pre_command.js",
             "timeout": 30
+          }
+        ]
+      },
+      {
+        "matcher": "write_to_file|multi_replace_file_content|replace_file_content",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node hooks/pre_edit.js",
+            "timeout": 30
+          }
+        ]
+      },
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node hooks/hello.js",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "write_to_file|multi_replace_file_content|replace_file_content",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node hooks/post_edit.js",
+            "timeout": 60,
+            "async": true
           }
         ]
       }
@@ -16,7 +49,7 @@
     "Stop": [
       {
         "type": "command",
-        "command": "C:\\PROGRA~1\\Git\\bin\\bash.exe C:\\Users\\Komp\\Documents\\GitHub\\Business-Metrics-Web\\.agents\\hooks\\on_stop.sh",
+        "command": "node hooks/on_stop.js",
         "timeout": 30
       }
     ]

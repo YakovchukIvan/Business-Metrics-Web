@@ -8,9 +8,10 @@ The system evaluates a Google Maps link or Place ID, calculates a score (0–100
 ## 2. Workspace Layout
 
 This is a monorepo. Backend and (future) frontend live in separate subfolders — never assume the working directory is the repo root when running commands.
+Note: We will do most of the development directly in VS Code. Docker is primarily included so the project is ready for deployment to any server (set up once and forget).
 
-- **`backend/`** — NestJS REST API (Phase 1, active). All paths in `.agents/rules/backend.md` are relative to `backend/`, not repo root.
-- **`frontend/`** — Next.js App Router (Phase 2, not started yet). No rules file exists for it yet — do not invent frontend conventions until this phase starts.
+- **`apps/api/`** — NestJS REST API (Phase 1, active). All paths in `.agents/rules/backend.md` are relative to `apps/api/`, not repo root.
+- **`apps/web/`** — Next.js App Router (Phase 2, not started yet). No rules file exists for it yet (will be `.agents/rules/frontend.md`) — do not invent frontend conventions until this phase starts.
 
 **Golden Rule:** Never couple backend logic with frontend rendering. Always return strict, predictable JSON envelopes (`{ success, data, meta }`).
 
@@ -22,6 +23,7 @@ This is a monorepo. Backend and (future) frontend live in separate subfolders �
 ## 4. Context Map (CRITICAL)
 
 - **For Workflow & Code Standards:** Read `.agents/rules/global.md`
+- **For generating Git commits:** Read `.agents/rules/commits.md`
 - **For NestJS Architecture:** Read `.agents/rules/backend.md`
 - **For Google API Specifics:** Read `.agents/skills/google-places.md`
 - **For creating a new analysis rule:** Follow `.agents/workflows/new-rule.md`
@@ -34,6 +36,6 @@ After completing any checklist item from `.agents/state.md`, update the file: ti
 
 ## 6. Scope Discipline
 
-Unlike Claude Code, this environment has NO automatic sibling-directory isolation — rules files are loaded by explicit reference (Context Map above), not by physical cwd. This means when working in `backend/`, nothing technically prevents `frontend/`-related conventions from leaking into the same context if they were read earlier in the session — YOU are the only safeguard.
+Unlike Claude Code, this environment has NO automatic sibling-directory isolation — rules files are loaded by explicit reference (Context Map above), not by physical cwd. This means when working in `apps/api/`, nothing technically prevents `apps/web/`-related conventions from leaking into the same context if they were read earlier in the session — YOU are the only safeguard.
 
-When switching between `backend/` and `frontend/` work within the same session: explicitly drop the previous area's rules file from active consideration before reading the new one. Never apply `backend.md` conventions to frontend code, or vice versa. If unsure which area a change belongs to, ask before proceeding — there is no mechanical fallback here.
+When switching between `apps/api/` and `apps/web/` work within the same session: explicitly drop the previous area's rules file from active consideration before reading the new one. Never apply `backend.md` conventions to frontend code, or vice versa. If unsure which area a change belongs to, ask before proceeding — there is no mechanical fallback here.
