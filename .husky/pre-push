@@ -8,18 +8,18 @@ changed=$(git diff --name-only HEAD @{u})
 
 ran_any=false
 
-if echo "$changed" | grep -q "^api/"; then
+if echo "$changed" | grep -q "^apps/api/"; then
   echo "📦 API changes detected — running lint & typecheck..."
-  npm --prefix api run lint
-  npm --prefix api run typecheck
+  npm --prefix apps/api run lint
+  npm --prefix apps/api run typecheck
   ran_any=true
 fi
 
-if echo "$changed" | grep -q "^web/"; then
+if echo "$changed" | grep -q "^apps/web/"; then
   echo "🎨 Web changes detected — running lint, typecheck & build..."
-  npm --prefix web run lint
-  npm --prefix web run typecheck
-  npm --prefix web run build
+  npm --prefix apps/web run lint
+  npm --prefix apps/web run typecheck
+  npm --prefix apps/web run build
   ran_any=true
 fi
 
