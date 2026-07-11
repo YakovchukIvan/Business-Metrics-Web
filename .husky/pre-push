@@ -8,23 +8,23 @@ changed=$(git diff --name-only HEAD @{u})
 
 ran_any=false
 
-if echo "$changed" | grep -q "^backend/"; then
-  echo "📦 Backend changes detected — running lint & typecheck..."
-  npm --prefix backend run lint
-  npm --prefix backend run typecheck
+if echo "$changed" | grep -q "^api/"; then
+  echo "📦 API changes detected — running lint & typecheck..."
+  npm --prefix api run lint
+  npm --prefix api run typecheck
   ran_any=true
 fi
 
-if echo "$changed" | grep -q "^frontend/"; then
-  echo "🎨 Frontend changes detected — running lint, typecheck & build..."
-  npm --prefix frontend run lint
-  npm --prefix frontend run typecheck
-  npm --prefix frontend run build
+if echo "$changed" | grep -q "^web/"; then
+  echo "🎨 Web changes detected — running lint, typecheck & build..."
+  npm --prefix web run lint
+  npm --prefix web run typecheck
+  npm --prefix web run build
   ran_any=true
 fi
 
 if [ "$ran_any" = false ]; then
-  echo "ℹ️  No backend/frontend changes in this push — skipping checks."
+  echo "ℹ️  No api/web changes in this push — skipping checks."
 fi
 
 echo "✅ Pre-push checks passed!"
