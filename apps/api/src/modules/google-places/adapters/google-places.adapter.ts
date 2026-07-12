@@ -28,7 +28,7 @@ export class GooglePlacesAdapter implements IGooglePlacesPort {
     'delivery',
     'dineIn',
     'takeout',
-    'wheelchairAccessibleEntrance',
+    'accessibilityOptions',
   ].join(',');
 
   constructor(

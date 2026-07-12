@@ -14,5 +14,7 @@ export type GooglePlaceRaw = {
   delivery?: boolean;
   dineIn?: boolean;
   takeout?: boolean;
-  wheelchairAccessibleEntrance?: boolean;
+  accessibilityOptions?: {
+    wheelchairAccessibleEntrance?: boolean;
+  };
 };

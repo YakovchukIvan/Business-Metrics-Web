@@ -18,6 +18,6 @@ export function mapGooglePlaceToProfile(raw: GooglePlaceRaw): PlaceProfile {
     delivery: raw.delivery,
     dineIn: raw.dineIn,
     takeout: raw.takeout,
-    wheelchairAccessibleEntrance: raw.wheelchairAccessibleEntrance,
+    wheelchairAccessibleEntrance: raw.accessibilityOptions?.wheelchairAccessibleEntrance,
   };
 }
