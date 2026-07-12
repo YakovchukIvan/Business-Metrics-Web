@@ -15,6 +15,7 @@ Reference: `profilelens-backend-tasks.md` for full task descriptions.
 - [x] Docker verification — done
 - [x] Husky pre-commit/pre-push at monorepo root — done, `core.hooksPath` set to `.husky` at repo root
 - [x] tsconfig.json — strict mode enabled, TS6 `baseUrl` deprecation fixed, `types: ["node","jest"]` added, `tsc-alias` wired for path aliases
+- [x] Passed strict `eslint` and `typecheck` validations — done
 
 ## TASK-2 — Config module (Zod) + Common layer
 
@@ -25,10 +26,17 @@ Reference: `profilelens-backend-tasks.md` for full task descriptions.
 - [x] ApiResponseEnvelope DTO with Swagger decorators — done
 - [x] GlobalValidationPipe with strict validation — done
 - [x] Wiring global components in main.ts — done
+- [x] Passed strict `eslint` and `typecheck` validations — done
 
 ## TASK-3 — CacheModule
 
-- [ ] Not started
+- [x] `ICacheService` interface — done
+- [x] DI token `CACHE_SERVICE` — done
+- [x] `InMemoryCacheService` (Map + setTimeout) — done
+- [x] `CacheModule` exported and registered in `app.module.ts` — done
+- [x] Unit tests for set/get/delete and TTL expiration — done
+- [x] Passed strict `eslint` and `typecheck` validations — done
+      _Completed on 2026-07-12: Removed cache-manager dependencies and implemented pure custom adapter. Fixed strict linting/typing issues post-implementation._
 
 ## TASK-4 — GooglePlacesModule (port/adapter)
 

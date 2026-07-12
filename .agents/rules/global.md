@@ -2,11 +2,10 @@
 
 ## 1. Execution Workflow
 
-1. **Docker First:** The application must run in a Docker container from Day 1. Do not suggest or use direct host execution for the server itself.
-2. **Prod-only Docker, no hot-reload:** After changing dependencies or source code that needs to run in the container, rebuild before testing: `docker compose up -d --build`. Never assume changes appear automatically.
-3. **Inspect Before Writing:** Do not create duplicate modules or files. Always look at existing structural patterns, DTOs, and import orders before adding new ones.
-4. **Validation:** Ensure all requests/responses are validated globally (via `class-validator` + the global `ValidationPipe`) before reaching business logic.
-5. **Git hooks are enforced at the repo root**, not inside `backend/`. `core.hooksPath` points to `.husky/` in the monorepo root. Do not add a `prepare` script inside `backend/package.json` that re-runs `husky init` — it breaks the shared hook path.
+1. **Inspect Before Writing:** Do not create duplicate modules or files. Always look at existing structural patterns, DTOs, and import orders before adding new ones.
+2. **Validation:** Ensure all requests/responses are validated globally (via `class-validator` + the global `ValidationPipe`) before reaching business logic.
+3. **Git hooks are enforced at the repo root**, not inside `backend/`. `core.hooksPath` points to `.husky/` in the monorepo root. Do not add a `prepare` script inside `backend/package.json` that re-runs `husky init` — it breaks the shared hook path.
+4. **Mandatory Post-Task Checks:** Before marking any task as complete in `state.md`, you MUST run `npm run lint:check` and `npm run typecheck` (or equivalent). You MUST add this exact line to every completed task checklist in `state.md`: `- [x] Passed strict \`eslint\` and \`typecheck\` validations — done`.
 
 ## 2. Universal Code Quality
 

@@ -1,5 +1,7 @@
 # ProfileLens — Backend Architecture & Implementation Plan
 
+## DO NOT read this file further unless explicitly requested
+
 > Google Business Profile analyzer: accepts a link to a profile or Place ID, evaluates optimization level (0-100), finds issues, and generates recommendations.
 
 This document describes the backend architecture as if it were not a one-off test task, but the first version of a real product. Every decision below is explicitly explained — why it is what it is, and what exactly allows it to be easily changed or extended in the future without rewriting existing code.
