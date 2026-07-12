@@ -1,14 +1,31 @@
-import { NestFactory } from '@nestjs/core';
 import { Logger } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
+import { getAppConfig } from './config/app.config';
+import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
+import { ResponseInterceptor } from './common/interceptors/response.interceptor';
+import { GlobalValidationPipe } from './common/pipes/global-validation.pipe';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  await app.listen(process.env.PORT ?? 3000);
+  // Register global components
+  app.useGlobalPipes(new GlobalValidationPipe());
+  app.useGlobalInterceptors(new ResponseInterceptor());
+  app.useGlobalFilters(new AllExceptionsFilter());
+
+  const configService = app.get(ConfigService);
+  const appConfig = getAppConfig(configService);
+
+  app.setGlobalPrefix(appConfig.globalPrefix);
+  await app.listen(appConfig.port, appConfig.host);
+  new Logger('Bootstrap').log(
+    `✅ Application is running on: http://${appConfig.host}:${appConfig.port}/${appConfig.globalPrefix}`,
+  );
 }
 
-bootstrap().catch((error: any) => {
-  new Logger('Bootstrap').error('Failed to start application', error);
+bootstrap().catch((error: unknown) => {
+  new Logger('❌ Bootstrap').error('Failed to start application', error);
   process.exit(1);
 });
