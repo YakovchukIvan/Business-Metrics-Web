@@ -75,7 +75,7 @@ export default defineConfig(
               // тільки про його інтерфейси (порт)
               target: './src/modules/analysis',
               from: './src/modules/google-places',
-              except: ['./interfaces'],
+              except: ['./interfaces', './google-places.constants.ts', './google-places.module.ts'],
               message:
                 'analysis може імпортувати тільки інтерфейси (порт) з google-places, не конкретні adapters/mappers.',
             },

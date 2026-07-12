@@ -1,5 +1,5 @@
 import { Logger } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import { getAppConfig } from './config/app.config';
@@ -12,7 +12,7 @@ async function bootstrap() {
 
   // Register global components
   app.useGlobalPipes(new GlobalValidationPipe());
-  app.useGlobalInterceptors(new ResponseInterceptor());
+  app.useGlobalInterceptors(new ResponseInterceptor(app.get(Reflector)));
   app.useGlobalFilters(new AllExceptionsFilter());
 
   const configService = app.get(ConfigService);

@@ -4,6 +4,9 @@ export class ApiResponseEnvelope<T = unknown> {
   @ApiProperty({ description: 'Indicates if the request was successful' })
   success!: boolean;
 
+  @ApiProperty({ required: false, description: 'Optional success message' })
+  message?: string;
+
   @ApiProperty({ required: false, description: 'The payload of the response' })
   data?: T;
 
