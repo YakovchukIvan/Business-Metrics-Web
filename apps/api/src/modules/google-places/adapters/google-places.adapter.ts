@@ -4,7 +4,7 @@ import type { IGooglePlacesPort } from '../interfaces/google-places-port.interfa
 import type { PlaceProfile } from '../interfaces/place-profile.interface';
 import type { ICacheService } from '../../cache/interfaces/cache-service.interface';
 import { CACHE_SERVICE } from '../../cache/cache.constants';
-import { PlaceIdResolverService } from '../utils/place-id-resolver.service';
+import { PlaceIdResolverService } from '../place-id-resolver.service';
 import { mapGooglePlaceToProfile } from '../mappers/google-place.mapper';
 import type { GooglePlaceRaw } from '../types/google-place-raw.type';
 
