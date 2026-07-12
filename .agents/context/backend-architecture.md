@@ -112,7 +112,6 @@ export const ANALYSIS_RULES: AnalysisRule[] = [
   openingHoursRule,
   photosRule,
   businessCategoryRule,
-  descriptionRule,
   attributesRule,
   businessStatusRule,
 ];
@@ -261,7 +260,6 @@ src/
             ├── opening-hours.rule.ts
             ├── photos.rule.ts
             ├── business-category.rule.ts
-            ├── description.rule.ts
             ├── attributes.rule.ts
             └── business-status.rule.ts
 ```
@@ -382,16 +380,15 @@ Basic service liveness check (for Docker healthcheck and future monitoring).
 
 Sum of weights = 100. Each rule is a separate pure function with a fixed weight.
 
-| Rule                | Weight | What it checks                                            | Why it's important                                                |
-| ------------------- | ------ | --------------------------------------------------------- | ----------------------------------------------------------------- |
-| `completeness`      | 20     | Phone, website, address are filled                        | Basic contacts are the main reason a client cannot get in touch   |
-| `rating`            | 20     | Rating exists and number of reviews ≥ threshold (e.g. 10) | Few reviews = low trust, even with a high rating                  |
-| `opening-hours`     | 15     | Opening hours are specified                               | Missing hours is a frequent reason for lost visitors              |
-| `photos`            | 15     | Number of photos ≥ threshold (e.g. 3)                     | Profiles with photos get significantly more clicks in Google Maps |
-| `business-category` | 10     | Business category/type is specified                       | Affects which searches the profile even appears in                |
-| `description`       | 10     | Editorial summary / description exists                    | Helps the user and Google understand the essence of the business  |
-| `attributes`        | 5      | Attributes relevant to the business category are filled   | A minor detail that boosts relevance in niche searches            |
-| `business-status`   | 5      | Status is `OPERATIONAL`, not `CLOSED_*`                   | Critical error — profile is marked as closed                      |
+| Rule                | Weight | What it checks                                            | Why it's important                                               |
+| ------------------- | ------ | --------------------------------------------------------- | ---------------------------------------------------------------- |
+| `rating`            | 30     | Rating exists and number of reviews ≥ threshold (e.g. 10) | Most important controllable factor: rating + consistent reviews  |
+| `completeness`      | 20     | Phone, website, address are filled                        | Basic contacts are the main reason a client cannot get in touch  |
+| `business-category` | 15     | Business category/type is specified                       | Industry's #1 ranking factor; affects niche search visibility    |
+| `opening-hours`     | 15     | Opening hours are specified                               | Missing hours is a frequent reason for lost visitors             |
+| `business-status`   | 10     | Status is `OPERATIONAL`, not `CLOSED_*`                   | Top 5 ranking factor; closed profiles are severely demoted       |
+| `photos`            | 7      | Number of photos ≥ threshold (e.g. 3)                     | Basic proxy metric to ensure profile is not completely empty     |
+| `attributes`        | 3      | Attributes relevant to the business category are filled   | A minor secondary detail that boosts relevance in niche searches |
 
 > **Technical metric limitations:** `photos` — threshold is calculated from the number of photo references returned by the API per request (limited by response quota, not the real number of photos in the profile) — suitable for "has/doesn't have enough", not for a graded scale. `attributes` — only attributes relevant to the business category are checked (`CATEGORY_TO_RELEVANT_ATTRIBUTES`), rather than a fixed HoReCa set for all types.
 

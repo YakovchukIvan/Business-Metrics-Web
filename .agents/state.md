@@ -50,7 +50,20 @@ Reference: `profilelens-backend-tasks.md` for full task descriptions.
 
 ## TASK-5 — AnalysisModule: rules engine
 
-- [ ] Not started
+- [x] `interfaces/rule.interface.ts` and `analysis-result.interface.ts`
+- [x] `analysis.constants.ts` (weights: rating 30, completeness 20, category 15, hours 15, status 10, photos 7, attributes 3)
+- [x] `rules/rating.rule.ts` (weight 30)
+- [x] `rules/completeness.rule.ts` (weight 20)
+- [x] `rules/business-category.rule.ts` (weight 15)
+- [x] `rules/opening-hours.rule.ts` (weight 15)
+- [x] `rules/business-status.rule.ts` (weight 10)
+- [x] `rules/photos.rule.ts` (weight 7)
+- [x] `rules/attributes.rule.ts` (weight 3)
+- [x] `rules/index.ts` (ANALYSIS_RULES aggregator)
+- [x] `analysis.service.ts` (orchestration)
+- [x] `analysis.module.ts` (registration)
+- [x] Passed strict `eslint` and `typecheck` validations — done
+      _Completed on 2026-07-12: Implemented 7 pure function rules with dynamic weights based on SEO research, plus the orchestrator AnalysisService._
 
 ## TASK-6 — API layer: controllers + DTOs
 
@@ -60,7 +73,7 @@ Reference: `profilelens-backend-tasks.md` for full task descriptions.
 
 - [ ] Not started (`@nestjs/swagger` package + CLI plugin already installed/configured in `nest-cli.json`, decorators not yet written)
 
-## TASK-8 — Unit-тести
+## TASK-8 — Unit-tests
 
 - [ ] Not started
 
