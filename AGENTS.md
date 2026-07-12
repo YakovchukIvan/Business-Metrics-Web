@@ -32,7 +32,7 @@ Note: We will do most of the development directly in VS Code. Docker is primaril
 
 ## 5. Progress Tracking
 
-After completing any checklist item from `.agents/state.md`, update the file: tick the box, add today's date and a one-line note. Do not leave state.md stale — it's the source of truth for what's already built.
+After completing any checklist item from `.agents/state.md`, update the file: tick the box, add today's date and a detailed description of everything that was done for this task. Do not leave state.md stale — it's the source of truth for what's already built and exactly how it was implemented.
 
 ## 6. Scope Discipline
 

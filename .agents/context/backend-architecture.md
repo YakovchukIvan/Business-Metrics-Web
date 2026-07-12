@@ -1,47 +1,47 @@
 # ProfileLens — Backend Architecture & Implementation Plan
 
-> Аналізатор Google Business Profile: приймає посилання на профіль або Place ID, оцінює рівень оптимізації (0–100), знаходить проблеми та формує рекомендації.
+> Google Business Profile analyzer: accepts a link to a profile or Place ID, evaluates optimization level (0-100), finds issues, and generates recommendations.
 
-Цей документ описує архітектуру бекенду так, ніби це не одноразове тестове, а перша версія реального продукту. Кожне рішення нижче explicitно пояснене — чому воно таке, і що саме дозволяє легко змінити чи розширити в майбутньому без переписування існуючого коду.
-
----
-
-## 1. Технологічний стек
-
-| Шар                                 | Технологія                                    | Коментар                                                           |
-| ----------------------------------- | --------------------------------------------- | ------------------------------------------------------------------ |
-| Framework                           | NestJS (REST)                                 | модульність та DI з коробки                                        |
-| Мова                                | TypeScript (strict mode)                      |                                                                    |
-| Валідація конфігурації              | Zod                                           | жодного прямого `process.env` — тільки типізований `ConfigService` |
-| Валідація запитів                   | class-validator + глобальний `ValidationPipe` | стандарт DTO-валідації в Nest                                      |
-| Джерело даних                       | Google Places API (New)                       | єдине публічно доступне джерело без OAuth власника профілю         |
-| API-документація                    | Swagger (`@nestjs/swagger`)                   | інтерактивна документація на `/api/docs`, без потреби в Postman    |
-| Контейнеризація                     | Docker + docker-compose                       | з першого дня, навіть без БД                                       |
-| ORM (заплановано, не зараз)         | Prisma                                        | підʼїде разом із БД                                                |
-| Кеш (заплановано, зараз — заглушка) | Redis                                         | інтерфейс готовий вже зараз                                        |
-| Черги (заплановано)                 | BullMQ                                        | коли зʼявиться потреба в асинхронній/масовій обробці               |
-
-**Важливе технічне уточнення для README:** Google має два різні API. Google Business Profile API дає повний доступ до профілю, але лише власнику через OAuth-верифікацію. Places API (New) — публічні дані про будь-яке місце за Place ID, без володіння профілем. ProfileLens свідомо будується на Places API (New), оскільки завдання — аналізувати **чужі** профілі за посиланням. Це означає, що деякі показники технічно недоступні і в аналіз не входять — це задокументована межа, а не недогляд. Повний перелік — розділ 10.
+This document describes the backend architecture as if it were not a one-off test task, but the first version of a real product. Every decision below is explicitly explained — why it is what it is, and what exactly allows it to be easily changed or extended in the future without rewriting existing code.
 
 ---
 
-## 2. Ключові архітектурні рішення
+## 1. Technology Stack
 
-### 2.1 Модулі не знають один про одного
+| Layer                             | Technology                                | Comment                                                        |
+| --------------------------------- | ----------------------------------------- | -------------------------------------------------------------- |
+| Framework                         | NestJS (REST)                             | modularity and DI out of the box                               |
+| Language                          | TypeScript (strict mode)                  |                                                                |
+| Config Validation                 | Zod                                       | no direct `process.env` — only typed `ConfigService`           |
+| Request Validation                | class-validator + global `ValidationPipe` | standard DTO validation in Nest                                |
+| Data Source                       | Google Places API (New)                   | the only publicly available source without profile owner OAuth |
+| API Documentation                 | Swagger (`@nestjs/swagger`)               | interactive docs at `/api/docs`, no need for Postman           |
+| Containerization                  | Docker + docker-compose                   | from day one, even without a DB                                |
+| ORM (planned)                     | Prisma                                    | will arrive together with the DB                               |
+| Cache (planned, currently a stub) | Redis                                     | interface is already prepared                                  |
+| Queues (planned)                  | BullMQ                                    | when the need for async/bulk processing arises                 |
 
-Кожен модуль (`cache`, `google-places`, `analysis`) — самодостатня одиниця. Якщо видалити один модуль, решта продовжує компілюватись і працювати (окрім прямої точки інтеграції, де це очікувано). Модулі спілкуються не напряму, а через інтерфейси (порти) та DI-токени. Це головна причина, чому в майбутньому можна додавати `auth`, `reports`, `queue` — не чіпаючи існуючий код.
+**Important technical clarification for README:** Google has two different APIs. The Google Business Profile API gives full access to a profile, but only to the owner via OAuth verification. Places API (New) provides public data about any place by Place ID, without owning the profile. ProfileLens is deliberately built on the Places API (New), as the task is to analyze **someone else's** profiles via a link. This means some metrics are technically unavailable and are not included in the analysis — this is a documented limitation, not an oversight. Full list in Section 10.
 
-### 2.2 Порт/адаптер над Google Places API
+---
 
-Замість того, щоб `analysis`-модуль знав формат відповіді Google (`displayName.text`, `regularOpeningHours.periods`, тощо), вводимо власний уніфікований тип — **`PlaceProfile`**. Це і є "порт": контракт, від якого залежить решта системи.
+## 2. Key Architectural Decisions
 
-- `google-places.adapter.ts` — єдине місце, яке звертається до Google API.
-- `google-place.mapper.ts` — переводить сирий Google-формат у `PlaceProfile`.
-- `analysis`-модуль працює виключно з `PlaceProfile` і навіть не імпортує нічого з `google-places`, крім інтерфейсу.
+### 2.1 Modules do not know about each other
 
-**Чому це важливо:** якщо завтра Google змінить структуру відповіді, або з'явиться потреба підключити інше джерело даних (наприклад, власний скрапер чи інший провайдер) — міняється тільки адаптер і мапер. Rules engine, контролери, DTO — не чіпаються взагалі.
+Each module (`cache`, `google-places`, `analysis`) is a self-sufficient unit. If you delete one module, the rest continue to compile and work (except for the direct integration point, where it's expected). Modules communicate not directly, but through interfaces (ports) and DI tokens. This is the main reason why `auth`, `reports`, `queue` can be added in the future without touching existing code.
 
-**FieldMask — свідомо мінімальний, без `reviews`.** Places API (New) тарифікує весь запит по найдорожчому SKU-рівню серед запитаних полів (Essentials / Pro / Enterprise). `places.reviews` потрапляє в Enterprise-рівень, при цьому жодне з 8 правил оцінки не використовує текст відгуків — тільки `rating` і `userRatingCount`. Тому `reviews` свідомо виключено:
+### 2.2 Port/Adapter over Google Places API
+
+Instead of the `analysis` module knowing the Google response format (`displayName.text`, `regularOpeningHours.periods`, etc.), we introduce our own unified type — **`PlaceProfile`**. This is the "port": a contract on which the rest of the system depends.
+
+- `google-places.adapter.ts` — the only place that calls the Google API.
+- `google-place.mapper.ts` — maps the raw Google format to `PlaceProfile`.
+- The `analysis` module works exclusively with `PlaceProfile` and doesn't even import anything from `google-places` except the interface.
+
+**Why this is important:** if Google changes the response structure tomorrow, or there's a need to connect another data source (e.g., custom scraper or another provider) — only the adapter and mapper change. Rules engine, controllers, DTOs — remain completely untouched.
+
+**FieldMask — deliberately minimal, without `reviews`.** Places API (New) bills the entire request based on the most expensive SKU tier among the requested fields (Essentials / Pro / Enterprise). `places.reviews` falls into the Enterprise tier, yet none of the 8 evaluation rules use the review text — only `rating` and `userRatingCount`. Therefore, `reviews` is deliberately excluded:
 
 ```ts
 (places.id,
@@ -62,18 +62,18 @@
   places.wheelchairAccessibleEntrance);
 ```
 
-**Розпізнавання вхідного посилання — окрема відповідальність, не проста перевірка формату рядка.** Вхід буває чотирьох форматів, кожен вимагає своєї обробки:
+**Incoming link resolution is a separate responsibility, not a simple string format check.** Input comes in four formats, each requiring its own processing:
 
-- готовий Place ID (`ChIJ...`) — використовується напряму;
-- короткий лінк (`maps.app.goo.gl/...`) — резолвиться через HTTP-редірект до повного URL;
-- повний Maps-лінк з CID у hex (`data=!...!1s0x...`) — конвертується через Text Search за координатами/назвою;
-- лінк з `?cid=` — так само через Text Search.
+- ready Place ID (`ChIJ...`) — used directly;
+- short link (`maps.app.goo.gl/...`) — resolved via HTTP redirect to the full URL;
+- full Maps link with CID in hex (`data=!...!1s0x...`) — converted via Text Search by coordinates/name;
+- link with `?cid=` — also via Text Search.
 
-Через мережеві виклики і залежність від `IGooglePlacesPort` (для Text Search-фолбеку) resolver винесений з чистих `utils` в окремий сервіс із DI (`place-id-resolver.service.ts`), а не статична утиліта.
+Due to network calls and dependency on `IGooglePlacesPort` (for Text Search fallback), the resolver is moved from pure `utils` to a separate service with DI (`place-id-resolver.service.ts`), rather than a static utility.
 
-### 2.3 CacheModule — заглушка з правильним інтерфейсом
+### 2.3 CacheModule — stub with a correct interface
 
-Зараз кеш — це `Map` в памʼяті. Але звертаємось ми до нього виключно через інтерфейс `ICacheService`, підключений через DI-токен:
+Currently, the cache is an in-memory `Map`. But we access it exclusively through the `ICacheService` interface, injected via a DI token:
 
 ```ts
 export interface ICacheService {
@@ -85,22 +85,22 @@ export interface ICacheService {
 export const CACHE_SERVICE = Symbol('CACHE_SERVICE');
 ```
 
-`CacheModule` зараз реєструє `InMemoryCacheService` під цим токеном. Коли за місяць зʼявиться Redis — додається `RedisCacheService`, що реалізує той самий інтерфейс, і в модулі міняється **одна стрічка** (`useClass: RedisCacheService` замість `InMemoryCacheService`). Жоден сервіс, який інжектить `CACHE_SERVICE`, не потребує змін.
+`CacheModule` currently registers `InMemoryCacheService` under this token. When Redis appears in a month, `RedisCacheService` is added implementing the same interface, and **one line** changes in the module (`useClass: RedisCacheService` instead of `InMemoryCacheService`). No service that injects `CACHE_SERVICE` requires changes.
 
-Кеш використовується в `google-places`-адаптері: результат по конкретному Place ID кешується на TTL (наприклад, 1 година), щоб не витрачати квоту Google API на повторні запити того самого профілю.
+The cache is used in the `google-places` adapter: the result for a specific Place ID is cached for a TTL (e.g., 1 hour) to avoid wasting Google API quota on repeated requests for the same profile.
 
-### 2.4 Rules engine — чисті функції, не сервіси
+### 2.4 Rules engine — pure functions, not services
 
-Кожне правило оцінки — чиста функція без побічних ефектів і без DI:
+Each evaluation rule is a pure function with no side effects and no DI:
 
 ```ts
 export type AnalysisRule = (profile: PlaceProfile) => RuleResult;
 ```
 
-Це свідоме рішення проти "правило = provider з DI". Правила не мають залежностей, нічого не викликають ззовні — тільки читають `PlaceProfile` і повертають результат. Це робить їх:
+This is a deliberate decision against "rule = DI provider". Rules have no dependencies, don't call anything external — they only read `PlaceProfile` and return a result. This makes them:
 
-- тривіальними для unit-тестів (чиста функція → вхід/вихід, без моків);
-- легкими для додавання: нове правило = новий файл + один рядок реєстрації в `rules/index.ts`.
+- trivial to unit test (pure function → input/output, no mocks);
+- easy to add: new rule = new file + one line of registration in `rules/index.ts`.
 
 ```ts
 // rules/index.ts
@@ -116,13 +116,13 @@ export const ANALYSIS_RULES: AnalysisRule[] = [
 ];
 ```
 
-Жоден інший файл при додаванні нового правила не змінюється (Open/Closed principle).
+No other file changes when adding a new rule (Open/Closed principle).
 
-**Атрибути залежать від категорії бізнесу.** `attributesRule` — єдине правило, яке спершу визначає релевантний для профілю набір атрибутів через мапу `CATEGORY_TO_RELEVANT_ATTRIBUTES` (`analysis.constants.ts`): `delivery`/`dineIn`/`takeout` мають сенс для HoReCa, але не для сервісних бізнесів. Для нерозпізнаної категорії — fallback на universal-підмножину (`wheelchairAccessibleEntrance` та подібні). Правило лишається чистою функцією (мапа — просто ще одна константа, не зовнішній виклик), але систематичне заниження скору для бізнесів поза HoReCa зникає.
+**Attributes depend on the business category.** `attributesRule` is the only rule that first determines a relevant set of attributes for the profile via the `CATEGORY_TO_RELEVANT_ATTRIBUTES` map (`analysis.constants.ts`): `delivery`/`dineIn`/`takeout` make sense for HoReCa, but not for service businesses. For an unrecognized category — fallback to a universal subset (`wheelchairAccessibleEntrance` and similar). The rule remains a pure function (the map is just another constant, not an external call), but the systematic score lowering for non-HoReCa businesses disappears.
 
-### 2.5 Конфігурація — тільки через ConfigModule + Zod
+### 2.5 Configuration — only through ConfigModule + Zod
 
-Жодного `process.env.GOOGLE_PLACES_API_KEY` десь у сервісах. Всі змінні середовища проходять через Zod-схему один раз при старті застосунку:
+No `process.env.GOOGLE_PLACES_API_KEY` anywhere in the services. All environment variables go through a Zod schema once at application startup:
 
 ```ts
 // config/config.schema.ts
@@ -136,11 +136,11 @@ export const envSchema = z.object({
 export type EnvConfig = z.infer<typeof envSchema>;
 ```
 
-`ConfigModule.forRoot({ validate: (config) => envSchema.parse(config) })`. Якщо змінної нема або вона невалідна — застосунок падає при старті з чіткою помилкою, а не десь посеред запиту в проді. Сервіси отримують значення виключно через типізований `ConfigService.get<EnvConfig>(...)`.
+`ConfigModule.forRoot({ validate: (config) => envSchema.parse(config) })`. If a variable is missing or invalid, the app crashes at startup with a clear error, rather than midway through a request in prod. Services receive values exclusively through typed `ConfigService.get<EnvConfig>(...)`.
 
-### 2.6 Response envelope + route-константи
+### 2.6 Response envelope + route constants
 
-Кожна успішна відповідь API обгортається в єдиний формат через глобальний `ResponseInterceptor`:
+Every successful API response is wrapped in a single format via a global `ResponseInterceptor`:
 
 ```json
 {
@@ -150,17 +150,17 @@ export type EnvConfig = z.infer<typeof envSchema>;
 }
 ```
 
-Той самий `AllExceptionsFilter` формує єдиний формат і для помилок, з коректним статус-кодом залежно від причини:
+The same `AllExceptionsFilter` formats errors uniformly as well, with the correct status code depending on the cause:
 
-| Причина                                   | HTTP-статус |
-| ----------------------------------------- | ----------- |
-| Невалідний вхід (не URL і не Place ID)    | 400         |
-| Профіль не знайдено (`ZERO_RESULTS`)      | 404         |
-| Квота Google вичерпана / `REQUEST_DENIED` | 429 / 502   |
+| Cause                                    | HTTP Status |
+| ---------------------------------------- | ----------- |
+| Invalid input (not URL and not Place ID) | 400         |
+| Profile not found (`ZERO_RESULTS`)       | 404         |
+| Google Quota Exceeded / `REQUEST_DENIED` | 429 / 502   |
 
-Помилки Google API прокидаються з `google-places`-адаптера як розпізнавані домен-винятки (`google-places.errors.ts`), а не сирі HTTP-помилки клієнта — фільтр вже мапить їх на статус-коди, контролер про це нічого не знає.
+Google API errors are thrown from the `google-places` adapter as recognizable domain exceptions (`google-places.errors.ts`), rather than raw client HTTP errors — the filter then maps them to status codes, and the controller knows nothing about this.
 
-Шляхи ендпоінтів не хардкодяться рядками в декораторах — виносяться в константи:
+Endpoint paths are not hardcoded strings in decorators — they are extracted into constants:
 
 ```ts
 // analysis.routes.ts
@@ -169,23 +169,23 @@ export const ANALYSIS_ROUTES = {
 } as const;
 ```
 
-Це той самий підхід, що і в моєму попередньому production-проєкті (QuizForge) — жодних "магічних рядків", все, що повторюється або може змінитись, — в константах.
+This is the same approach used in my previous production project (QuizForge) — no "magic strings", everything that repeats or might change is in constants.
 
-### 2.7 Docker з першого дня
+### 2.7 Docker from Day 1
 
-`docker-compose.yml` піднімає застосунок у контейнері вже зараз, навіть без жодної БД чи Redis поруч. Причина: коли за місяць додасться Postgres, а ще через два тижні — Redis, вони просто додаються як нові сервіси в той самий compose-файл. Сам застосунок вже вміє жити в контейнері, змінні середовища вже йдуть через `.env` + Zod-валідацію — тобто перенесення на будь-який сервер (VPS, хмара) зводиться до `docker compose up` з правильним `.env`.
+`docker-compose.yml` currently contains only one service — the app itself (multi-stage `Dockerfile`: build stage with full `node_modules`, production stage with only prod dependencies). Environment variables are injected via `.env`, which is validated by the Zod schema at container startup. When Postgres/Redis arrive, they are added as new services in the same compose file, and the app connects to them by service name (`postgres`, `redis`) instead of `localhost`.
 
-### 2.8 Swagger — інтерактивна документація з першого бізнес-ендпоінта
+### 2.8 Swagger — interactive documentation from the first business endpoint
 
-`@nestjs/swagger` підключається одразу разом з `POST /analysis`, не відкладається на "потім". UI доступний на `/api/docs`, з прикладами запиту/відповіді прямо в браузері — щоб СТО чи хтось інший міг протестувати ендпоінт без Postman. `@ApiProperty` на DTO і `@ApiResponse` для кожного статус-коду (200, 400, 404, 429) тримають документацію синхронною з реальною поведінкою: вона генерується з того самого коду, що виконується, а не пишеться окремо і не застаріває.
+`@nestjs/swagger` is connected immediately alongside `POST /analysis`, not deferred for "later". The UI is available at `/api/docs`, with request/response examples right in the browser — so a CTO or someone else can test the endpoint without Postman. `@ApiProperty` on DTOs and `@ApiResponse` for each status code (200, 400, 404, 429) keep the documentation synchronous with actual behavior: it is generated from the same code that executes, rather than written separately and going stale.
 
-### 2.9 Rate limiting — захист публічної квоти
+### 2.9 Rate limiting — protecting public quota
 
-`POST /analysis` публічний і без авторизації (свідомо — розділ 10). Це означає, що будь-хто може викликати його скільки завгодно разів, витрачаючи платну Google-квоту. Базовий guard (`@nestjs/throttler`) по IP підключається глобально в `main.ts`, поруч з іншими наскрізними компонентами з `common/`. Це не заміна authentication — мінімальний захист від випадкового чи навмисного зловживання, поки `AuthModule` не впроваджено (розділ 8).
+`POST /analysis` is public and unauthenticated (deliberately — Section 10). This means anyone can call it as much as they want, spending paid Google quota. A basic guard (`@nestjs/throttler`) by IP is globally connected in `main.ts`, alongside other cross-cutting components from `common/`. This is not a replacement for authentication — just a minimal defense against accidental or intentional abuse until the `AuthModule` is implemented (Section 8).
 
 ---
 
-## 3. Структура проєкту
+## 3. Project Structure
 
 ```bash
 src/
@@ -198,18 +198,18 @@ src/
 │   ├── dto/res/
 │   │   └── api-response-envelope.dto.ts
 │   ├── filters/
-│   │   └── all-exceptions.filter.ts       # мапить домен-винятки (у т.ч. Google API) на HTTP-статуси
+│   │   └── all-exceptions.filter.ts       # maps domain exceptions (incl. Google API) to HTTP statuses
 │   ├── interceptors/
 │   │   └── response.interceptor.ts
 │   ├── guards/
-│   │   └── throttler.guard.ts             # rate limit по IP, підключений глобально
+│   │   └── throttler.guard.ts             # rate limit by IP, connected globally
 │   ├── pipes/
 │   │   └── global-validation.pipe.ts
 │   └── interfaces/
 │       └── api-response.interface.ts
 │
 ├── config/
-│   ├── config.schema.ts        # Zod-схема + тип EnvConfig
+│   ├── config.schema.ts        # Zod schema + EnvConfig type
 │   ├── config.module.ts
 │   ├── app.config.ts
 │   ├── google-places.config.ts
@@ -218,7 +218,7 @@ src/
 └── modules/
     ├── cache/
     │   ├── cache.module.ts
-    │   ├── cache.constants.ts          # DI-токен CACHE_SERVICE
+    │   ├── cache.constants.ts          # CACHE_SERVICE DI token
     │   ├── interfaces/
     │   │   └── cache-service.interface.ts
     │   └── adapters/
@@ -227,25 +227,25 @@ src/
     ├── google-places/
     │   ├── google-places.module.ts
     │   ├── interfaces/
-    │   │   ├── place-profile.interface.ts        # наш уніфікований тип (порт)
-    │   │   └── google-places-port.interface.ts   # контракт адаптера
+    │   │   ├── place-profile.interface.ts        # our unified type (port)
+    │   │   └── google-places-port.interface.ts   # adapter contract
     │   ├── adapters/
-    │   │   └── google-places.adapter.ts           # звернення до Google з фінальним FieldMask, кешування, мапінг помилок
+    │   │   └── google-places.adapter.ts           # Google call with final FieldMask, caching, error mapping
     │   ├── mappers/
     │   │   └── google-place.mapper.ts              # raw Google → PlaceProfile
     │   ├── types/
-    │   │   └── google-place-raw.type.ts             # типи сирої відповіді Google
+    │   │   └── google-place-raw.type.ts             # raw Google response types
     │   ├── services/
-    │   │   └── place-id-resolver.service.ts          # асинхронний: Place ID / short-лінк / CID / ?cid=
+    │   │   └── place-id-resolver.service.ts          # async: Place ID / short-link / CID / ?cid=
     │   └── errors/
-    │       └── google-places.errors.ts                # ZERO_RESULTS, QUOTA_EXCEEDED — домен-винятки
+    │       └── google-places.errors.ts                # ZERO_RESULTS, QUOTA_EXCEEDED — domain exceptions
     │
     └── analysis/
         ├── analysis.module.ts
         ├── analysis.controller.ts
-        ├── analysis.service.ts        # оркестрація: google-places → rules → score
+        ├── analysis.service.ts        # orchestration: google-places → rules → score
         ├── analysis.routes.ts
-        ├── analysis.constants.ts       # ваги правил, пороги, CATEGORY_TO_RELEVANT_ATTRIBUTES
+        ├── analysis.constants.ts       # rule weights, thresholds, CATEGORY_TO_RELEVANT_ATTRIBUTES
         ├── dto/
         │   ├── req/analyze-profile.req.dto.ts
         │   └── res/analysis-result.res.dto.ts
@@ -253,7 +253,7 @@ src/
         │   ├── rule.interface.ts
         │   └── analysis-result.interface.ts
         └── rules/
-            ├── index.ts                     # реєстр усіх правил
+            ├── index.ts                     # registry of all rules
             ├── completeness.rule.ts
             ├── rating.rule.ts
             ├── opening-hours.rule.ts
@@ -264,33 +264,33 @@ src/
             └── business-status.rule.ts
 ```
 
-**Примітка щодо монорепо:** зараз це самостійний Nest-проєкт (без Nx/Turborepo — для одного бекенду це надлишково). Коли підключиться фронтенд, поточний код переїде в `apps/api`, а `apps/web` стане поруч через прості npm/pnpm workspaces. Важкі монорепо-інструменти (Nx) підключимо, тільки якщо реально зʼявиться потреба в спільних пакетах між застосунками.
+**Note regarding monorepo:** currently, this is a standalone Nest project (without Nx/Turborepo — excessive for a single backend). When the frontend is connected, the current code will move to `apps/api`, and `apps/web` will sit alongside it via simple npm/pnpm workspaces. Heavy monorepo tools (Nx) will be connected only if there is a real need for shared packages between apps.
 
 ---
 
-## 4. Опис модулів
+## 4. Module Descriptions
 
 ### 4.1 `common/`
 
-Наскрізні речі, що не належать жодному бізнес-модулю: глобальний exception filter (уніфікує формат помилок і мапить їх на статус-коди), глобальний validation pipe (валідація вхідних DTO), response interceptor (обгортка відповіді), throttler guard (rate limit по IP). Ці компоненти підключаються в `main.ts` глобально — жоден бізнес-модуль про них "не знає" і не імпортує напряму.
+Cross-cutting concerns that don't belong to any business module: global exception filter (unifies error formatting and maps them to status codes), global validation pipe (incoming DTO validation), response interceptor (response envelope), throttler guard (IP rate limit). These components are globally connected in `main.ts` — no business module "knows" about them or imports them directly.
 
 ### 4.2 `config/`
 
-Єдина точка правди для змінних середовища. Кожен домен має свій конфіг-файл (`google-places.config.ts`, `cache.config.ts`), але всі вони валідуються через одну Zod-схему при старті.
+Single source of truth for environment variables. Each domain has its config file (`google-places.config.ts`, `cache.config.ts`), but they all are validated via a single Zod schema at startup.
 
 ### 4.3 `cache/`
 
-Інфраструктурний модуль. Зовні видно тільки інтерфейс `ICacheService` та токен `CACHE_SERVICE`. Поточна реалізація — `InMemoryCacheService` (`Map` з TTL через `setTimeout`). Використовується `google-places`-модулем для кешування відповідей Google API за Place ID.
+Infrastructure module. Externally, only the `ICacheService` interface and `CACHE_SERVICE` token are visible. Current implementation is `InMemoryCacheService` (`Map` with TTL via `setTimeout`). Used by the `google-places` module to cache Google API responses by Place ID.
 
 ### 4.4 `google-places/`
 
-Адаптер до зовнішнього світу. Відповідає за:
+Adapter to the outside world. Responsible for:
 
-1. Розпізнавання вхідних даних — готовий Place ID, короткий лінк, повний лінк з CID, лінк з `?cid=` (`place-id-resolver.service.ts`, асинхронний, деталі — розділ 2.2).
-2. Звернення до Places API (New) з фінальним `FieldMask` (розділ 2.2) — тільки поля, що реально йдуть в оцінку, без `reviews`.
-3. Кешування відповіді через `ICacheService`.
-4. Мапінг сирої відповіді у внутрішній тип `PlaceProfile` — саме тут вся "брудна робота" з форматом Google ізольована в одному файлі.
-5. Мапінг помилок Google (`ZERO_RESULTS`, `REQUEST_DENIED`, вичерпана квота) у розпізнавані домен-винятки — далі обробляються глобальним `AllExceptionsFilter` (розділ 2.6).
+1. Input recognition — ready Place ID, short link, full link with CID, link with `?cid=` (`place-id-resolver.service.ts`, async, details in Section 2.2).
+2. Calling Places API (New) with final `FieldMask` (Section 2.2) — only fields that actually go into scoring, without `reviews`.
+3. Caching the response via `ICacheService`.
+4. Mapping the raw response into the internal `PlaceProfile` type — this is where all the "dirty work" with the Google format is isolated in a single file.
+5. Mapping Google errors (`ZERO_RESULTS`, `REQUEST_DENIED`, quota exceeded) into recognizable domain exceptions — later handled by the global `AllExceptionsFilter` (Section 2.6).
 
 `PlaceProfile`:
 
@@ -301,22 +301,22 @@ export interface PlaceProfile {
   formattedAddress: string | null;
   phoneNumber: string | null;
   websiteUri: string | null;
-  types: string[]; // категорії профілю; types[0] умовно "primary"
+  types: string[]; // profile categories; types[0] is roughly "primary"
   businessStatus: 'OPERATIONAL' | 'CLOSED_TEMPORARILY' | 'CLOSED_PERMANENTLY' | 'FUTURE_OPENING' | 'UNKNOWN';
   rating: number | null;
   userRatingCount: number | null;
   hasOpeningHours: boolean;
   editorialSummary: string | null;
-  photoCount: number; // кількість фото-референсів у відповіді API — ОБМЕЖЕНА лімітом, не реальна кількість фото в профілі
+  photoCount: number; // number of photo references in the API response — LIMITED by API quota, not the real number of profile photos
   attributes: Record<string, boolean>; // delivery, dineIn, takeout, wheelchairAccessibleEntrance...
 }
 ```
 
-> `photoCount` і `attributes` мають задокументовані обмеження джерела даних — див. розділ 10.
+> `photoCount` and `attributes` have documented data source limitations — see Section 10.
 
 ### 4.5 `analysis/`
 
-Бізнес-логіка продукту. `AnalysisService` викликає `google-places` (через порт), отримує `PlaceProfile`, проганяє через `ANALYSIS_RULES`, агрегує в підсумковий скор і формує список проблем/рекомендацій. Контролер тонкий — тільки приймає DTO і викликає сервіс.
+Product business logic. `AnalysisService` calls `google-places` (via port), gets `PlaceProfile`, runs it through `ANALYSIS_RULES`, aggregates it into a final score, and generates a list of issues/recommendations. The controller is thin — only accepts the DTO and calls the service.
 
 ---
 
@@ -324,15 +324,15 @@ export interface PlaceProfile {
 
 ### `POST /analysis`
 
-**Запит:**
+**Request:**
 
 ```json
 { "input": "https://maps.app.goo.gl/xxxxx" }
 ```
 
-(приймає посилання будь-якого підтримного формату або чистий Place ID — розпізнається автоматично, розділ 2.2)
+(accepts a link of any supported format or a pure Place ID — automatically recognized, Section 2.2)
 
-**Відповідь (успіх):**
+**Response (success):**
 
 ```json
 {
@@ -342,8 +342,8 @@ export interface PlaceProfile {
     "issues": [
       {
         "ruleId": "opening-hours",
-        "message": "Не вказано години роботи",
-        "recommendation": "Додайте графік роботи в Google Business Profile"
+        "message": "Opening hours not provided",
+        "recommendation": "Add working hours to your Google Business Profile"
       }
     ],
     "breakdown": [
@@ -355,90 +355,90 @@ export interface PlaceProfile {
 }
 ```
 
-**Відповідь (помилка)** — той самий envelope, `success: false`:
+**Response (error)** — the same envelope, `success: false`:
 
 ```json
 {
   "success": false,
-  "error": { "code": "PROFILE_NOT_FOUND", "message": "Профіль за вказаним посиланням не знайдено" }
+  "error": { "code": "PROFILE_NOT_FOUND", "message": "Profile at the provided link was not found" }
 }
 ```
 
-Статус-коди — розділ 2.6.
+Status codes — Section 2.6.
 
 ### `GET /api/docs`
 
-Swagger UI — інтерактивна документація з прикладами запиту/відповіді (розділ 2.8).
+Swagger UI — interactive documentation with request/response examples (Section 2.8).
 
 ### `GET /health`
 
-Базова перевірка живучості сервісу (для Docker healthcheck і майбутнього моніторингу).
+Basic service liveness check (for Docker healthcheck and future monitoring).
 
 ---
 
-## 6. Алгоритм оцінювання
+## 6. Evaluation Algorithm
 
-Сума ваг = 100. Кожне правило — окрема чиста функція з фіксованою вагою.
+Sum of weights = 100. Each rule is a separate pure function with a fixed weight.
 
-| Правило             | Вага | Що перевіряє                                       | Чому важливо                                                      |
-| ------------------- | ---- | -------------------------------------------------- | ----------------------------------------------------------------- |
-| `completeness`      | 20   | Телефон, сайт, адреса заповнені                    | Базові контакти — головна причина, чому клієнт не може зв'язатись |
-| `rating`            | 20   | Рейтинг є і кількість відгуків ≥ порогу (напр. 10) | Мало відгуків = низька довіра, навіть при високому рейтингу       |
-| `opening-hours`     | 15   | Години роботи вказані                              | Відсутність годин — часта причина втрачених відвідувачів          |
-| `photos`            | 15   | Кількість фото ≥ порогу (напр. 3)                  | Профілі з фото отримують значно більше кліків у Google Maps       |
-| `business-category` | 10   | Вказано категорію/тип бізнесу                      | Впливає на те, за якими запитами профіль взагалі показується      |
-| `description`       | 10   | Є editorial summary / опис                         | Допомагає користувачу і Google зрозуміти суть бізнесу             |
-| `attributes`        | 5    | Заповнені атрибути, релевантні категорії бізнесу   | Дрібниця, яка підвищує релевантність у нішевих запитах            |
-| `business-status`   | 5    | Статус `OPERATIONAL`, не `CLOSED_*`                | Критична помилка — профіль позначений закритим                    |
+| Rule                | Weight | What it checks                                            | Why it's important                                                |
+| ------------------- | ------ | --------------------------------------------------------- | ----------------------------------------------------------------- |
+| `completeness`      | 20     | Phone, website, address are filled                        | Basic contacts are the main reason a client cannot get in touch   |
+| `rating`            | 20     | Rating exists and number of reviews ≥ threshold (e.g. 10) | Few reviews = low trust, even with a high rating                  |
+| `opening-hours`     | 15     | Opening hours are specified                               | Missing hours is a frequent reason for lost visitors              |
+| `photos`            | 15     | Number of photos ≥ threshold (e.g. 3)                     | Profiles with photos get significantly more clicks in Google Maps |
+| `business-category` | 10     | Business category/type is specified                       | Affects which searches the profile even appears in                |
+| `description`       | 10     | Editorial summary / description exists                    | Helps the user and Google understand the essence of the business  |
+| `attributes`        | 5      | Attributes relevant to the business category are filled   | A minor detail that boosts relevance in niche searches            |
+| `business-status`   | 5      | Status is `OPERATIONAL`, not `CLOSED_*`                   | Critical error — profile is marked as closed                      |
 
-> **Технічні обмеження показників:** `photos` — поріг рахується від кількості фото-референсів, повернутих API за один запит (обмежено лімітом відповіді, не реальна кількість фото в профілі) — придатне для «є/нема достатньо», не для градуйованої шкали. `attributes` — перевіряються тільки атрибути, релевантні категорії бізнесу (`CATEGORY_TO_RELEVANT_ATTRIBUTES`), а не фіксований HoReCa-набір для всіх типів.
+> **Technical metric limitations:** `photos` — threshold is calculated from the number of photo references returned by the API per request (limited by response quota, not the real number of photos in the profile) — suitable for "has/doesn't have enough", not for a graded scale. `attributes` — only attributes relevant to the business category are checked (`CATEGORY_TO_RELEVANT_ATTRIBUTES`), rather than a fixed HoReCa set for all types.
 
-**Розширюваність:** щоб додати нове правило (наприклад, перевірку ціннового рівня чи наявності `priceRange`), достатньо створити файл у `rules/`, реалізувати сигнатуру `AnalysisRule` і додати один рядок у `rules/index.ts`. Ваги правил перерозподіляються централізовано в `analysis.constants.ts`.
+**Extensibility:** to add a new rule (e.g., checking price level or the presence of `priceRange`), simply create a file in `rules/`, implement the `AnalysisRule` signature, and add one line in `rules/index.ts`. Rule weights are redistributed centrally in `analysis.constants.ts`.
 
 ---
 
 ## 7. Docker
 
-`docker-compose.yml` зараз містить лише один сервіс — сам застосунок (multi-stage `Dockerfile`: build-стадія з повним `node_modules`, production-стадія — тільки прод-залежності). Змінні середовища прокидаються через `.env`, який валідується Zod-схемою при старті контейнера. Коли зʼявляться Postgres/Redis — вони додаються новими сервісами в той самий файл, застосунок під'єднується до них за назвою сервіса (`postgres`, `redis`) замість `localhost`.
+`docker-compose.yml` currently contains only one service — the app itself (multi-stage `Dockerfile`: build stage with full `node_modules`, production stage with only prod dependencies). Environment variables are injected via `.env`, which is validated by the Zod schema at container startup. When Postgres/Redis arrive, they are added as new services in the same file, and the app connects to them by service name (`postgres`, `redis`) instead of `localhost`.
 
 ---
 
-## 8. Дорожня карта масштабування
+## 8. Scaling Roadmap
 
-| Крок                                       | Коли (орієнтовно)                     | Що додається                                                                     | Чому це не ламає існуюче                                                                      |
-| ------------------------------------------ | ------------------------------------- | -------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| Redis замість in-memory cache              | +1 місяць                             | `RedisCacheService`, реалізує `ICacheService`                                    | Все залежить від інтерфейсу, а не від `Map`                                                   |
-| BullMQ для черг                            | +2 тижні після Redis                  | `QueueModule`, асинхронна/масова обробка профілів                                | Redis вже піднятий і сконфігурований                                                          |
-| Auth + guard                               | за потреби                            | `AuthModule`, `@UseGuards(JwtAuthGuard)` на потрібних контролерах                | Guard — декоратор поверх контролера, не залежність усередині модулів                          |
-| PostgreSQL + Prisma                        | коли треба зберігати історію аналізів | `PrismaModule`, репозиторій в `analysis/`                                        | `google-places` і rules engine нічого не знають про БД                                        |
-| Export CSV/PDF/Google Sheets               | за потреби                            | новий `reports/`-модуль, читає готовий `AnalysisResult`                          | Формат результату вже стабільний і не привʼязаний до джерела даних                            |
-| Кастомізований скоринг (вибіркові правила) | за потреби                            | `POST /analysis` приймає `selectedRuleIds`, перерахунок ваг серед обраних правил | Rules engine вже ізольований — зміна тільки в API-шарі й агрегації, самі правила не чіпаються |
-| Frontend (Next.js)                         | старт UI                              | `apps/web` поруч з `apps/api`                                                    | Бекенд вже REST з чітким контрактом відповіді (envelope)                                      |
-
----
-
-## 9. Тестування
-
-- **Rules engine** — головний кандидат на unit-тести: кожна функція тестується як `expect(rule(mockProfile)).toEqual(...)`, без жодних моків, оскільки функції чисті.
-- **`attributesRule`** — окремо тестується для HoReCa-категорії і для не-HoReCa, щоб підтвердити коректність `CATEGORY_TO_RELEVANT_ATTRIBUTES` і fallback-поведінку.
-- **AnalysisService** — тестується з замоканим `IGooglePlacesPort` (інтерфейс, не конкретний адаптер) — перевіряємо тільки оркестрацію і агрегацію скору.
-- **GooglePlacesAdapter** — тестується окремо, з замоканим HTTP-клієнтом: перевіряє коректність мапінгу сирої відповіді і коректність мапінгу помилок Google (`ZERO_RESULTS`, квота) у домен-винятки.
-- **`place-id-resolver.service.ts`** — окремо тестується на всіх підтримних форматах входу (Place ID, короткий лінк, повний лінк з CID, `?cid=`).
+| Step                             | When (approx.)                 | What is added                                                                   | Why it doesn't break existing code                                                                      |
+| -------------------------------- | ------------------------------ | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Redis instead of in-memory cache | +1 month                       | `RedisCacheService`, implements `ICacheService`                                 | Everything depends on the interface, not `Map`                                                          |
+| BullMQ for queues                | +2 weeks after Redis           | `QueueModule`, async/bulk profile processing                                    | Redis is already up and configured                                                                      |
+| Auth + guard                     | as needed                      | `AuthModule`, `@UseGuards(JwtAuthGuard)` on relevant controllers                | Guard is a decorator over a controller, not a dependency inside modules                                 |
+| PostgreSQL + Prisma              | when history needs to be saved | `PrismaModule`, repository in `analysis/`                                       | `google-places` and rules engine know nothing about the DB                                              |
+| Export CSV/PDF/Google Sheets     | as needed                      | new `reports/` module, reads ready `AnalysisResult`                             | Result format is already stable and not tied to data source                                             |
+| Custom scoring (selective rules) | as needed                      | `POST /analysis` accepts `selectedRuleIds`, weight recalculation among selected | Rules engine is already isolated — change only in API layer and aggregation, rules themselves untouched |
+| Frontend (Next.js)               | UI kickoff                     | `apps/web` alongside `apps/api`                                                 | Backend is already REST with a strict response contract (envelope)                                      |
 
 ---
 
-## 10. Що свідомо НЕ входить у цю версію
+## 9. Testing
 
-Щоб не переускладнювати тестове, свідомо відкладено (а не забуто — див. Дорожню карту):
+- **Rules engine** — prime candidate for unit tests: each function is tested as `expect(rule(mockProfile)).toEqual(...)`, without any mocks, since functions are pure.
+- **`attributesRule`** — tested separately for HoReCa category and non-HoReCa, to confirm the correctness of `CATEGORY_TO_RELEVANT_ATTRIBUTES` and fallback behavior.
+- **AnalysisService** — tested with a mocked `IGooglePlacesPort` (interface, not concrete adapter) — testing only orchestration and score aggregation.
+- **GooglePlacesAdapter** — tested separately, with a mocked HTTP client: verifies correct mapping of raw response and correct mapping of Google errors (`ZERO_RESULTS`, quota) into domain exceptions.
+- **`place-id-resolver.service.ts`** — tested separately on all supported input formats (Place ID, short link, full link with CID, `?cid=`).
 
-- авторизація — інструмент публічний, аналізує будь-який профіль без входу (захищений лише базовим rate-limit, розділ 2.9);
-- збереження історії аналізів у БД — поки stateless, тільки кеш відповіді Google на короткий TTL;
-- пакетний/масовий аналіз кількох профілів одразу;
-- експорт звітів (CSV/PDF/Google Sheets);
-- кастомізований скоринг (вибір правил на фронтенді) — архітектура це вже підтримує через ізольований rules engine, реалізація — за потреби (розділ 8);
-- дані, недоступні через публічний Places API (New) — прозоро зазначається в README як межа інструменту:
-  - активність Google Posts та розділ Q&A;
-  - відповіді власника на відгуки та **review velocity** (рівномірність накопичення відгуків у часі) — один із топ-факторів ранжування за оцінками SEO-практики, але недоступний через публічний API;
-  - секція **Products/Services** — окрема частина профілю, Places API (New) її не повертає;
-  - **свіжість фото** (дата завантаження) — API повертає лише самі референси фото, без часових міток;
-  - **NAP-консистентність із зовнішніми джерелами** (сайт бізнесу, інші довідники) — перевіряється лише повнота й формат контактних даних усередині самого профілю, без звірки з сайтом чи каталогами.
+---
+
+## 10. What deliberately IS NOT included in this version
+
+To avoid overcomplicating the test task, the following are deliberately deferred (not forgotten — see Roadmap):
+
+- authentication — tool is public, analyzes any profile without login (protected only by basic rate-limit, Section 2.9);
+- saving analysis history to DB — stateless for now, only Google response caching for a short TTL;
+- batch/bulk analysis of multiple profiles at once;
+- exporting reports (CSV/PDF/Google Sheets);
+- custom scoring (rule selection on frontend) — architecture already supports this via isolated rules engine, implementation as needed (Section 8);
+- data unavailable via public Places API (New) — transparently stated in README as a tool limitation:
+  - Google Posts activity and Q&A section;
+  - Owner responses to reviews and **review velocity** (even distribution of review accumulation over time) — one of the top ranking factors according to SEO practice, but unavailable via public API;
+  - **Products/Services** section — a separate profile part, Places API (New) doesn't return it;
+  - **Photo freshness** (upload date) — API only returns photo references themselves, without timestamps;
+  - **NAP consistency with external sources** (business website, other directories) — only completeness and format of contact data within the profile itself are checked, without matching against website or directories.

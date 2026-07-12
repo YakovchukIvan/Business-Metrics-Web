@@ -2,7 +2,7 @@ const input = process.env.CLAUDE_TOOL_INPUT || process.env.AGY_TOOL_ARGS || JSON
 const dangerousPatterns = /rm\s+-rf|DROP\s+TABLE|del\s+\/f\s+\/s/i;
 
 if (dangerousPatterns.test(input)) {
-    console.error('Критична помилка: Виявлено деструктивну команду (rm -rf, DROP TABLE, тощо). Заборонено.');
+    console.error('Critical Error: Detected a destructive command (rm -rf, DROP TABLE, etc.). Forbidden.');
     process.exit(2);
 }
 

@@ -4,7 +4,7 @@
 
 Reference: `profilelens-backend-tasks.md` for full task descriptions.
 
-## TASK-1 — Ініціалізація проєкту + Docker
+## TASK-1 — Project Initialization + Docker
 
 - [x] `nest new` — done
 - [x] ESLint + Prettier — done, with `import/no-restricted-paths` boundaries and `consistent-type-imports`
@@ -18,13 +18,19 @@ Reference: `profilelens-backend-tasks.md` for full task descriptions.
 
 ## TASK-2 — Config module (Zod) + Common layer
 
-- [ ] Not started
+- [x] Zod validation schema (`config.schema.ts`) for all env variables — done
+- [x] Hybrid ConfigModule (pure `getAppConfig` for main.ts, `registerAs` for APIs, `AsyncOptions` for infra) — done
+- [x] Global AllExceptionsFilter — done
+- [x] Global ResponseInterceptor (standard success/error envelope) — done
+- [x] ApiResponseEnvelope DTO with Swagger decorators — done
+- [x] GlobalValidationPipe with strict validation — done
+- [x] Wiring global components in main.ts — done
 
 ## TASK-3 — CacheModule
 
 - [ ] Not started
 
-## TASK-4 — GooglePlacesModule (порт/адаптер)
+## TASK-4 — GooglePlacesModule (port/adapter)
 
 - [ ] Not started
 
@@ -32,7 +38,7 @@ Reference: `profilelens-backend-tasks.md` for full task descriptions.
 
 - [ ] Not started
 
-## TASK-6 — API layer: контролер + DTO
+## TASK-6 — API layer: controllers + DTOs
 
 - [ ] Not started
 
