@@ -84,7 +84,7 @@ export default defineConfig(
               // реалізацію кешу напряму — тільки через CACHE_SERVICE-токен
               target: './src/modules/google-places',
               from: './src/modules/cache',
-              except: ['./interfaces', './cache.constants.ts'],
+              except: ['./interfaces', './cache.constants.ts', './cache.module.ts'],
               message: 'Кеш підключається лише через CACHE_SERVICE-токен, не через конкретний adapter.',
             },
           ],

@@ -40,7 +40,13 @@ Reference: `profilelens-backend-tasks.md` for full task descriptions.
 
 ## TASK-4 — GooglePlacesModule (port/adapter)
 
-- [ ] Not started
+- [x] `PlaceProfile` interface and raw types — done
+- [x] `IGooglePlacesPort` and `GOOGLE_PLACES_PORT` DI token — done
+- [x] `PlaceIdResolverService` (handles short links, CIDs via Text Search fallback) — done
+- [x] `GooglePlacesAdapter` (with caching, fieldMask logic without reviews, error mapping) — done
+- [x] Documented limitations (photoCount, CID resolution) in `.agents/context/google-places-limitations.md` — done
+- [x] Module registration and ESLint boundaries verified — done
+- [x] Passed strict `eslint` and `typecheck` validations — done
 
 ## TASK-5 — AnalysisModule: rules engine
 
