@@ -28,9 +28,11 @@ export function RecentDropdown() {
 
   return (
     <div className="hidden md:flex items-center gap-4 relative">
-      <DropdownMenu onOpenChange={(open) => {
-        if (open) setRecent(getRecentSearches());
-      }}>
+      <DropdownMenu
+        onOpenChange={(open) => {
+          if (open) setRecent(getRecentSearches());
+        }}
+      >
         <DropdownMenuTrigger className="flex items-center gap-1.5 text-sm font-medium text-gray-300 hover:text-white transition-colors focus:outline-none data-[state=open]:text-white cursor-pointer">
           Recent <ChevronDown className="w-4 h-4" />
         </DropdownMenuTrigger>
@@ -43,7 +45,7 @@ export function RecentDropdown() {
           <DropdownMenuSeparator />
           {recent.length > 0 ? (
             recent.map((item, idx) => (
-              <DropdownMenuItem 
+              <DropdownMenuItem
                 key={idx}
                 onClick={() => handleSelect(item.input)}
                 className="cursor-pointer py-2 text-sm font-medium"
@@ -52,9 +54,7 @@ export function RecentDropdown() {
               </DropdownMenuItem>
             ))
           ) : (
-            <div className="px-4 py-3 text-sm text-gray-500 text-center">
-              No recent searches
-            </div>
+            <div className="px-4 py-3 text-sm text-gray-500 text-center">No recent searches</div>
           )}
         </DropdownMenuContent>
       </DropdownMenu>

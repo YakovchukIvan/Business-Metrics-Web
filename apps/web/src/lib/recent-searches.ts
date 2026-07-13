@@ -20,10 +20,10 @@ export function getRecentSearches(): RecentSearch[] {
 export function addRecentSearch(input: string, businessName: string) {
   if (typeof window === 'undefined') return;
   const current = getRecentSearches();
-  
+
   // Remove existing entry for the same input to move it to the top
-  const filtered = current.filter(item => item.input !== input);
-  
+  const filtered = current.filter((item) => item.input !== input);
+
   const newEntry: RecentSearch = {
     input,
     businessName,

@@ -24,17 +24,21 @@ if (fs.existsSync(currentTaskFile)) {
 
 // Smart Linter Logic
 try {
-  console.log("🔍 Checking for modified apps to run lint...");
+  console.log('🔍 Checking for modified apps to run lint...');
   const rootDir = path.join(__dirname, '..', '..');
-  
+
   // Get all modified, added, or deleted files (both staged and unstaged)
   let changedFiles = '';
-  try { changedFiles = execSync('git diff --name-only HEAD', { encoding: 'utf-8', cwd: rootDir }); } catch(e) {}
-  
+  try {
+    changedFiles = execSync('git diff --name-only HEAD', { encoding: 'utf-8', cwd: rootDir });
+  } catch (e) {}
+
   // also check untracked files just in case
   let untrackedFiles = '';
-  try { untrackedFiles = execSync('git ls-files --others --exclude-standard', { encoding: 'utf-8', cwd: rootDir }); } catch(e) {}
-  
+  try {
+    untrackedFiles = execSync('git ls-files --others --exclude-standard', { encoding: 'utf-8', cwd: rootDir });
+  } catch (e) {}
+
   const allFiles = (changedFiles + '\n' + untrackedFiles).trim();
 
   if (allFiles) {
@@ -60,10 +64,10 @@ try {
       }
     }
   } else {
-    console.log("ℹ️ No changes detected. Skipping lint.");
+    console.log('ℹ️ No changes detected. Skipping lint.');
   }
 } catch (e) {
-  console.error("⚠️ Linter hook encountered an error:", e.message);
+  console.error('⚠️ Linter hook encountered an error:', e.message);
 }
 
 process.exit(0);

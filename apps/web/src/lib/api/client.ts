@@ -4,7 +4,7 @@ import { ApiResponse, ApiErrorResponse } from '../types/analysis';
 
 export async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const url = `${env.NEXT_PUBLIC_API_URL}${endpoint}`;
-  
+
   const response = await fetch(url, {
     ...options,
     headers: {

@@ -54,7 +54,11 @@ export function SearchForm({ isLoading, onSubmit, defaultUrl = '' }: SearchFormP
                   <X className="h-5 w-5" />
                 </button>
               </HoverCardTrigger>
-              <HoverCardContent side="top" align="center" className="w-auto p-2 text-sm font-medium border-gray-200 shadow-md">
+              <HoverCardContent
+                side="top"
+                align="center"
+                className="w-auto p-2 text-sm font-medium border-gray-200 shadow-md"
+              >
                 Очистити пошук
               </HoverCardContent>
             </HoverCard>
@@ -76,7 +80,7 @@ export function SearchForm({ isLoading, onSubmit, defaultUrl = '' }: SearchFormP
           )}
         </Button>
       </form>
-      
+
       {isLoading && (
         <div className="w-full mt-4 h-1 bg-gray-200 rounded-full overflow-hidden">
           <div className="h-full bg-gray-900 animate-pulse w-1/3 rounded-full" />

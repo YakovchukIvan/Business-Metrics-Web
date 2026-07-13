@@ -4,11 +4,7 @@ import { cn } from '@/lib/utils';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card"
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 
 export const metadata = {
   title: 'Documentation | ProfileLens',
@@ -24,7 +20,10 @@ export default function DocsPage() {
           <p className="text-gray-500 text-lg">Detailed guide on the Google Business Profile audit process.</p>
         </div>
         <Link href="/">
-          <Button variant="outline" className="text-sm font-medium border-gray-200 px-4 py-2 hover:bg-gray-50 flex items-center gap-2">
+          <Button
+            variant="outline"
+            className="text-sm font-medium border-gray-200 px-4 py-2 hover:bg-gray-50 flex items-center gap-2"
+          >
             &larr; Back to Auditor
           </Button>
         </Link>
@@ -39,25 +38,40 @@ export default function DocsPage() {
               How it works
             </CardTitle>
           </CardHeader>
-          
+
           <CardContent className="p-6">
             <p className="text-gray-600 leading-relaxed mb-8 max-w-3xl">
-              ProfileLens analyzes publicly available data from Google Business Profiles to determine how well an entry is optimized for local search and customer trust. We evaluate your profile against 8 weighted rules to generate a comprehensive optimization score.
+              ProfileLens analyzes publicly available data from Google Business Profiles to determine how well an entry
+              is optimized for local search and customer trust. We evaluate your profile against 8 weighted rules to
+              generate a comprehensive optimization score.
             </p>
-            
+
             <div className="grid md:grid-cols-3 gap-6">
               {[
-                { step: "1", title: "Paste Link", desc: "Input a Google Maps URL, short link, or Place ID into the analyzer.", icon: <Search className="w-4 h-4" /> },
-                { step: "2", title: "Analyze", desc: "Our engine fetches and evaluates 100+ data points in real-time.", icon: <Loader2 className="w-4 h-4" /> },
-                { step: "3", title: "Improve", desc: "Review identified problems and follow recommendations to boost ranking.", icon: <CheckCircle2 className="w-4 h-4" /> }
+                {
+                  step: '1',
+                  title: 'Paste Link',
+                  desc: 'Input a Google Maps URL, short link, or Place ID into the analyzer.',
+                  icon: <Search className="w-4 h-4" />,
+                },
+                {
+                  step: '2',
+                  title: 'Analyze',
+                  desc: 'Our engine fetches and evaluates 100+ data points in real-time.',
+                  icon: <Loader2 className="w-4 h-4" />,
+                },
+                {
+                  step: '3',
+                  title: 'Improve',
+                  desc: 'Review identified problems and follow recommendations to boost ranking.',
+                  icon: <CheckCircle2 className="w-4 h-4" />,
+                },
               ].map((item) => (
                 <div key={item.step} className="bg-white border border-gray-200 p-6 rounded-xl shadow-sm">
                   <div className="w-8 h-8 bg-gray-900 text-white rounded-md flex items-center justify-center mb-4 text-sm font-bold">
                     {item.step}
                   </div>
-                  <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
-                    {item.title}
-                  </h3>
+                  <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2">{item.title}</h3>
                   <p className="text-sm text-gray-500 leading-relaxed">{item.desc}</p>
                 </div>
               ))}
@@ -91,24 +105,28 @@ export default function DocsPage() {
                   </thead>
                   <tbody className="divide-y divide-gray-200">
                     {[
-                      { rule: "Rating", weight: 30, priority: "High" },
-                      { rule: "Completeness", weight: 20, priority: "High" },
-                      { rule: "Business Category", weight: 15, priority: "Medium" },
-                      { rule: "Opening Hours", weight: 15, priority: "Medium" },
-                      { rule: "Business Status", weight: 10, priority: "Medium" },
-                      { rule: "Photos", weight: 7, priority: "Low" },
-                      { rule: "Attributes", weight: 3, priority: "Low" }
+                      { rule: 'Rating', weight: 30, priority: 'High' },
+                      { rule: 'Completeness', weight: 20, priority: 'High' },
+                      { rule: 'Business Category', weight: 15, priority: 'Medium' },
+                      { rule: 'Opening Hours', weight: 15, priority: 'Medium' },
+                      { rule: 'Business Status', weight: 10, priority: 'Medium' },
+                      { rule: 'Photos', weight: 7, priority: 'Low' },
+                      { rule: 'Attributes', weight: 3, priority: 'Low' },
                     ].map((row) => (
                       <tr key={row.rule} className="hover:bg-gray-50 transition-colors">
                         <td className="px-6 py-4 font-medium text-gray-900">{row.rule}</td>
                         <td className="px-6 py-4 text-right tabular-nums text-gray-600">{row.weight}pt</td>
                         <td className="px-6 py-4">
-                          <span className={cn(
-                            "px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border",
-                            row.priority === "High" ? "bg-green-50 text-green-700 border-green-100" :
-                            row.priority === "Medium" ? "bg-amber-50 text-amber-700 border-amber-100" :
-                            "bg-red-50 text-red-700 border-red-100"
-                          )}>
+                          <span
+                            className={cn(
+                              'px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border',
+                              row.priority === 'High'
+                                ? 'bg-green-50 text-green-700 border-green-100'
+                                : row.priority === 'Medium'
+                                  ? 'bg-amber-50 text-amber-700 border-amber-100'
+                                  : 'bg-red-50 text-red-700 border-red-100',
+                            )}
+                          >
                             {row.priority}
                           </span>
                         </td>
@@ -124,24 +142,57 @@ export default function DocsPage() {
                   <h3 className="font-bold text-gray-900 mb-4">Score Bands</h3>
                   <div className="grid grid-cols-2 gap-3">
                     {[
-                      { label: "Excellent", range: "90–100", color: "bg-green-500", desc: "Profile is highly optimized and follows best practices." },
-                      { label: "Very Good", range: "80–89", color: "bg-green-500", desc: "Strong profile with only minor recommendations." },
-                      { label: "Good", range: "65–79", color: "bg-amber-500", desc: "Well optimized with noticeable room for improvement." },
-                      { label: "Fair", range: "50–64", color: "bg-amber-500", desc: "Profile is functional but requires several improvements." },
-                      { label: "Poor", range: "25–49", color: "bg-red-500", desc: "Basic optimization exists, but many important elements are missing." },
-                      { label: "Critical", range: "0–24", color: "bg-red-500", desc: "Major optimization issues detected." }
-                    ].map(band => (
+                      {
+                        label: 'Excellent',
+                        range: '90–100',
+                        color: 'bg-green-500',
+                        desc: 'Profile is highly optimized and follows best practices.',
+                      },
+                      {
+                        label: 'Very Good',
+                        range: '80–89',
+                        color: 'bg-green-500',
+                        desc: 'Strong profile with only minor recommendations.',
+                      },
+                      {
+                        label: 'Good',
+                        range: '65–79',
+                        color: 'bg-amber-500',
+                        desc: 'Well optimized with noticeable room for improvement.',
+                      },
+                      {
+                        label: 'Fair',
+                        range: '50–64',
+                        color: 'bg-amber-500',
+                        desc: 'Profile is functional but requires several improvements.',
+                      },
+                      {
+                        label: 'Poor',
+                        range: '25–49',
+                        color: 'bg-red-500',
+                        desc: 'Basic optimization exists, but many important elements are missing.',
+                      },
+                      {
+                        label: 'Critical',
+                        range: '0–24',
+                        color: 'bg-red-500',
+                        desc: 'Major optimization issues detected.',
+                      },
+                    ].map((band) => (
                       <HoverCard key={band.label} openDelay={150} closeDelay={150}>
                         <HoverCardTrigger asChild>
                           <div className="bg-gray-50 border border-gray-200 p-3 rounded-md flex flex-col gap-1 cursor-help hover:bg-gray-100 transition-colors">
                             <div className="flex items-center gap-2">
-                              <div className={cn("w-2 h-2 rounded-full", band.color)} />
+                              <div className={cn('w-2 h-2 rounded-full', band.color)} />
                               <span className="text-xs font-bold text-gray-900">{band.label}</span>
                             </div>
                             <span className="text-lg font-bold text-gray-900 ml-4 tabular-nums">{band.range}</span>
                           </div>
                         </HoverCardTrigger>
-                        <HoverCardContent side="top" className="w-64 text-sm text-gray-600 p-4 shadow-lg border-gray-200">
+                        <HoverCardContent
+                          side="top"
+                          className="w-64 text-sm text-gray-600 p-4 shadow-lg border-gray-200"
+                        >
                           <strong className="text-gray-900 block mb-1">{band.label}</strong>
                           {band.desc}
                         </HoverCardContent>
@@ -153,7 +204,9 @@ export default function DocsPage() {
                 <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
                   <h3 className="font-bold text-gray-900 mb-2">Algorithm Note</h3>
                   <p className="text-xs text-gray-500 leading-relaxed">
-                    The final score is a simple sum of earned points across all rules. Each rule is calculated based on presence, accuracy, and comparison against industry benchmarks (e.g., 4.5+ average rating for full points).
+                    The final score is a simple sum of earned points across all rules. Each rule is calculated based on
+                    presence, accuracy, and comparison against industry benchmarks (e.g., 4.5+ average rating for full
+                    points).
                   </p>
                 </div>
               </div>
@@ -174,16 +227,17 @@ export default function DocsPage() {
             <div className="grid md:grid-cols-2 gap-12">
               <div>
                 <p className="text-gray-600 text-sm leading-relaxed mb-6">
-                  Due to Google Places API limitations and privacy restrictions, the following profile elements are not included in this automated audit:
+                  Due to Google Places API limitations and privacy restrictions, the following profile elements are not
+                  included in this automated audit:
                 </p>
                 <ul className="space-y-3">
                   {[
-                    "Owner responses to reviews / review velocity",
-                    "Posts and Q&A interactions",
-                    "Individual Products/Services section items",
-                    "Photo freshness (exact upload dates)",
-                    "NAP consistency with external sources (directories)"
-                  ].map(item => (
+                    'Owner responses to reviews / review velocity',
+                    'Posts and Q&A interactions',
+                    'Individual Products/Services section items',
+                    'Photo freshness (exact upload dates)',
+                    'NAP consistency with external sources (directories)',
+                  ].map((item) => (
                     <li key={item} className="flex items-start gap-3 text-sm text-gray-500">
                       <div className="w-1.5 h-1.5 rounded-full bg-gray-300 mt-1.5 shrink-0" />
                       {item}
@@ -197,7 +251,8 @@ export default function DocsPage() {
                   Technical Caveat
                 </h4>
                 <p className="text-xs text-gray-500 leading-relaxed">
-                  The photo count displayed in our report reflects the number of photos returned by the Google API response limit, which may differ from the total visible count on the public profile.
+                  The photo count displayed in our report reflects the number of photos returned by the Google API
+                  response limit, which may differ from the total visible count on the public profile.
                 </p>
               </div>
             </div>
@@ -219,10 +274,10 @@ export default function DocsPage() {
                 <h3 className="font-bold text-gray-900 mb-4">Supported Input Formats</h3>
                 <div className="space-y-4">
                   {[
-                    { label: "Google Maps URL", example: "maps.google.com/maps?cid=..." },
-                    { label: "Shortened Maps Link", example: "maps.app.goo.gl/..." },
-                    { label: "Google Place ID", example: "ChIJN1t_tDeuEmsR..." }
-                  ].map(item => (
+                    { label: 'Google Maps URL', example: 'maps.google.com/maps?cid=...' },
+                    { label: 'Shortened Maps Link', example: 'maps.app.goo.gl/...' },
+                    { label: 'Google Place ID', example: 'ChIJN1t_tDeuEmsR...' },
+                  ].map((item) => (
                     <div key={item.label} className="bg-gray-50 border border-gray-200 p-4 rounded-md">
                       <div className="text-xs font-bold text-gray-900 mb-1">{item.label}</div>
                       <code className="text-[10px] text-blue-600 break-all">{item.example}</code>
@@ -234,7 +289,8 @@ export default function DocsPage() {
               <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm">
                 <h3 className="font-bold text-gray-900 mb-4">Real-time Analysis</h3>
                 <p className="text-sm text-gray-600 leading-relaxed mb-6">
-                  Analysis typically takes 3-5 seconds to resolve. During this time, ProfileLens communicates with Google's upstream servers to fetch the most recent data available.
+                  Analysis typically takes 3-5 seconds to resolve. During this time, ProfileLens communicates with
+                  Google's upstream servers to fetch the most recent data available.
                 </p>
                 <div className="flex items-center gap-4 text-[10px] text-gray-400 font-mono uppercase tracking-widest bg-gray-50 border border-gray-200 p-3 rounded-md">
                   <div className="flex items-center gap-1.5">

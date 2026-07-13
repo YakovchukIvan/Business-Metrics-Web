@@ -23,7 +23,7 @@ export interface Recommendation {
   docsUrl?: string;
 }
 
-export function IssuesList({ problems, recommendations }: { problems: Problem[], recommendations: Recommendation[] }) {
+export function IssuesList({ problems, recommendations }: { problems: Problem[]; recommendations: Recommendation[] }) {
   if (problems.length === 0) return null;
 
   return (
@@ -40,7 +40,7 @@ export function IssuesList({ problems, recommendations }: { problems: Problem[],
           </span>
         </h3>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
         {problems.map((problem, index) => {
           const rec = recommendations[index];
@@ -58,16 +58,16 @@ export function IssuesList({ problems, recommendations }: { problems: Problem[],
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1.5">
                         <span className="text-sm font-semibold text-gray-900">{problem.ruleName}</span>
-                        <span className={cn(
-                          "text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full",
-                          problem.severity === 'critical' ? "bg-red-100 text-red-700" : "bg-amber-100 text-amber-700"
-                        )}>
+                        <span
+                          className={cn(
+                            'text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full',
+                            problem.severity === 'critical' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700',
+                          )}
+                        >
                           {problem.severity}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-600 leading-relaxed">
-                        {problem.explanation}
-                      </p>
+                      <p className="text-sm text-gray-600 leading-relaxed">{problem.explanation}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -86,11 +86,9 @@ export function IssuesList({ problems, recommendations }: { problems: Problem[],
                             +{rec.max - rec.earned} pts
                           </span>
                         </div>
-                        <p className="text-sm text-gray-700 font-medium leading-relaxed">
-                          {rec.action}
-                        </p>
+                        <p className="text-sm text-gray-700 font-medium leading-relaxed">{rec.action}</p>
                         {rec.docsUrl && (
-                          <a 
+                          <a
                             href={rec.docsUrl}
                             target="_blank"
                             rel="noopener noreferrer"
