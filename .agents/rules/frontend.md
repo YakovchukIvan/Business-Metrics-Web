@@ -25,7 +25,10 @@
 
 - **No inline error strings:** All user-visible error messages live exclusively in `src/lib/api/errors.ts`, looked up by HTTP status code. Components render the message they receive — they never compose it.
 
-- **Server vs Client Components — default to Server, drop to Client only when forced:**
+- **Server vs Client Components — Strict Boundaries (default to Server):**
+  - **Server Components (Default):** Do NOT use `'use server';` at the top (that is for Server Actions, not components). They handle static rendering and server-side logic. They cannot use React hooks (`useState`, `useEffect`) or browser APIs.
+  - **Client Components:** Must start with `'use client';`. Used _only_ when interactivity, React hooks, or browser APIs (like `localStorage`) are required.
+  - **Strict Import Rule:** You CANNOT import a Server Component directly into a Client Component. If a Client Component needs to render a Server Component, you must pass the Server Component as a `children` prop (Composition Pattern).
 
   | File / Area                    | Rendering  | Reason                                         |
   | ------------------------------ | ---------- | ---------------------------------------------- |

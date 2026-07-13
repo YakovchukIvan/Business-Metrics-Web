@@ -50,9 +50,13 @@ The backend sends structured errors with HTTP status codes. The frontend maps th
 
 No component contains error strings — they are all centralized in `errors.ts` and looked up by status code. Errors are displayed inline below the search form (not as a toast or a separate page).
 
-### 2.3 Server Components vs Client Components
+### 2.3 Server Components vs Client Components (Strict Boundaries)
 
-The boundary follows Next.js best practices — use Server Components by default, drop to Client only when necessary:
+The boundary follows Next.js best practices — use Server Components by default, drop to Client only when necessary. Both must strictly respect their constraints:
+
+- **Server Components:** No hooks (`useState`, `useEffect`), no DOM APIs. (Note: do NOT write `'use server'` at the top of a Server Component. That directive is strictly for Server Actions).
+- **Client Components:** Defined with `'use client';` at the very top.
+- **Import Restrictions:** A Client Component CANNOT import a Server Component directly. If you need a Server Component inside a Client Component, it must be passed down as a `children` prop (Composition Pattern).
 
 | Area                           | Rendering  | Reason                                            |
 | ------------------------------ | ---------- | ------------------------------------------------- |

@@ -123,3 +123,11 @@ Removed all mentions of ui-kit/page.tsx from docs and deleted the directory apps
 ### 13.07.2026, 18:27:49
 
 Refactored Dockerfiles and docker-compose.yml files in api and web to properly use the dynamic PORT env variables for port mapping and healthchecks, ensuring universal deployment capabilities.
+
+### 13.07.2026, 18:42:11
+
+Added explicit Server vs Client component boundaries to frontend rules and architecture docs, clarifying Next.js composition patterns. Created `.agents/workflows/new-frontend-component.md` for consistent component creation.
+
+### 13.07.2026, 19:14:18
+
+Renamed new-module.md to new-backend-module.md and updated AGENTS.md to reference the correct backend/frontend workflows.

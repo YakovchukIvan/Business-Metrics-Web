@@ -36,8 +36,9 @@ This directory serves as the "AI brain" of the project. It stores all instructio
 - **`skills/`** — Detailed instructions for specialized domain implementations.
   - Read `.agents/skills/google-places.md` (How to interact with Google API)
 - **`workflows/`** — Step-by-step guides for repeatable processes.
-  - Follow `.agents/workflows/new-rule.md` (Creating a new analysis rule)
-  - Follow `.agents/workflows/new-module.md` (Creating a new NestJS module)
+  - Follow `.agents/workflows/new-rule.md` (Creating a new backend analysis rule)
+  - Follow `.agents/workflows/new-backend-module.md` (Creating a new backend NestJS module)
+  - Follow `.agents/workflows/new-frontend-component.md` (Creating a new frontend Next.js component)
 - **`changelog/`** — History logs. Contains `current_task.txt` (active subtask) and `history.md`.
 - **`state.md`** — The single source of truth for tracking implementation progress.
 
