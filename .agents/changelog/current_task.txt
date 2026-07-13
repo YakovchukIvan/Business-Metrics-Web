@@ -1,0 +1,1 @@
+Fixed husky pre-push hook to fallback to main branch when upstream is not configured yet.
