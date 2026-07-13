@@ -111,3 +111,15 @@ Updated .gitignore with Next.js specific directories (.next/, out/, .vercel/) an
 ### 13.07.2026, 18:08:53
 
 Ignored next-env.d.ts in root .prettierignore and apps/web/eslint.config.mjs to resolve auto-generated Next.js double-quotes conflict with Prettier.
+
+### 13.07.2026, 18:15:59
+
+Created initial empty file structure for apps/web/ following the frontend architecture rules (components, lib, hooks, config, app routes).
+
+### 13.07.2026, 18:21:35
+
+Removed all mentions of ui-kit/page.tsx from docs and deleted the directory apps/web/src/app/ui-kit/ as per user request.
+
+### 13.07.2026, 18:27:49
+
+Refactored Dockerfiles and docker-compose.yml files in api and web to properly use the dynamic PORT env variables for port mapping and healthchecks, ensuring universal deployment capabilities.

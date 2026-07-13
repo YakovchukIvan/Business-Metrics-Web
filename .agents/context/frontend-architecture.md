@@ -201,17 +201,6 @@ Static Server Component. Explains the tool to the user directly in the app — m
 - "What is NOT analyzed" — Posts, Q&A, NAP consistency, review velocity, photo freshness
 - "Technical notes" — `photoCount` API limitation, `attributes` category dependency
 
-### 4.3 UI Kit / Reference Page (`/ui-kit`) — Internal Only
-
-A hidden reference page, not linked from navigation. Contains:
-
-- All accepted input format examples (Place ID, Short Link, Full Link with CID)
-- All error state variants (400 / 404 / 429+502) with their trigger conditions and display text
-
-Not visible to end users. Used during development and design reviews.
-
----
-
 ## 5. Data Flow
 
 ```ts

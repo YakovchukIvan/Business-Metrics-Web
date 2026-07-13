@@ -37,8 +37,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
 
-EXPOSE 3000
 ENV PORT=3000
+EXPOSE $PORT
 ENV HOSTNAME="0.0.0.0"
 
 # В standalone режимі Next.js генерує власний мінімальний server.js

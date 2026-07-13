@@ -28,6 +28,7 @@ COPY --from=build /app/dist ./dist
 COPY package.json ./
 
 USER node
-EXPOSE 5000
+ENV PORT=5000
+EXPOSE $PORT
 
 CMD ["node", "dist/main.js"]
