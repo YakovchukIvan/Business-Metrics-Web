@@ -1,0 +1,30 @@
+#!/bin/sh
+
+echo "🔍 Running pre-push checks..."
+
+set -e
+
+changed=$(git diff --name-only HEAD @{u})
+
+ran_any=false
+
+if echo "$changed" | grep -q "^apps/api/"; then
+  echo "📦 API changes detected — running lint & typecheck..."
+  npm --prefix apps/api run lint
+  npm --prefix apps/api run typecheck
+  ran_any=true
+fi
+
+if echo "$changed" | grep -q "^apps/web/"; then
+  echo "🎨 Web changes detected — running lint, typecheck & build..."
+  npm --prefix apps/web run lint
+  npm --prefix apps/web run typecheck
+  npm --prefix apps/web run build
+  ran_any=true
+fi
+
+if [ "$ran_any" = false ]; then
+  echo "ℹ️  No api/web changes in this push — skipping checks."
+fi
+
+echo "✅ Pre-push checks passed!"

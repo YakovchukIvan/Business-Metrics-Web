@@ -1,0 +1,33 @@
+{
+  "name": "business-metrics-web",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/web",
+    "apps/api"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:api": "npm --prefix apps/api run start:dev",
+    "dev:web": "npm --prefix apps/web run dev",
+    "prisma:generate": "npm --prefix apps/api run prisma:generate",
+    "prisma:migrate": "npm --prefix apps/api run prisma:migrate",
+    "prisma:studio": "npm --prefix apps/api run prisma:studio",
+    "prisma:seed": "npm --prefix apps/api run prisma:seed",
+    "lint:api": "npm --prefix apps/api run lint",
+    "lint:web": "npm --prefix apps/web run lint",
+    "lint:all": "concurrently \"npm run lint:api\" \"npm run lint:web\"",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "prepare": "husky",
+    "typecheck:api": "npm --prefix apps/api run typecheck",
+    "typecheck:web": "npm --prefix apps/web run typecheck",
+    "check:api": "npm --prefix apps/api run lint && npm --prefix apps/api run typecheck",
+    "check:web": "npm --prefix apps/web run lint && npm --prefix apps/web run typecheck && npm --prefix apps/web run build"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0",
+    "husky": "^9.0.0",
+    "lint-staged": "^15.0.0",
+    "prettier": "^3.0.0"
+  }
+}
