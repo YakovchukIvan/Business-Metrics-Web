@@ -1,6 +1,6 @@
-# Workflow: Creating a New Frontend Component (Next.js)
+# Workflow: Creating a New Web Component (Next.js)
 
-When asked to create a new UI component or feature on the frontend, always follow this workflow to ensure strict adherence to Next.js best practices and our architectural boundaries.
+When asked to create a new UI component or feature on the web, always follow this workflow to ensure strict adherence to Next.js best practices and our architectural boundaries.
 
 ## 1. Determine Component Type (Server vs Client)
 

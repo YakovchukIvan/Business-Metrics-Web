@@ -1,6 +1,6 @@
-# Backend Architecture (NestJS)
+# Api Architecture (NestJS)
 
-> Paths below are relative to `backend/`, since `.agents/` lives at the monorepo root. See `.agents/rules/global.md` for workflow, commit, and Docker rules that also apply here — not repeated below.
+> Paths below are relative to `api/`, since `.agents/` lives at the monorepo root. See `.agents/rules/global.md` for workflow, commit, and Docker rules that also apply here — not repeated below.
 
 ## 1. Core Stack
 
@@ -10,7 +10,7 @@
 ## 2. Strict Architectural Boundaries
 
 - **Module Independence:** Modules (`cache`, `google-places`, `analysis`) MUST be completely decoupled. They communicate ONLY via interfaces (ports) and DI tokens. If you delete one module, the rest of the application must still compile.
-- **Enforced by ESLint, not just convention.** `backend/eslint.config.mjs` has `import/no-restricted-paths` rules that fail the build on cross-module imports that bypass `interfaces/`. Do not work around this via re-export barrels — fix the architecture, or ask the user.
+- **Enforced by ESLint, not just convention.** `api/eslint.config.mjs` has `import/no-restricted-paths` rules that fail the build on cross-module imports that bypass `interfaces/`. Do not work around this via re-export barrels — fix the architecture, or ask the user.
 - **No `process.env`:** Never use it directly. Everything goes through the typed `ConfigService`.
 - **Pure Rules Engine:** Every rule in `src/modules/analysis/rules/` is a pure function (`(profile: PlaceProfile) => RuleResult`). No side effects, no DI inside rule files.
 - **Pricing Guardrail:** NEVER request `places.reviews` from Places API (New) — see `.agents/skills/google-places.md` for the full approved FieldMask.

@@ -1,8 +1,8 @@
-# ProfileLens — Implementation State
+# ProfileLens — API Implementation State
 
 > Source of truth for what's already built. Update after every completed checklist item — tick the box, add date + short note. Do not skip ahead of the current task without explicit instruction.
 
-Reference: `profilelens-backend-tasks.md` for full task descriptions.
+Reference: `profilelens-api-tasks.md` for full task descriptions.
 
 ## TASK-1 — Project Initialization + Docker
 
@@ -104,5 +104,3 @@ Reference: `profilelens-backend-tasks.md` for full task descriptions.
 - [x] Таблиця алгоритму оцінки: поточні 7 правил та їх ваги — done
 - [x] Розділ "Свідомо відкладено". Реалізуй і створи це в apps/api/README.md. — done
       _Completed on 2026-07-13: Created comprehensive README.md in apps/api/README.md detailing architecture, rules, and setup._
-
----

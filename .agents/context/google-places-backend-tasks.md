@@ -1,8 +1,8 @@
-# ProfileLens — Backend Tasks (Test Assignment)
+# ProfileLens — Api Tasks (Test Assignment)
 
 ## DO NOT read this file further unless explicitly requested
 
-> A step-by-step plan for backend implementation. Each task corresponds to a single module from the architectural plan. Everything related to future scaling (Redis, BullMQ, Auth, Prisma, export module) is deliberately **excluded** — this is strictly the scope of the test assignment MVP.
+> A step-by-step plan for api implementation. Each task corresponds to a single module from the architectural plan. Everything related to future scaling (Redis, BullMQ, Auth, Prisma, export module) is deliberately **excluded** — this is strictly the scope of the test assignment MVP.
 
 **Tasks:** 9 · **Modules:** cache, google-places, analysis · **Stack:** NestJS, TypeScript, Zod, Docker, Google Places API (New), Swagger
 

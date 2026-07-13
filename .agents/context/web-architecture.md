@@ -1,8 +1,8 @@
-# ProfileLens — Frontend Architecture & Implementation Plan
+# ProfileLens — Web Architecture & Implementation Plan
 
 ## DO NOT read this file further unless explicitly requested
 
-> Next.js frontend for the ProfileLens GBP audit tool. Accepts a Google Maps URL or Place ID via a search form, calls the backend API, and renders a rich audit result — score, rule breakdown, issues, and recommendations. Designed to mirror the same structural principles as the backend: clear boundaries, single points of responsibility, and explicit future extension paths.
+> Next.js web for the ProfileLens GBP audit tool. Accepts a Google Maps URL or Place ID via a search form, calls the api API, and renders a rich audit result — score, rule breakdown, issues, and recommendations. Designed to mirror the same structural principles as the api: clear boundaries, single points of responsibility, and explicit future extension paths.
 
 ---
 
@@ -19,15 +19,15 @@
 | Env Validation    | `config/env.ts` (custom, no Zod) | —                        | Single typed getter — no scattered `process.env.X!` across the codebase                    |
 | Recent History    | `localStorage` (client-side)     | —                        | Deliberate MVP decision — no DB yet; see Section 2.5                                       |
 | Deployment        | Vercel                           | —                        | Zero-config for Next.js; `NEXT_PUBLIC_API_URL` set as environment variable                 |
-| Shared Types      | Manual mirror of backend DTOs    | —                        | Acceptable for MVP; extracted to `packages/shared-types` when types start diverging        |
+| Shared Types      | Manual mirror of api DTOs        | —                        | Acceptable for MVP; extracted to `packages/shared-types` when types start diverging        |
 
 ---
 
 ## 2. Key Architectural Decisions
 
-### 2.1 `lib/api/client.ts` — the single point of contact with the backend
+### 2.1 `lib/api/client.ts` — the single point of contact with the api
 
-The same philosophy as `GooglePlacesAdapter` on the backend: **one file owns all network calls**. Components and hooks never call `fetch` directly.
+The same philosophy as `GooglePlacesAdapter` on the api: **one file owns all network calls**. Components and hooks never call `fetch` directly.
 
 `client.ts` is responsible for:
 
@@ -40,9 +40,9 @@ This means `use-analysis.ts` and all future hooks receive either clean typed dat
 
 ### 2.2 Error mapping — typed codes → user-friendly messages
 
-The backend sends structured errors with HTTP status codes. The frontend maps them in a single place — `lib/api/errors.ts`:
+The api sends structured errors with HTTP status codes. The web maps them in a single place — `lib/api/errors.ts`:
 
-| HTTP Status | Backend code        | Displayed message                                                                     |
+| HTTP Status | Api code            | Displayed message                                                                     |
 | ----------- | ------------------- | ------------------------------------------------------------------------------------- |
 | 400         | (bad request)       | "That doesn't look like a Google Business Profile link or Place ID. Check and retry." |
 | 404         | `PROFILE_NOT_FOUND` | "No profile found for this link."                                                     |
@@ -71,7 +71,7 @@ The boundary follows Next.js best practices — use Server Components by default
 
 ### 2.4 Component boundary — three layers, no cross-contamination
 
-Mirrors the backend module isolation (`cache` / `google-places` / `analysis`):
+Mirrors the api module isolation (`cache` / `google-places` / `analysis`):
 
 ```ts
 components/ui/          ← shadcn/ui primitives (Button, Input, etc.)
@@ -79,13 +79,13 @@ components/layout/      ← app shell (header, footer, recent dropdown)
 components/analysis/    ← feature components (score-card, breakdown, issues)
 ```
 
-**Rule:** `ui/` never imports from `analysis/` or `layout/`. `layout/` never imports from `analysis/`. Dependency flows in one direction only — feature components build on primitives, never the reverse. ESLint `import/no-restricted-paths` enforces this, same as on the backend.
+**Rule:** `ui/` never imports from `analysis/` or `layout/`. `layout/` never imports from `analysis/`. Dependency flows in one direction only — feature components build on primitives, never the reverse. ESLint `import/no-restricted-paths` enforces this, same as on the api.
 
 ### 2.5 `localStorage` for Recent search history — a deliberate MVP decision
 
 The "Recent" dropdown in the header shows previously analyzed businesses (name + cached indicator). This data is stored in `localStorage` exclusively on the client side.
 
-**Why:** There is no database in this MVP version. Introducing a backend persistence layer for this feature alone would add `AuthModule` + `PrismaModule` + a new endpoint — disproportionate for a list of recent searches.
+**Why:** There is no database in this MVP version. Introducing a api persistence layer for this feature alone would add `AuthModule` + `PrismaModule` + a new endpoint — disproportionate for a list of recent searches.
 
 **What is stored:** `RecentSearch[]` — `{ input: string; businessName: string; cachedAt: number }`. Max 10 entries, deduplicated by `input`, newest first.
 
@@ -104,11 +104,11 @@ export function getApiUrl(): string {
 }
 ```
 
-This is the frontend equivalent of the backend's Zod `configSchema` — lighter, but the same principle: fail loudly at the boundary, not silently mid-request.
+This is the web equivalent of the api's Zod `configSchema` — lighter, but the same principle: fail loudly at the boundary, not silently mid-request.
 
 ### 2.7 Shared types — manual mirror, consciously postponed extraction
 
-`lib/types/analysis.ts` contains TypeScript types that manually mirror the backend DTOs:
+`lib/types/analysis.ts` contains TypeScript types that manually mirror the api DTOs:
 
 ```ts
 export interface AnalysisResult {
@@ -121,9 +121,9 @@ export interface AnalysisResult {
 // ... RuleBreakdown, RuleIssue, ApiError
 ```
 
-For the MVP, this manual duplication is acceptable — there is no shared package infrastructure yet. When types start diverging between frontend and backend (which they will as the product grows), this becomes `packages/shared-types` in the monorepo.
+For the MVP, this manual duplication is acceptable — there is no shared package infrastructure yet. When types start diverging between web and api (which they will as the product grows), this becomes `packages/shared-types` in the monorepo.
 
-This is explicitly documented in the frontend README as "Consciously Postponed."
+This is explicitly documented in the web README as "Consciously Postponed."
 
 ---
 
@@ -160,7 +160,7 @@ apps/web/
 │   │   │   ├── analysis.ts               # postAnalysis(input: string): Promise<AnalysisResult>
 │   │   │   └── errors.ts                 # ApiError type + status code → user message mapping
 │   │   ├── types/
-│   │   │   └── analysis.ts               # AnalysisResult, RuleBreakdown, RuleIssue — mirrors backend DTOs
+│   │   │   └── analysis.ts               # AnalysisResult, RuleBreakdown, RuleIssue — mirrors api DTOs
 │   │   ├── recent-searches.ts            # localStorage adapter + RecentSearch type
 │   │   └── utils.ts                      # cn() and other shadcn/ui helpers
 │   │
@@ -198,7 +198,7 @@ The form never navigates away — result renders on the same page. Each successf
 
 ### 4.2 Documentation Page (`/docs`)
 
-Static Server Component. Explains the tool to the user directly in the app — mirrors the backend README content but written for end users, not developers:
+Static Server Component. Explains the tool to the user directly in the app — mirrors the api README content but written for end users, not developers:
 
 - "How it works" — accepted input formats (Place ID, short link, full Maps URL)
 - "Scoring algorithm" — table of 7 rules, weights, and why they matter
@@ -234,26 +234,26 @@ No component makes a network call directly. No component contains error message 
 
 ## 6. Deployment
 
-The frontend is deployed to **Vercel**. No CORS configuration is required — in production, `NEXT_PUBLIC_API_URL` points to the deployed backend (e.g., a VPS or Railway). Locally, it points to `http://localhost:3000`.
+The web is deployed to **Vercel**. No CORS configuration is required — in production, `NEXT_PUBLIC_API_URL` points to the deployed api (e.g., a VPS or Railway). Locally, it points to `http://localhost:3000`.
 
 ```env
 # .env.local.example
 NEXT_PUBLIC_API_URL=http://localhost:3000/api
 ```
 
-The backend's `THROTTLER_LIMIT` (5 req/min) and `CACHE_TTL_SECONDS` (86400) are the primary mechanism protecting the Google API quota. The frontend has no additional rate-limiting logic — this is intentional for the MVP.
+The api's `THROTTLER_LIMIT` (5 req/min) and `CACHE_TTL_SECONDS` (86400) are the primary mechanism protecting the Google API quota. The web has no additional rate-limiting logic — this is intentional for the MVP.
 
 ---
 
 ## 7. Scaling Roadmap
 
-| Step                            | When (approx.)             | What is added                                                            | Why it doesn't break existing code                                             |
-| ------------------------------- | -------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
-| Shared types package            | When types start diverging | `packages/shared-types` in monorepo root                                 | `lib/types/analysis.ts` is replaced by an import — component code is unchanged |
-| DB-backed recent history        | After Auth + DB            | New backend endpoint; `lib/recent-searches.ts` swaps `localStorage` impl | Hook and component interfaces remain identical                                 |
-| User authentication             | As needed                  | Auth provider wraps `providers.tsx`; guarded routes via middleware       | Existing pages are unaffected unless explicitly guarded                        |
-| E2E tests (Playwright)          | As needed                  | Test against real API or mock server                                     | Component structure is already testable — no logic hidden in JSX               |
-| Multiple result pages / history | After Auth + DB            | `/analysis/[id]` route; shareable links                                  | Backend already caches by Place ID — frontend just needs a new route           |
+| Step                            | When (approx.)             | What is added                                                        | Why it doesn't break existing code                                             |
+| ------------------------------- | -------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Shared types package            | When types start diverging | `packages/shared-types` in monorepo root                             | `lib/types/analysis.ts` is replaced by an import — component code is unchanged |
+| DB-backed recent history        | After Auth + DB            | New api endpoint; `lib/recent-searches.ts` swaps `localStorage` impl | Hook and component interfaces remain identical                                 |
+| User authentication             | As needed                  | Auth provider wraps `providers.tsx`; guarded routes via middleware   | Existing pages are unaffected unless explicitly guarded                        |
+| E2E tests (Playwright)          | As needed                  | Test against real API or mock server                                 | Component structure is already testable — no logic hidden in JSX               |
+| Multiple result pages / history | After Auth + DB            | `/analysis/[id]` route; shareable links                              | Api already caches by Place ID — web just needs a new route                    |
 
 ---
 
@@ -262,6 +262,6 @@ The backend's `THROTTLER_LIMIT` (5 req/min) and `CACHE_TTL_SECONDS` (86400) are 
 - **Authentication** — the tool is publicly accessible, no login required
 - **Server-side recent history** — `localStorage` only; see Section 2.5
 - **E2E or component tests** — deliberately skipped for MVP scope
-- **Export (PDF/CSV)** — requires backend `reports/` module first
-- **Custom rule selection UI** — backend architecture already supports it; frontend deferred
+- **Export (PDF/CSV)** — requires api `reports/` module first
+- **Custom rule selection UI** — api architecture already supports it; web deferred
 - **Shared types package** — manual mirror is acceptable until types diverge; see Section 2.7

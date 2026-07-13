@@ -1,10 +1,10 @@
-# ProfileLens — Backend Architecture & Implementation Plan
+# ProfileLens — Api Architecture & Implementation Plan
 
 ## DO NOT read this file further unless explicitly requested
 
 > Google Business Profile analyzer: accepts a link to a profile or Place ID, evaluates optimization level (0-100), finds issues, and generates recommendations.
 
-This document describes the backend architecture as if it were not a one-off test task, but the first version of a real product. Every decision below is explicitly explained — why it is what it is, and what exactly allows it to be easily changed or extended in the future without rewriting existing code.
+This document describes the api architecture as if it were not a one-off test task, but the first version of a real product. Every decision below is explicitly explained — why it is what it is, and what exactly allows it to be easily changed or extended in the future without rewriting existing code.
 
 ---
 
@@ -264,7 +264,7 @@ src/
             └── business-status.rule.ts
 ```
 
-**Note regarding monorepo:** currently, this is a standalone Nest project (without Nx/Turborepo — excessive for a single backend). When the frontend is connected, the current code will move to `apps/api`, and `apps/web` will sit alongside it via simple npm/pnpm workspaces. Heavy monorepo tools (Nx) will be connected only if there is a real need for shared packages between apps.
+**Note regarding monorepo:** currently, this is a standalone Nest project (without Nx/Turborepo — excessive for a single api). When the web is connected, the current code will move to `apps/api`, and `apps/web` will sit alongside it via simple npm/pnpm workspaces. Heavy monorepo tools (Nx) will be connected only if there is a real need for shared packages between apps.
 
 ---
 
@@ -412,7 +412,7 @@ Sum of weights = 100. Each rule is a separate pure function with a fixed weight.
 | PostgreSQL + Prisma              | when history needs to be saved | `PrismaModule`, repository in `analysis/`                                       | `google-places` and rules engine know nothing about the DB                                              |
 | Export CSV/PDF/Google Sheets     | as needed                      | new `reports/` module, reads ready `AnalysisResult`                             | Result format is already stable and not tied to data source                                             |
 | Custom scoring (selective rules) | as needed                      | `POST /analysis` accepts `selectedRuleIds`, weight recalculation among selected | Rules engine is already isolated — change only in API layer and aggregation, rules themselves untouched |
-| Frontend (Next.js)               | UI kickoff                     | `apps/web` alongside `apps/api`                                                 | Backend is already REST with a strict response contract (envelope)                                      |
+| Web (Next.js)                    | UI kickoff                     | `apps/web` alongside `apps/api`                                                 | Api is already REST with a strict response contract (envelope)                                          |
 
 ---
 
@@ -434,7 +434,7 @@ To avoid overcomplicating the test task, the following are deliberately deferred
 - saving analysis history to DB — stateless for now, only Google response caching for a short TTL;
 - batch/bulk analysis of multiple profiles at once;
 - exporting reports (CSV/PDF/Google Sheets);
-- custom scoring (rule selection on frontend) — architecture already supports this via isolated rules engine, implementation as needed (Section 8);
+- custom scoring (rule selection on web) — architecture already supports this via isolated rules engine, implementation as needed (Section 8);
 - data unavailable via public Places API (New) — transparently stated in README as a tool limitation:
   - Google Posts activity and Q&A section;
   - Owner responses to reviews and **review velocity** (even distribution of review accumulation over time) — one of the top ranking factors according to SEO practice, but unavailable via public API;

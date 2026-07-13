@@ -50,7 +50,7 @@ Translated all remaining Ukrainian documentation in .agents to English and added
 
 ### 12.07.2026, 15:12:28
 
-Translated backend-architecture.md and hook scripts (pre_command.js, pre_edit.js) to English.
+Translated api-architecture.md and hook scripts (pre_command.js, pre_edit.js) to English.
 
 ### 12.07.2026, 15:15:58
 
@@ -94,11 +94,11 @@ Implemented TASK-9 by writing a comprehensive README.md in apps/api/. Documented
 
 ### 13.07.2026, 17:24:40
 
-Updated frontend-architecture.md: bumped all library versions to latest stable (Jul 2026). Next.js 15 → 16.2.x, TypeScript → 7.0.x (Go rewrite), Tailwind CSS → 4.3.x, Recharts → 3.9.x, TanStack Query → 5.101.x. Added Version column to the stack table; noted shadcn/ui now defaults to Base UI primitives.
+Updated web-architecture.md: bumped all library versions to latest stable (Jul 2026). Next.js 15 → 16.2.x, TypeScript → 7.0.x (Go rewrite), Tailwind CSS → 4.3.x, Recharts → 3.9.x, TanStack Query → 5.101.x. Added Version column to the stack table; noted shadcn/ui now defaults to Base UI primitives.
 
 ### 13.07.2026, 17:29:03
 
-Created .agents/rules/frontend.md (Next.js architecture rules for apps/web/). Updated AGENTS.md: Phase 2 marked active, frontend.md and frontend-architecture.md added to Context Map.
+Created .agents/rules/web.md (Next.js architecture rules for apps/web/). Updated AGENTS.md: Phase 2 marked active, web.md and web-architecture.md added to Context Map.
 
 ### 13.07.2026, 17:53:35
 
@@ -114,7 +114,7 @@ Ignored next-env.d.ts in root .prettierignore and apps/web/eslint.config.mjs to 
 
 ### 13.07.2026, 18:15:59
 
-Created initial empty file structure for apps/web/ following the frontend architecture rules (components, lib, hooks, config, app routes).
+Created initial empty file structure for apps/web/ following the web architecture rules (components, lib, hooks, config, app routes).
 
 ### 13.07.2026, 18:21:35
 
@@ -126,8 +126,20 @@ Refactored Dockerfiles and docker-compose.yml files in api and web to properly u
 
 ### 13.07.2026, 18:42:11
 
-Added explicit Server vs Client component boundaries to frontend rules and architecture docs, clarifying Next.js composition patterns. Created `.agents/workflows/new-frontend-component.md` for consistent component creation.
+Added explicit Server vs Client component boundaries to web rules and architecture docs, clarifying Next.js composition patterns. Created `.agents/workflows/new-web-component.md` for consistent component creation.
 
 ### 13.07.2026, 19:14:18
 
-Renamed new-module.md to new-backend-module.md and updated AGENTS.md to reference the correct backend/frontend workflows.
+Renamed new-module.md to new-api-module.md and updated AGENTS.md to reference the correct api/web workflows.
+
+### 13.07.2026, 19:18:31
+
+Analyzed web web state and updated state.md with new tasks (TASK-10, TASK-11, TASK-12) to reflect current progress and missing pieces.
+
+### 13.07.2026, 19:33:05
+
+Split state.md into state-api.md and state-web.md to properly reflect the monorepo architecture, and updated AGENTS.md to point to the new files.
+
+### 13.07.2026, 19:34:48
+
+Executed global text replacement in all .agents/ docs: replaced 'backend'/'Backend' with 'api'/'Api' and 'frontend'/'Frontend' with 'web'/'Web'.

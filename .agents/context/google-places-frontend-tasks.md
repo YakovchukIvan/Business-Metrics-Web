@@ -1,8 +1,8 @@
-# ProfileLens — Frontend Tasks (Test Assignment)
+# ProfileLens — Web Tasks (Test Assignment)
 
 ## DO NOT read this file further unless explicitly requested
 
-> A step-by-step plan for frontend implementation. Each task corresponds to a single functional layer. Everything related to future scaling (Auth, DB-backed history, export, batch analysis) is deliberately **excluded** — this is strictly the scope of the test assignment MVP.
+> A step-by-step plan for web implementation. Each task corresponds to a single functional layer. Everything related to future scaling (Auth, DB-backed history, export, batch analysis) is deliberately **excluded** — this is strictly the scope of the test assignment MVP.
 
 **Tasks:** 7 · **Pages:** `/` (home), `/docs` · **Stack:** Next.js (App Router), TypeScript, Tailwind CSS, shadcn/ui, Recharts, TanStack Query
 
@@ -47,7 +47,7 @@
 - [ ] Install and configure `@tanstack/react-query` with `QueryClientProvider` in root layout
 - [ ] `lib/api/client.ts` — base `fetch` wrapper that reads `NEXT_PUBLIC_API_URL`, parses the `{ success, data, meta }` envelope, and throws typed errors on failure
 - [ ] `lib/api/analysis.ts` — `postAnalysis(input: string)` function
-- [ ] `lib/types/analysis.ts` — TypeScript types mirroring backend DTOs exactly:
+- [ ] `lib/types/analysis.ts` — TypeScript types mirroring api DTOs exactly:
   - `AnalysisResult` (`businessName`, `address`, `score`, `breakdown`, `issues`)
   - `RuleBreakdown` (`ruleId`, `weight`, `score`, `passed`)
   - `RuleIssue` (`ruleId`, `message`, `recommendation`, `potentialGain`)
@@ -76,7 +76,7 @@
 - [ ] `components/layout/recent-dropdown.tsx` — "Recent" button in header that opens a dropdown list with cached business names and a "Cached 24h" label; clicking an entry re-runs the analysis
 - [ ] Verification: submit → loading state visible → error renders inline on bad input
 
-> **Design Decision:** Recent search history is stored in `localStorage` (client-side only). This was a deliberate choice for the MVP scope — there is no database on the backend at this stage. When user authentication and a database are introduced in a future iteration, this can be migrated to server-side persistence without changing the UI contract.
+> **Design Decision:** Recent search history is stored in `localStorage` (client-side only). This was a deliberate choice for the MVP scope — there is no database on the api at this stage. When user authentication and a database are introduced in a future iteration, this can be migrated to server-side persistence without changing the UI contract.
 
 ---
 
@@ -110,11 +110,11 @@
 
 **Type:** Feature
 
-**Goal:** A static `/docs` page that transparently explains what the tool analyzes, what it does not, and how the score is calculated — matching the spirit of the backend README.
+**Goal:** A static `/docs` page that transparently explains what the tool analyzes, what it does not, and how the score is calculated — matching the spirit of the api README.
 
 - [ ] `app/docs/page.tsx` — documentation page
 - [ ] Section: "How it works" — short product description, input formats supported (Place ID, short link, full Maps URL)
-- [ ] Section: "Scoring algorithm" — table with all 7 rules, weight, and why it matters (mirrors backend README table)
+- [ ] Section: "Scoring algorithm" — table with all 7 rules, weight, and why it matters (mirrors api README table)
 - [ ] Section: "What is NOT analyzed" — Posts, Q&A, NAP consistency, review velocity, photo freshness
 - [ ] Section: "Technical notes" — `photoCount` API limitation, `attributes` category dependency
 - [ ] Navigation link to `/docs` in the header
@@ -128,10 +128,10 @@
 
 **Goal:** A developer drops into `apps/web/` and within 5 minutes understands the product, setup, and key decisions.
 
-- [ ] Product description + link to live backend (`/api/docs`)
+- [ ] Product description + link to live api (`/api/docs`)
 - [ ] Tech stack table (Next.js, TypeScript, Tailwind, shadcn/ui, TanStack Query, Recharts)
 - [ ] Local setup instructions (`npm install` + `npm run dev`)
 - [ ] Example `.env.local` with `NEXT_PUBLIC_API_URL`
 - [ ] Architecture overview: page/component/hook structure
-- [ ] **Explicit note on `localStorage` for Recent history:** Explain that server-side persistence was deliberately skipped in this MVP because there is no database yet. `localStorage` was chosen as the simplest solution that keeps the feature fully functional without introducing a backend dependency.
+- [ ] **Explicit note on `localStorage` for Recent history:** Explain that server-side persistence was deliberately skipped in this MVP because there is no database yet. `localStorage` was chosen as the simplest solution that keeps the feature fully functional without introducing a api dependency.
 - [ ] "Consciously Postponed" section (Auth, DB-backed history, E2E tests, export)
