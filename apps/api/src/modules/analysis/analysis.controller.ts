@@ -6,8 +6,9 @@ import { ANALYSIS_ROUTES } from './routes/analysis.routes';
 import { AnalyzeProfileReqDto } from './dto/req/analyze-profile.req.dto';
 import { AnalysisResultResDto } from './dto/res/analysis-result.res.dto';
 import { ResponseMessage } from '../../common/decorators/response-message.decorator';
+import { ApiEnvelopeResponse } from '../../common/decorators/api-envelope-response.decorator';
 
-@ApiTags('Analysis')
+@ApiTags('analysis')
 @Controller(ANALYSIS_ROUTES.BASE)
 @UseGuards(ThrottlerGuard)
 export class AnalysisController {
@@ -16,7 +17,7 @@ export class AnalysisController {
   @Post()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Analyze a Google Business Profile' })
-  @ApiResponse({ status: 200, description: 'Profile analyzed successfully', type: AnalysisResultResDto })
+  @ApiEnvelopeResponse(AnalysisResultResDto, 200, 'Profile analyzed successfully')
   @ApiResponse({ status: 400, description: 'Invalid input format' })
   @ApiResponse({ status: 404, description: 'Profile not found' })
   @ApiResponse({ status: 429, description: 'Too many requests / API quota exhausted' })

@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import { getAppConfig } from './config/app.config';
+import { setupSwagger } from './config/swagger.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -11,6 +12,9 @@ async function bootstrap() {
   const appConfig = getAppConfig(configService);
 
   app.setGlobalPrefix(appConfig.globalPrefix);
+
+  setupSwagger(app, appConfig);
+
   await app.listen(appConfig.port, appConfig.host);
 
   new Logger('Bootstrap').log(

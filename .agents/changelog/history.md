@@ -75,3 +75,11 @@ TASK-5: Implemented AnalysisModule with 7 pure-function rules based on new SEO r
 ### 12.07.2026, 23:50:00
 
 TASK-6: Implemented API layer with Controller and DTOs. Configured rate-limiting using ThrottlerModule. Integrated with AnalysisService and validated Google API integration. Passed strict linting and typecheck.
+
+### 13.07.2026, 12:06:45
+
+TASK-7: Implemented Swagger documentation. Added DocumentBuilder in main.ts, configured env variables, created custom @ApiEnvelopeResponse decorator, and documented AnalysisController and DTOs. Passed strict linting and typecheck.
+
+### 13.07.2026, 13:45:40
+
+Refactored Swagger setup into a separate config file (swagger.config.ts) and removed duplicate logger in main.ts. Passed strict linting and typecheck.

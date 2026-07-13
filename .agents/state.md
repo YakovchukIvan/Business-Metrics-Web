@@ -71,7 +71,14 @@ Reference: `profilelens-backend-tasks.md` for full task descriptions.
 
 ## TASK-7 — Swagger
 
-- [ ] Not started (`@nestjs/swagger` package + CLI plugin already installed/configured in `nest-cli.json`, decorators not yet written)
+- [x] DocumentBuilder in main.ts
+- [x] @ApiTags, @ApiOperation, @ApiResponse on analysis controller
+- [x] @ApiProperty on all DTOs
+- [x] Custom @ApiEnvelopeResponse decorator
+- [x] Swagger UI on /api/docs
+- [x] Environment variables for Swagger config
+- [x] Passed strict `eslint` and `typecheck` validations — done
+      _Completed on 2026-07-13: Implemented Swagger documentation with custom envelope response decorators._
 
 ## TASK-8 — Unit-tests
 
