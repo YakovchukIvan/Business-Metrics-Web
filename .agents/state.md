@@ -82,7 +82,14 @@ Reference: `profilelens-backend-tasks.md` for full task descriptions.
 
 ## TASK-8 — Unit-tests
 
-- [ ] Not started
+- [x] Test fixtures (`place-profile.fixture.ts`) — done
+- [x] Unit tests for all 7 rules — done
+- [x] Unit test for `attributes.rule.ts` with HoReCa and generic paths — done
+- [x] Unit test for score aggregation (`AnalysisService` testing) — done
+- [x] Unit test for `PlaceIdResolverService` (fetch mock for short links and redirects) — done
+- [x] `npm run test` is completely green — done
+- [x] Passed strict `eslint` and `typecheck` validations — done
+      _Completed on 2026-07-13: Wrote comprehensive unit tests for business rules, orchestration service, and fetch-mocked resolver._
 
 ## TASK-9 — README
 

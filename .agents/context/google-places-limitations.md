@@ -20,3 +20,12 @@ Our `resolvePlaceId` function explicitly supports:
 - Google Maps Short Links (`maps.app.goo.gl/...` and `g.page/...`)
 - Google Maps Long URLs with CID (`?cid=...` or `data=...`)
 - General Google Maps URLs (resolved via text query fallback)
+
+## 3. Generic Text Search Exclusion
+
+Generic free-text search (e.g., just typing "McDonald's" or "КТС Луцьк" as input) is deliberately NOT supported as a fallback scenario in the `PlaceIdResolverService`.
+This is a conscious architectural decision made to:
+
+1. Prevent auditing the wrong business profile due to Google's ambiguous sorting of multiple matches (e.g. multiple branches in one city).
+2. Protect the paid Google Places API (New) quota from being drained by irrelevant generic queries or typos.
+   Users are strictly required to provide valid Google Maps URLs or exact Place IDs to ensure 100% accuracy in the SEO audit.
