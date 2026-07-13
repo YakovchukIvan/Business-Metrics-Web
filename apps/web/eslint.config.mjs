@@ -12,7 +12,7 @@ import tseslint from 'typescript-eslint';
 
 export default defineConfig(
   {
-    ignores: ['.next/**', 'dist/**', 'eslint.config.mjs', 'next.config.ts', 'tailwind.config.ts', 'components/ui/**'],
+    ignores: ['.next/**', 'dist/**', 'eslint.config.mjs', 'next.config.ts', 'tailwind.config.ts', 'components/ui/**', 'next-env.d.ts'],
     // Зверни увагу: ми ігноруємо components/ui, бо shadcn/ui генерує код,
     // який часто не проходить строгий лінтер (наприклад, any або unused vars)
   },

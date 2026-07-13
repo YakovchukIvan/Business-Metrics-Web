@@ -107,3 +107,7 @@ Fixed husky pre-push hook to gracefully handle missing upstreams. Fixed web pret
 ### 13.07.2026, 18:03:52
 
 Updated .gitignore with Next.js specific directories (.next/, out/, .vercel/) and local env files.
+
+### 13.07.2026, 18:08:53
+
+Ignored next-env.d.ts in root .prettierignore and apps/web/eslint.config.mjs to resolve auto-generated Next.js double-quotes conflict with Prettier.
