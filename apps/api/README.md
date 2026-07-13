@@ -16,14 +16,14 @@ What is analyzed:
 
 ## Tech Stack
 
-| Technology     | Role in the project                                                                               |
-| -------------- | ------------------------------------------------------------------------------------------------- |
-| **NestJS**     | Core framework providing strict modular architecture and DI (Dependency Injection).               |
-| **TypeScript** | Strict typing (strict mode) to prevent errors at compile time.                                    |
-| **Zod**        | Configuration safety: strict validation of environment variables at application startup.          |
-| **Jest**       | Unit testing for business logic and isolated services.                                            |
-| **Swagger**    | Automatic generation of interactive REST API documentation.                                       |
-| **Docker**     | Containerization (multi-stage build) for easy local setup and reliable deployments.               |
+| Technology     | Role in the project                                                                      |
+| -------------- | ---------------------------------------------------------------------------------------- |
+| **NestJS**     | Core framework providing strict modular architecture and DI (Dependency Injection).      |
+| **TypeScript** | Strict typing (strict mode) to prevent errors at compile time.                           |
+| **Zod**        | Configuration safety: strict validation of environment variables at application startup. |
+| **Jest**       | Unit testing for business logic and isolated services.                                   |
+| **Swagger**    | Automatic generation of interactive REST API documentation.                              |
+| **Docker**     | Containerization (multi-stage build) for easy local setup and reliable deployments.      |
 
 ## Architecture & Structure
 
@@ -48,15 +48,15 @@ src/
 
 ## Evaluation Algorithm (Rules Engine)
 
-| Rule                  | Weight | Why it matters                                                                      |
-| --------------------- | ------ | ----------------------------------------------------------------------------------- |
-| **Rating**            | 30     | High ratings and a large number of reviews are key ranking factors.                 |
-| **Completeness**      | 20     | Missing fields (phone, website) repel clients and lower Google's trust.             |
-| **Business Category** | 15     | Without a category, the profile won't show up in relevant search queries.           |
-| **Opening Hours**     | 15     | Missing opening hours often result in customers going to competitors.               |
-| **Business Status**   | 10     | Temporarily or permanently closed businesses are penalized in search results.       |
-| **Photos**            | 7      | Profiles with photos receive significantly more engagement (clicks, directions).    |
-| **Attributes**        | 3      | Specific attributes (e.g. delivery) help capture niche, long-tail search queries.   |
+| Rule                  | Weight | Why it matters                                                                    |
+| --------------------- | ------ | --------------------------------------------------------------------------------- |
+| **Rating**            | 30     | High ratings and a large number of reviews are key ranking factors.               |
+| **Completeness**      | 20     | Missing fields (phone, website) repel clients and lower Google's trust.           |
+| **Business Category** | 15     | Without a category, the profile won't show up in relevant search queries.         |
+| **Opening Hours**     | 15     | Missing opening hours often result in customers going to competitors.             |
+| **Business Status**   | 10     | Temporarily or permanently closed businesses are penalized in search results.     |
+| **Photos**            | 7      | Profiles with photos receive significantly more engagement (clicks, directions).  |
+| **Attributes**        | 3      | Specific attributes (e.g. delivery) help capture niche, long-tail search queries. |
 
 ## What is NOT analyzed (Limitations)
 
@@ -79,7 +79,7 @@ To preserve performance, save costs, and due to API limitations, ProfileLens **d
 The endpoint supports Place IDs, short links (`maps.app.goo.gl`), and full Maps URLs.
 
 ```bash
-curl -X POST http://localhost:3000/analysis \
+curl -X POST http://localhost:5000/api/analysis \
   -H "Content-Type: application/json" \
   -d '{"input": "https://maps.app.goo.gl/abcd123"}'
 ```
@@ -141,7 +141,7 @@ The application will be available on port 3000.
   npm run start:dev
 ```
 
-4. Open Swagger UI: `http://localhost:3000/api/docs`
+4. Open Swagger UI: `http://localhost:5000/api/docs`
 
 ## Example `.env`
 
@@ -153,7 +153,7 @@ The application will be available on port 3000.
 # Server Configuration
 # ----------------------------------------
 NODE_ENV=development
-PORT=3000
+PORT=5000
 
 # ----------------------------------------
 # External APIs (Google Places)

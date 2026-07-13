@@ -10,8 +10,8 @@ The system evaluates a Google Maps link or Place ID, calculates a score (0–100
 This is a monorepo. Backend and (future) frontend live in separate subfolders — never assume the working directory is the repo root when running commands.
 Note: We will do most of the development directly in VS Code. Docker is primarily included so the project is ready for deployment to any server (set up once and forget).
 
-- **`apps/api/`** — NestJS REST API (Phase 1, active). All paths in `.agents/rules/backend.md` are relative to `apps/api/`, not repo root.
-- **`apps/web/`** — Next.js App Router (Phase 2, not started yet). No rules file exists for it yet (will be `.agents/rules/frontend.md`) — do not invent frontend conventions until this phase starts.
+- **`apps/api/`** — NestJS REST API (Phase 1, complete). All paths in `.agents/rules/backend.md` are relative to `apps/api/`, not repo root.
+- **`apps/web/`** — Next.js App Router (Phase 2, active). All paths in `.agents/rules/frontend.md` are relative to `apps/web/`, not repo root.
 
 **Golden Rule:** Never couple backend logic with frontend rendering. Always return strict, predictable JSON envelopes (`{ success, data, meta }`).
 
@@ -27,9 +27,11 @@ This directory serves as the "AI brain" of the project. It stores all instructio
 - **`rules/`** — Mandatory code standards and constraints.
   - Read `.agents/rules/global.md` (Workflow & TS standards)
   - Read `.agents/rules/commits.md` (Git commit conventions)
-  - Read `.agents/rules/backend.md` (NestJS architecture rules)
+  - Read `.agents/rules/backend.md` (NestJS architecture rules — `apps/api/` only)
+  - Read `.agents/rules/frontend.md` (Next.js architecture rules — `apps/web/` only)
 - **`context/`** — Architectural rationale, technical limitations, and domain knowledge.
-  - Read `.agents/context/backend-architecture.md` (Why decisions were made — consult if rules are unclear)
+  - Read `.agents/context/backend-architecture.md` (Why decisions were made — consult if backend rules are unclear)
+  - Read `.agents/context/frontend-architecture.md` (Why decisions were made — consult if frontend rules are unclear)
   - Read `.agents/context/google-places-limitations.md` (API quirks and quotas)
 - **`skills/`** — Detailed instructions for specialized domain implementations.
   - Read `.agents/skills/google-places.md` (How to interact with Google API)

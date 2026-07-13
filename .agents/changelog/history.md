@@ -91,3 +91,11 @@ Implemented comprehensive unit tests (TASK-8) for the rules engine, analysis orc
 ### 13.07.2026, 15:50:35
 
 Implemented TASK-9 by writing a comprehensive README.md in apps/api/. Documented the architecture, evaluation algorithm, API limitations, and run instructions.
+
+### 13.07.2026, 17:24:40
+
+Updated frontend-architecture.md: bumped all library versions to latest stable (Jul 2026). Next.js 15 → 16.2.x, TypeScript → 7.0.x (Go rewrite), Tailwind CSS → 4.3.x, Recharts → 3.9.x, TanStack Query → 5.101.x. Added Version column to the stack table; noted shadcn/ui now defaults to Base UI primitives.
+
+### 13.07.2026, 17:29:03
+
+Created .agents/rules/frontend.md (Next.js architecture rules for apps/web/). Updated AGENTS.md: Phase 2 marked active, frontend.md and frontend-architecture.md added to Context Map.
