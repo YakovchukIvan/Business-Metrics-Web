@@ -3,6 +3,7 @@ dist/
 node_modules/
 build/
 *.tsbuildinfo
+ProfileLens Audit Tool Design
 
 # Logs
 logs
@@ -59,4 +60,3 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 .next/
 out/
 .vercel/
-.env*.local

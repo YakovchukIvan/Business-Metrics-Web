@@ -143,3 +143,23 @@ Split state.md into state-api.md and state-web.md to properly reflect the monore
 ### 13.07.2026, 19:34:48
 
 Executed global text replacement in all .agents/ docs: replaced 'backend'/'Backend' with 'api'/'Api' and 'frontend'/'Frontend' with 'web'/'Web'.
+
+### 13.07.2026, 21:19:30
+
+Stage 1 (UI Primitives): Verified and initialized basic UI dependencies (`clsx`, `tailwind-merge`, `lucide-react`, and `cn` utility) for transferring design components. Discovered that the design `App.tsx` exclusively uses pure HTML + Tailwind instead of Shadcn UI components, meaning no UI components needed to be copied. Stage 1 is fully complete.
+
+### 13.07.2026, 21:22:36
+
+Stage 2 (Layout Framework): Successfully transferred the global layout from the design mockup. Created `Header` and `RecentDropdown` as Client Components (`'use client'`) to handle navigation state and dropdown interactions. Created `Footer` as a Server Component. Integrated these into `app/layout.tsx` alongside Next.js layout structure and styling defaults. Updated `state-web.md`.
+
+### 13.07.2026, 21:24:42
+
+Stage 3 (Static Pages & Forms): Extracted the `SearchForm` into a Client Component (`components/analysis/search-form.tsx`) that manages its own input state and displays the loading animation. Extracted the entire `Documentation` section into a statically rendered Next.js Server Component page (`app/docs/page.tsx`), replacing `onNavigate` custom logic with Next.js `<Link>` components.
+
+### 13.07.2026, 21:27:06
+
+Stage 4 (Results Components): Extracted the analysis results UI into small, modular components (`score-card.tsx`, `breakdown-card.tsx`, `issues-list.tsx`, `transparency-panel.tsx`, `results-panel.tsx`). Assembled `app/page.tsx` utilizing these components with temporary mock data and a simulated timeout to allow for immediate visual testing of the UI against the main `globals.css` theme. Checked off related items in `state-web.md`.
+
+### 13.07.2026, 21:32:12
+
+Stage 5 (API Integration): Replaced mock logic with real TanStack Query implementations. Created API types (`analysis.ts`), HTTP client wrapper (`client.ts`), and standard hooks (`use-analysis.ts`). Integrated `QueryClientProvider` into root layout. Wired `page.tsx` to actually send requests to `NEXT_PUBLIC_API_URL`. Implemented LocalStorage history tracking in `recent-searches.ts` and connected it to `RecentDropdown`.

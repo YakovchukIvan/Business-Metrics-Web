@@ -20,14 +20,31 @@
 - [ ] `src/config/env.ts` (typed environment getter)
 - [ ] `src/lib/api/errors.ts` (error mapping dictionary)
 - [ ] `src/lib/api/client.ts` (envelope parser and fetch wrapper)
-- [ ] `src/lib/api/analysis.ts` (typed postAnalysis call)
-- [ ] `src/hooks/use-analysis.ts` (TanStack Query integration)
-- [ ] `src/lib/recent-searches.ts` (localStorage adapter)
+- [x] `src/lib/types/analysis.ts` (mirror api DTOs)
+- [x] `src/config/env.ts` (typed environment getter)
+- [x] `src/lib/api/errors.ts` (error mapping dictionary)
+- [x] `src/lib/api/client.ts` (envelope parser and fetch wrapper)
+- [x] `src/lib/api/analysis.ts` (typed postAnalysis call)
+- [x] `src/hooks/use-analysis.ts` (TanStack Query integration)
+- [x] `src/lib/recent-searches.ts` (localStorage adapter)
 
 ## TASK-3 — Web UI Components & Pages
 
-- [ ] `src/app/providers.tsx` (QueryClientProvider)
-- [ ] Layout shell components (`header.tsx`, `footer.tsx`, `recent-dropdown.tsx`)
-- [ ] Analysis feature components (`search-form.tsx`, `results-panel.tsx`, `score-card.tsx`, etc.)
-- [ ] Main page assembly (`src/app/page.tsx`)
-- [ ] Static documentation page (`src/app/docs/page.tsx`)
+- [x] `src/app/providers.tsx` (QueryClientProvider)
+- [x] Layout shell components (`header.tsx`, `footer.tsx`, `recent-dropdown.tsx`)
+- [x] Analysis feature components (`search-form.tsx`, `results-panel.tsx`, `score-card.tsx`, etc.)
+- [x] Main page assembly (`src/app/page.tsx`)
+- [x] Static documentation page (`src/app/docs/page.tsx`)
+
+## TASK-4 — API Integration
+
+- [x] `src/config/env.ts` (API URL validation)
+- [x] `src/lib/types/analysis.ts` (Mirror API DTOs)
+- [x] `src/lib/api/client.ts` & `errors.ts` (Fetch wrapper)
+- [x] `src/lib/api/analysis.ts` (API functions)
+- [x] `src/hooks/use-analysis.ts` (TanStack React Query mutation)
+
+## TASK-5 — State & Storage
+
+- [x] Client-side recent searches state (`localStorage`)
+- [ ] Analytics/Telemetry tracking events (Optional for MVP)
