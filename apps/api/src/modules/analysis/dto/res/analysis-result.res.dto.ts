@@ -17,6 +17,8 @@ export class RuleIssueDto implements RuleIssue {
 
   @ApiProperty({ description: 'ID of the rule that generated this issue', example: 'rating' })
   ruleId!: string;
+  @ApiProperty({ description: 'Potential score gain if fixed', example: 15 })
+  potentialGain!: number;
 }
 
 export class RuleResultDto implements Omit<RuleResult, 'issues'> {
@@ -34,6 +36,12 @@ export class RuleResultDto implements Omit<RuleResult, 'issues'> {
 }
 
 export class AnalysisResultResDto implements AnalysisResult {
+  @ApiProperty({ description: 'Name of the analyzed business', example: 'Acme Corp' })
+  businessName!: string;
+
+  @ApiProperty({ description: 'Formatted address of the business', example: '123 Main St, NY', nullable: true })
+  address!: string | null;
+
   @ApiProperty({ description: 'Total optimization score (0-100)', example: 85 })
   score!: number;
 

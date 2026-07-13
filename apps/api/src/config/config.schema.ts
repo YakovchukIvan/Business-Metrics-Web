@@ -6,12 +6,12 @@ export const configSchema = z.object({
   APP_HOST: z.string().default('0.0.0.0'),
   GLOBAL_PREFIX: z.string().default('api'),
   GOOGLE_PLACES_API_KEY: z.string().min(1, 'GOOGLE_PLACES_API_KEY must not be empty'),
-  CACHE_TTL_SECONDS: z.coerce.number().int().nonnegative().default(3600),
+  CACHE_TTL_SECONDS: z.coerce.number().int().nonnegative().default(86400),
   SWAGGER_TITLE: z.string().optional(),
   SWAGGER_DESCRIPTION: z.string().optional(),
   SWAGGER_VERSION: z.string().optional(),
   THROTTLER_TTL_MS: z.coerce.number().int().positive().default(60000),
-  THROTTLER_LIMIT: z.coerce.number().int().positive().default(10),
+  THROTTLER_LIMIT: z.coerce.number().int().positive().default(5),
 });
 
 export type Config = z.infer<typeof configSchema>;

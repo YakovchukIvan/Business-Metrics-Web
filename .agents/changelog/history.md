@@ -83,3 +83,11 @@ TASK-7: Implemented Swagger documentation. Added DocumentBuilder in main.ts, con
 ### 13.07.2026, 13:45:40
 
 Refactored Swagger setup into a separate config file (swagger.config.ts) and removed duplicate logger in main.ts. Passed strict linting and typecheck.
+
+### 13.07.2026, 15:30:05
+
+Implemented comprehensive unit tests (TASK-8) for the rules engine, analysis orchestrator, and the Place ID resolver. Mapped place profile fixtures and ensured all 35 tests pass perfectly. Passed strict linting and typecheck constraints.
+
+### 13.07.2026, 15:50:35
+
+Implemented TASK-9 by writing a comprehensive README.md in apps/api/. Documented the architecture, evaluation algorithm, API limitations, and run instructions.

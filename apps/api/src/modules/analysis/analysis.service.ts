@@ -15,7 +15,7 @@ export class AnalysisService {
 
     let totalScore = 0;
     const breakdown = [];
-    const allIssues: Array<RuleIssue & { ruleId: string }> = [];
+    const allIssues: Array<RuleIssue & { ruleId: string; potentialGain: number }> = [];
 
     for (const rule of ANALYSIS_RULES) {
       const result = rule(profile);
@@ -28,9 +28,11 @@ export class AnalysisService {
         passed: result.passed,
       });
 
+      const gain = result.weight - result.score;
       for (const issue of result.issues) {
         allIssues.push({
           ruleId: result.ruleId,
+          potentialGain: Number(gain.toFixed(2)),
           ...issue,
         });
       }
@@ -39,6 +41,8 @@ export class AnalysisService {
     totalScore = Math.round(totalScore);
 
     return {
+      businessName: profile.displayName,
+      address: profile.formattedAddress || null,
       score: totalScore,
       breakdown,
       issues: allIssues,

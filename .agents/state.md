@@ -93,6 +93,16 @@ Reference: `profilelens-backend-tasks.md` for full task descriptions.
 
 ## TASK-9 — README
 
-- [ ] Not started
+- [x] Опис продукту + що аналізується — done
+- [x] Короткий опис архітектури — done
+- [x] Чесний розділ "Що НЕ аналізується" (Posts, NAP, Q&A, reviews) — done
+- [x] Технічні нюанси полів (`photoCount`, `attributes`) — done
+- [x] Інструкція запуску: локально і Docker — done
+- [x] Приклад `.env` — done
+- [x] Приклад запиту до `POST /analysis` + пояснення нових полів (`potentialGain`, `businessName`) — done
+- [x] FieldMask без `places.reviews` — done
+- [x] Таблиця алгоритму оцінки: поточні 7 правил та їх ваги — done
+- [x] Розділ "Свідомо відкладено". Реалізуй і створи це в apps/api/README.md. — done
+      _Completed on 2026-07-13: Created comprehensive README.md in apps/api/README.md detailing architecture, rules, and setup._
 
 ---

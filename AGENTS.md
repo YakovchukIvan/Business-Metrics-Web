@@ -20,15 +20,24 @@ Note: We will do most of the development directly in VS Code. Docker is primaril
 1. Read `.agents/state.md` — it tracks which tasks (TASK-1..9) are already done. Do not redo completed work or skip ahead of the current task without being asked.
 2. Read the relevant rules file for the area you're working in — see the Workspace Layout above and the Context Map below.
 
-## 4. Context Map (CRITICAL)
+## 4. Agent Directory Structure (`.agents/`)
 
-- **For Workflow & Code Standards:** Read `.agents/rules/global.md`
-- **For generating Git commits:** Read `.agents/rules/commits.md`
-- **For NestJS Architecture:** Read `.agents/rules/backend.md`
-- **For Google API Specifics:** Read `.agents/skills/google-places.md`
-- **For creating a new analysis rule:** Follow `.agents/workflows/new-rule.md`
-- **For creating a new Nest module:** Follow `.agents/workflows/new-module.md`
-- **For architectural rationale (why decisions were made — optional deep-dive):** `.agents/context/backend-architecture.md`. Not required reading; consult only when the "why" behind a decision isn't clear from the rules files alone.
+This directory serves as the "AI brain" of the project. It stores all instructions, constraints, and tracking logic. Always consult these folders to understand the project context:
+
+- **`rules/`** — Mandatory code standards and constraints.
+  - Read `.agents/rules/global.md` (Workflow & TS standards)
+  - Read `.agents/rules/commits.md` (Git commit conventions)
+  - Read `.agents/rules/backend.md` (NestJS architecture rules)
+- **`context/`** — Architectural rationale, technical limitations, and domain knowledge.
+  - Read `.agents/context/backend-architecture.md` (Why decisions were made — consult if rules are unclear)
+  - Read `.agents/context/google-places-limitations.md` (API quirks and quotas)
+- **`skills/`** — Detailed instructions for specialized domain implementations.
+  - Read `.agents/skills/google-places.md` (How to interact with Google API)
+- **`workflows/`** — Step-by-step guides for repeatable processes.
+  - Follow `.agents/workflows/new-rule.md` (Creating a new analysis rule)
+  - Follow `.agents/workflows/new-module.md` (Creating a new NestJS module)
+- **`changelog/`** — History logs. Contains `current_task.txt` (active subtask) and `history.md`.
+- **`state.md`** — The single source of truth for tracking implementation progress.
 
 ## 5. Progress Tracking
 
