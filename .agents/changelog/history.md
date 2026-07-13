@@ -99,3 +99,11 @@ Updated frontend-architecture.md: bumped all library versions to latest stable (
 ### 13.07.2026, 17:29:03
 
 Created .agents/rules/frontend.md (Next.js architecture rules for apps/web/). Updated AGENTS.md: Phase 2 marked active, frontend.md and frontend-architecture.md added to Context Map.
+
+### 13.07.2026, 17:53:35
+
+Fixed husky pre-push hook to gracefully handle missing upstreams. Fixed web prettier errors and added 'typecheck' script to web/package.json. Committed changes.
+
+### 13.07.2026, 18:03:52
+
+Updated .gitignore with Next.js specific directories (.next/, out/, .vercel/) and local env files.
