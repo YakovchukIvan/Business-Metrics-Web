@@ -1,4 +1,3 @@
-import React from 'react';
 import { cn } from '@/lib/utils';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -19,7 +18,7 @@ export function BreakdownCard({ rules }: Props) {
       </CardHeader>
       <CardContent className="w-full overflow-y-auto p-6 flex-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-gray-400">
         {rules.map((rule, idx, arr) => (
-          <React.Fragment key={rule.id}>
+          <div key={rule.id} className="contents">
             <div className="flex items-center gap-3 py-3 px-2 rounded-md">
               <div
                 className={cn(
@@ -53,7 +52,7 @@ export function BreakdownCard({ rules }: Props) {
               )}
             </div>
             {idx !== arr.length - 1 && <hr className="border-card-divider" />}
-          </React.Fragment>
+          </div>
         ))}
       </CardContent>
     </Card>

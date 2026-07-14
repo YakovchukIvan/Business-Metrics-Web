@@ -1,4 +1,3 @@
-import React from 'react';
 import { ScoreCard } from './score-card';
 import { BreakdownCard } from './breakdown-card';
 import { IssueCard } from './issues-list';
@@ -20,7 +19,7 @@ type Props = {
 export function ResultsPanel({ score, businessName, address, rules, problems, recommendations, rawProfile }: Props) {
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="grid lg:grid-cols-2 gap-8 mb-12 items-stretch lg:h-[430px]">
+      <div className="grid lg:grid-cols-2 gap-8 mb-12 items-stretch lg:h-107.5">
         <ScoreCard score={score} businessName={businessName} address={address} />
         <BreakdownCard rules={rules} />
       </div>
@@ -48,7 +47,7 @@ export function ResultsPanel({ score, businessName, address, rules, problems, re
           {/* Paired Grid - alternating on mobile, side-by-side equal height rows on md+ */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
             {problems.map((problem, idx) => (
-              <React.Fragment key={problem.id}>
+              <div key={problem.id} className="contents">
                 <div className="flex flex-col gap-2">
                   <div className="md:hidden">
                     <h3 className="text-lg font-medium text-foreground">Identified problem</h3>
@@ -66,7 +65,7 @@ export function ResultsPanel({ score, businessName, address, rules, problems, re
                     <RecommendationCard rec={recommendations[idx]!} />
                   </div>
                 </div>
-              </React.Fragment>
+              </div>
             ))}
           </div>
         </div>

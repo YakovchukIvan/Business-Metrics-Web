@@ -1,3 +1,5 @@
+import type { PlaceProfile } from '@/types/models';
+
 export interface RuleIssue {
   ruleId: string;
   message: string;
@@ -20,7 +22,7 @@ export interface AnalysisResult {
   score: number;
   breakdown: RuleBreakdown[];
   issues: RuleIssue[];
-  rawProfile: Record<string, unknown>;
+  rawProfile: PlaceProfile;
 }
 
 export interface ApiResponse<T> {
