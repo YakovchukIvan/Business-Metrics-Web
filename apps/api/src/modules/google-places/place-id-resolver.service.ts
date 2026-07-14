@@ -80,7 +80,35 @@ export class PlaceIdResolverService {
     const searchString = nameMatch && nameMatch[1] ? decodeURIComponent(nameMatch[1].replace(/\+/g, ' ')) : query;
 
     const url = 'https://places.googleapis.com/v1/places:searchText';
-    const body = { textQuery: searchString };
+
+    interface TextSearchRequestBody {
+      textQuery: string;
+      locationBias?: {
+        circle: {
+          center: {
+            latitude: number;
+            longitude: number;
+          };
+          radius: number;
+        };
+      };
+    }
+
+    const body: TextSearchRequestBody = { textQuery: searchString };
+
+    // Extract location from URL if available to improve search accuracy (fixes ZERO_RESULTS on remote servers)
+    const locationMatch = query.match(/@([0-9.-]+),([0-9.-]+)/);
+    if (locationMatch && locationMatch[1] && locationMatch[2]) {
+      body.locationBias = {
+        circle: {
+          center: {
+            latitude: parseFloat(locationMatch[1]),
+            longitude: parseFloat(locationMatch[2]),
+          },
+          radius: 5000.0, // 5km radius
+        },
+      };
+    }
 
     const response = await fetch(url, {
       method: 'POST',
