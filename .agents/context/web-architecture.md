@@ -255,7 +255,7 @@ The web is deployed to **Vercel**. No CORS configuration is required — in prod
 
 ```env
 # .env.local.example
-NEXT_PUBLIC_API_URL=http://localhost:3000/api
+NEXT_PUBLIC_API_URL=http://localhost:3000
 ```
 
 The api's `THROTTLER_LIMIT` (5 req/min) and `CACHE_TTL_SECONDS` (86400) are the primary mechanism protecting the Google API quota. The web has no additional rate-limiting logic — this is intentional for the MVP.
