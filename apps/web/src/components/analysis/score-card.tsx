@@ -7,7 +7,7 @@ import { type ChartConfig, ChartContainer } from '@/components/ui/chart';
 import { HelpTooltip } from '@/components/ui/help-tooltip';
 
 import { SCORE_BANDS } from '@/lib/constants/scoring';
-import { getScoreBand } from '@/lib/utils/scoring';
+import { getScoreBand } from '@/lib/utils/score-band';
 
 function ScoreRing({ score }: { score: number }) {
   const band = getScoreBand(score);

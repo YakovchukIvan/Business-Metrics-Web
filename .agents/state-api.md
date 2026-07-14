@@ -93,14 +93,14 @@ Reference: `profilelens-api-tasks.md` for full task descriptions.
 
 ## TASK-9 — README
 
-- [x] Опис продукту + що аналізується — done
-- [x] Короткий опис архітектури (Scalable Monorepo, Microservices-Ready, Domain-Driven Design) — done
-- [x] Чесний розділ "Що НЕ аналізується" (Posts, NAP, Q&A, reviews) — done
-- [x] Технічні нюанси полів (`photoCount`, `attributes`, Context-Aware Rules) — done
-- [x] Інструкція запуску: локально і Docker — done
-- [x] Приклад `.env` (порт оновлено на 3001) — done
-- [x] Приклад запиту до `POST /analysis` + пояснення нових полів (`potentialGain`, `businessName`) — done
-- [x] FieldMask без `places.reviews` — done
-- [x] Таблиця алгоритму оцінки: поточні 9 правил та їх ваги — done
-- [x] Розділ "Свідомо відкладено". Реалізуй і створи це в apps/api/README.md. — done
-- [x] Passed strict `eslint` and `typecheck` validations — done
+- [x] Product description + what is analyzed — done
+- [x] Brief description of the architecture (Scalable Monorepo, Microservices-Ready, Domain-Driven Design) — done
+- [x] Honest section "What is NOT analyzed" (Posts, NAP, Q&A, reviews) — done
+- [x] Technical nuances of fields (`photoCount`, `attributes`, Context-Aware Rules) — done
+- [x] Startup instructions: locally and Docker — done
+- [x] Example `.env` (port updated to 5000) — done
+- [x] Example request to `POST /analysis` + explanation of new fields (`potentialGain`, `businessName`) — done
+- [x] FieldMask without `places.reviews` — done
+- [x] Evaluation algorithm table: current 9 rules and their weights — done
+- [x] Section "Deliberately delayed". Implement and create this in apps/api/README.md. — done
+- [x] Passed strict `eslint` and `typecheck` checks — done

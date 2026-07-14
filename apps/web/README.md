@@ -55,7 +55,7 @@ Recent searches are persisted exclusively on the client side using `localStorage
 
    ```env
    # The URL of the ProfileLens API (NestJS backend)
-   NEXT_PUBLIC_API_URL=http://localhost:3001/api
+   NEXT_PUBLIC_API_URL=http://localhost:5000/api
    ```
 
 3. **Run the development server (from root or apps/web):**

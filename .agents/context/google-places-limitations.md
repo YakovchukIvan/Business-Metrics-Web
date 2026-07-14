@@ -22,7 +22,7 @@ Google Places API (New) determines billing based on the most expensive FieldMask
 The older numeric identifier (CID) found in URLs like `data=!3m1!4b1!4m...` or `?cid=...` is resolved to a `Place ID` via a "best-effort" Text Search fallback. We extract the place name from the URL path and perform a Text Search using the Places API.
 **IMPORTANT:** This resolution is not guaranteed to be exact, especially for massive franchise chains with multiple nearby locations sharing the same name.
 
-### Supported Formats in v1:
+### Supported Formats in v1':'
 
 Our `resolvePlaceId` function explicitly supports:
 
@@ -32,7 +32,7 @@ Our `resolvePlaceId` function explicitly supports:
 
 ## 5. Generic Text Search Exclusion
 
-Generic free-text search (e.g., just typing "McDonald's" or "КТС Луцьк" as input) is deliberately NOT supported as a fallback scenario in the `PlaceIdResolverService`.
+Generic free-text search (e.g., just typing "McDonald's" or "KFC Rivne" as input) is deliberately NOT supported as a fallback scenario in the `PlaceIdResolverService`.
 **This is a conscious architectural decision made to:**
 
 1. Prevent auditing the wrong business profile due to Google's ambiguous sorting of multiple matches (e.g., auditing the wrong branch of a local store).

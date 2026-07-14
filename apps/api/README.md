@@ -85,7 +85,7 @@ To preserve performance, save costs, and due to API limitations, ProfileLens **d
 The endpoint supports Place IDs, short links (`maps.app.goo.gl`), and full Maps URLs.
 
 ```bash
-curl -X POST http://localhost:3001/api/analysis \
+curl -X POST http://localhost:5000/api/analysis \
   -H "Content-Type: application/json" \
   -d '{"input": "https://maps.app.goo.gl/abcd123"}'
 ```
@@ -103,7 +103,7 @@ _(See Swagger UI for the full Response Example)_
 docker compose up --build -d
 ```
 
-The application will be available on port 3001 (or as configured).
+The application will be available on port 5000 (or as configured).
 
 ### Local Setup (Development)
 
@@ -121,7 +121,7 @@ The application will be available on port 3001 (or as configured).
    npm run dev
    ```
 
-4. Open Swagger UI: `http://localhost:3001/api/docs`
+4. Open Swagger UI: `http://localhost:5000/api/docs`
 
 ## Example `.env`
 
@@ -130,7 +130,7 @@ The application will be available on port 3001 (or as configured).
 # Server Configuration
 # ----------------------------------------
 NODE_ENV=development
-PORT=3001
+PORT=5000
 
 # ----------------------------------------
 # External APIs (Google Places)

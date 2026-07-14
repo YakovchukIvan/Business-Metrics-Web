@@ -158,7 +158,7 @@
 - [x] Honest "What is NOT analyzed" section (Posts, NAP, Q&A, reviews)
 - [x] Technical field nuances (`photoCount`, `attributes`)
 - [x] Startup instructions: Local and Docker
-- [x] Example `.env` configuration (port 3001)
+- [x] Example `.env` configuration (port 5000)
 - [x] `POST /analysis` request example + explanation of UI fields (`potentialGain`, `businessName`)
 - [x] FieldMask without `places.reviews` explained
 - [x] Evaluation algorithm table: Current 9 rules and weights

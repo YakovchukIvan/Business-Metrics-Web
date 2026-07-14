@@ -211,7 +211,7 @@ export function DetailedAnalysis({ rules, rawProfile }: Props) {
                         ) : (
                           <span
                             className={cn(
-                              'text-sm font-medium sm:text-right break-words',
+                              'text-sm font-medium sm:text-right wrap-break-word',
                               f.missing ? 'text-destructive' : 'text-foreground',
                             )}
                           >

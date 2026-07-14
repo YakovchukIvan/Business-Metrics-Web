@@ -55,7 +55,13 @@ export const SCORE_BANDS = [
   },
 ];
 
-export const WEIGHTED_RULES = [
+export const WEIGHTED_RULES: Array<{
+  id: string;
+  rule: string;
+  weight: number;
+  priority: 'High' | 'Medium' | 'Low';
+  description: string;
+}> = [
   {
     id: 'rating',
     rule: 'Rating & Reviews',

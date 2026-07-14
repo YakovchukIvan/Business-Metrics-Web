@@ -57,13 +57,13 @@ _Golden Rule: The frontend NEVER calculates scores. The API is the single source
 
    - ```env
      GOOGLE_PLACES_API_KEY=your_google_api_key
-     PORT=3001
+     PORT=5000
      ```
 
    - Create `apps/web/.env`:
 
    - ```env
-     NEXT_PUBLIC_API_URL=http://localhost:3001/api
+     NEXT_PUBLIC_API_URL=http://localhost:5000/api
      ```
 
 3. **Start development servers:**
@@ -71,8 +71,6 @@ _Golden Rule: The frontend NEVER calculates scores. The API is the single source
 ```bash
  npm run dev
 ```
-
-_(This starts the API on port 3001 and the Web client on port 3000)._
 
 ---
 

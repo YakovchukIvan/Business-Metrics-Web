@@ -1,13 +1,11 @@
 'use client';
 
-import { useState } from 'react';
-import { Search, Loader2, X } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import { useId, useState } from 'react';
+import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/hover-card';
-import { TOOLTIP_DELAY } from '@/components/ui/help-tooltip';
 import { TrickleProgress } from '@/components/ui/trickle-progress';
+import { SearchInput } from '@/components/analysis/search-input';
 import { toast } from 'sonner';
 
 type Props = {
@@ -18,8 +16,9 @@ type Props = {
 
 export function SearchForm({ isLoading, onSubmit, currentUrl = '' }: Props) {
   const [inputValue, setInputValue] = useState('');
+  const inputId = useId();
 
-  const handleAnalyze = (e: React.FormEvent) => {
+  const handleAnalyze = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     const val = inputValue.trim();
     if (!val) return;
@@ -29,48 +28,25 @@ export function SearchForm({ isLoading, onSubmit, currentUrl = '' }: Props) {
       return;
     }
 
-    setInputValue(''); // Clear input after search
+    setInputValue('');
     onSubmit(val);
   };
 
   return (
     <Card className="mb-12 p-8 text-center">
       <form onSubmit={handleAnalyze} className="relative flex flex-col sm:flex-row gap-3 w-full">
-        <div className="relative flex-1 group">
-          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
-            <Search className="h-6 w-6 text-muted-foreground" />
-          </div>
-          <Input
-            type="text"
-            value={inputValue}
-            onChange={(e) => {
-              setInputValue(e.target.value);
-            }}
-            disabled={isLoading}
-            placeholder="paste google business profile url or place id..."
-            className="pl-12 pr-12 h-14 text-base md:text-base bg-white shadow-sm transition-shadow rounded-lg w-full"
-          />
-          {inputValue && !isLoading && (
-            <HoverCard>
-              <HoverCardTrigger
-                delay={TOOLTIP_DELAY}
-                closeDelay={TOOLTIP_DELAY}
-                type="button"
-                onClick={() => setInputValue('')}
-                className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-900 focus:outline-none cursor-pointer transition-colors"
-              >
-                <X className="h-5 w-5" />
-              </HoverCardTrigger>
-              <HoverCardContent
-                side="top"
-                align="center"
-                className="w-auto p-2 text-sm font-medium border-gray-200 shadow-md"
-              >
-                Clear search
-              </HoverCardContent>
-            </HoverCard>
-          )}
-        </div>
+        <label htmlFor={inputId} className="sr-only">
+          Google Business Profile URL or Place ID
+        </label>
+
+        <SearchInput
+          inputId={inputId}
+          value={inputValue}
+          onChange={setInputValue}
+          onClear={() => setInputValue('')}
+          disabled={isLoading}
+        />
+
         <Button
           type="submit"
           disabled={isLoading || !inputValue.trim()}
@@ -79,7 +55,7 @@ export function SearchForm({ isLoading, onSubmit, currentUrl = '' }: Props) {
         >
           {isLoading ? (
             <>
-              <Loader2 className="animate-spin -ml-1 mr-2 h-5 w-5" />
+              <Loader2 className="animate-spin -ml-1 mr-2 h-5 w-5" aria-hidden="true" />
               Analyzing...
             </>
           ) : (
