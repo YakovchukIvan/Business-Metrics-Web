@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const configSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-  PORT: z.coerce.number().int().positive().default(3000),
+  PORT: z.coerce.number().int().positive().default(5000),
   APP_HOST: z.string().default('0.0.0.0'),
   GLOBAL_PREFIX: z.string().default('api'),
   GOOGLE_PLACES_API_KEY: z.string().min(1, 'GOOGLE_PLACES_API_KEY must not be empty'),
@@ -12,6 +12,8 @@ export const configSchema = z.object({
   SWAGGER_VERSION: z.string().optional(),
   THROTTLER_TTL_MS: z.coerce.number().int().positive().default(60000),
   THROTTLER_LIMIT: z.coerce.number().int().positive().default(5),
+  FRONTEND_DEV_URL: z.string().min(1).default('http://localhost:3000'),
+  FRONTEND_PROD_URL: z.string().min(1).default('https://profilelens.com'),
 });
 
 export type Config = z.infer<typeof configSchema>;

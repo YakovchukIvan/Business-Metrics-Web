@@ -1,26 +1,26 @@
 import type { AnalysisRule, RuleResult, RuleIssue } from '../interfaces/rule.interface';
 import type { PlaceProfile } from '../../google-places/interfaces/place-profile.interface';
-import { RULE_WEIGHTS } from '../constants/analysis.constants';
 
 export const photosRule: AnalysisRule = (profile: PlaceProfile): RuleResult => {
-  const weight = RULE_WEIGHTS['photos'];
-  let score = 0;
+  let successRatio = 0;
   const issues: RuleIssue[] = [];
 
   if (profile.photoCount >= 3) {
-    score = weight;
+    successRatio = 1;
   } else {
     issues.push({
       message: `Profile has insufficient photos (${profile.photoCount} detected)`,
-      recommendation: 'Add more high-quality photos. Profiles with many photos get significantly more clicks.',
+      recommendation:
+        `You only have ${profile.photoCount} photos. Add more high-quality, real-world photos. ` +
+        'Avoid stock imagery; originality is a key ranking factor in 2026.',
     });
   }
 
   return {
     ruleId: 'photos',
-    weight,
-    score,
-    passed: score === weight,
+    successRatio,
+    passed: successRatio === 1,
+    applicable: true,
     issues,
   };
 };

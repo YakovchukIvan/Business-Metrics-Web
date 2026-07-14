@@ -24,7 +24,7 @@ Use only what applies. Most commits in this project will be `feat`, `fix`, `chor
 
 ## Scopes — use exactly these, matching our module/folder names
 
-See `.agents/rules/backend.md` for what each module does.
+See `.agents/rules/api.md` for what each module does.
 
 - `init` — project bootstrap
 - `docker` — Dockerfile, docker-compose, .dockerignore
@@ -89,7 +89,7 @@ One logical change per commit. If you're about to write "and" in the commit mess
   - Add `.agents/hooks.json` defining PreToolUse and Stop hooks.
   - Add `pre_command.sh` to log pre-command execution events.
   - Add `on_stop.sh` to log session stop events.
-  - Add backend architecture documentation in `.agents/rules/backend.md`.
+  - Add api architecture documentation in `.agents/rules/api.md`.
 ```
 
 If the bullets don't share one clear theme, that's a signal the change should be split into separate commits instead of stretching one subject line to cover all of it.
@@ -112,5 +112,5 @@ git commit -m "feat(agents): add agent hooks and stop-event logging
 - Add .agents/hooks.json defining PreToolUse and Stop hooks.
 - Add pre_command.sh to log pre-command execution events.
 - Add on_stop.sh to log session stop events.
-- Add backend architecture documentation in .agents/rules/backend.md."
+- Add api architecture documentation in .agents/rules/api.md."
 ```

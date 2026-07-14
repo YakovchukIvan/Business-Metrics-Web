@@ -1,48 +1,49 @@
 import type { AnalysisRule, RuleResult, RuleIssue } from '../interfaces/rule.interface';
 import type { PlaceProfile } from '../../google-places/interfaces/place-profile.interface';
-import { RULE_WEIGHTS } from '../constants/analysis.constants';
 
 export const completenessRule: AnalysisRule = (profile: PlaceProfile): RuleResult => {
-  const weight = RULE_WEIGHTS['completeness'];
-  let score = 0;
+  let successRatio = 0;
   const issues: RuleIssue[] = [];
 
-  const pointsPerField = weight / 3;
+  const ratioPerField = 1 / 3;
 
   if (profile.internationalPhoneNumber) {
-    score += pointsPerField;
+    successRatio += ratioPerField;
   } else {
     issues.push({
       message: 'Phone number is missing',
-      recommendation: 'Add a primary phone number to allow customers to contact you directly.',
+      recommendation:
+        'Add a primary phone number. Ensure it perfectly matches (NAP consistency) the phone number on your website and local directories.',
     });
   }
 
   if (profile.websiteUri) {
-    score += pointsPerField;
+    successRatio += ratioPerField;
   } else {
     issues.push({
       message: 'Website is missing',
-      recommendation: 'Add a link to your website to increase credibility and conversions.',
+      recommendation:
+        'Add a link to your website. Link directly to your local landing page and ensure you have LocalBusiness schema markup.',
     });
   }
 
   if (profile.formattedAddress) {
-    score += pointsPerField;
+    successRatio += ratioPerField;
   } else {
     issues.push({
       message: 'Address is missing',
-      recommendation: 'Ensure your business address is visible so customers can find your physical location.',
+      recommendation:
+        'Ensure your business address is visible. Maintain 100% NAP consistency (Name, Address, Phone) across the web.',
     });
   }
 
-  score = Math.min(Math.round(score * 100) / 100, weight);
+  successRatio = Math.min(successRatio, 1);
 
   return {
     ruleId: 'completeness',
-    weight,
-    score,
-    passed: score === weight,
+    successRatio,
+    passed: Math.abs(successRatio - 1) < 0.001,
+    applicable: true,
     issues,
   };
 };

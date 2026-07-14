@@ -1,26 +1,25 @@
 import type { AnalysisRule, RuleResult, RuleIssue } from '../interfaces/rule.interface';
 import type { PlaceProfile } from '../../google-places/interfaces/place-profile.interface';
-import { RULE_WEIGHTS } from '../constants/analysis.constants';
 
 export const businessStatusRule: AnalysisRule = (profile: PlaceProfile): RuleResult => {
-  const weight = RULE_WEIGHTS['business-status'];
-  let score = 0;
+  let successRatio = 0;
   const issues: RuleIssue[] = [];
 
   if (profile.businessStatus === 'OPERATIONAL') {
-    score = weight;
+    successRatio = 1;
   } else {
     issues.push({
       message: `Business status is marked as ${profile.businessStatus || 'UNKNOWN'}`,
-      recommendation: 'Ensure your business is marked as OPERATIONAL. Closed profiles are severely demoted in search.',
+      recommendation:
+        'Ensure your business is marked as OPERATIONAL. Closed profiles are severely demoted in search and AI Overviews.',
     });
   }
 
   return {
     ruleId: 'business-status',
-    weight,
-    score,
-    passed: score === weight,
+    successRatio,
+    passed: successRatio === 1,
+    applicable: true,
     issues,
   };
 };

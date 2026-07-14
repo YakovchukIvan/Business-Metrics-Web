@@ -4,7 +4,12 @@ echo "🔍 Running pre-push checks..."
 
 set -e
 
-changed=$(git diff --name-only HEAD @{u})
+upstream="@{u}"
+if ! git rev-parse @{u} >/dev/null 2>&1; then
+  upstream="main"
+fi
+
+changed=$(git diff --name-only HEAD "$upstream")
 
 ran_any=false
 

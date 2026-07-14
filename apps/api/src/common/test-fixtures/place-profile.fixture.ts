@@ -6,7 +6,7 @@ export const createBaseProfile = (overrides?: Partial<PlaceProfile>): PlaceProfi
   formattedAddress: '123 Main St, City',
   internationalPhoneNumber: '+1234567890',
   websiteUri: 'https://example.com',
-  types: ['store'],
+  types: ['store', 'point_of_interest'],
   businessStatus: 'OPERATIONAL',
   rating: 4.5,
   userRatingCount: 100,

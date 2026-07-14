@@ -7,9 +7,9 @@ export interface RuleIssue {
 
 export interface RuleResult {
   ruleId: string;
-  weight: number;
+  successRatio: number;
   passed: boolean;
-  score: number;
+  applicable: boolean;
   issues: RuleIssue[];
 }
 
