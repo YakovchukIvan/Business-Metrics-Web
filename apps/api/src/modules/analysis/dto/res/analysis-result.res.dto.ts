@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import type { AnalysisResult } from '../../interfaces/analysis-result.interface';
 import type { RuleResult, RuleIssue } from '../../interfaces/rule.interface';
+import type { PlaceProfile } from '../../../google-places/interfaces/place-profile.interface';
 
 export class RuleIssueDto implements RuleIssue {
   @ApiProperty({
@@ -33,9 +34,15 @@ export class RuleResultDto implements Omit<RuleResult, 'issues'> {
 
   @ApiProperty({ description: 'Score achieved for this rule (0 to weight)', example: 20 })
   score!: number;
+
+  @ApiProperty({ description: 'Whether this rule is applicable to this business type', example: true })
+  applicable!: boolean;
 }
 
 export class AnalysisResultResDto implements AnalysisResult {
+  @ApiProperty({ description: 'The Google Place ID', example: 'ChIJN1t_tDeuEmsRUsoyG83frY4' })
+  placeId!: string;
+
   @ApiProperty({ description: 'Name of the analyzed business', example: 'Acme Corp' })
   businessName!: string;
 
@@ -50,4 +57,7 @@ export class AnalysisResultResDto implements AnalysisResult {
 
   @ApiProperty({ type: [RuleIssueDto], description: 'List of all issues found' })
   issues!: RuleIssueDto[];
+
+  @ApiProperty({ description: 'Raw Google Place Profile data used for analysis', type: Object })
+  rawProfile!: PlaceProfile;
 }

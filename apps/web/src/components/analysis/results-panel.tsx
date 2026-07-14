@@ -4,23 +4,28 @@ import { BreakdownCard } from './breakdown-card';
 import { IssueCard } from './issues-list';
 import { RecommendationCard } from './recommendations-list';
 import { TransparencyPanel } from './transparency-panel';
-import type { Rule, Problem, Recommendation } from '@/types/models';
+import { DetailedAnalysis } from './detailed-analysis';
+import type { Rule, Problem, Recommendation, PlaceProfile } from '@/types/models';
 
 type Props = {
   score: number;
   businessName: string;
+  address?: string;
   rules: Rule[];
   problems: Problem[];
   recommendations: Recommendation[];
+  rawProfile?: PlaceProfile;
 };
 
-export function ResultsPanel({ score, businessName, rules, problems, recommendations }: Props) {
+export function ResultsPanel({ score, businessName, address, rules, problems, recommendations, rawProfile }: Props) {
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="grid lg:grid-cols-2 gap-8 mb-12 items-start">
-        <ScoreCard score={score} businessName={businessName} />
+      <div className="grid lg:grid-cols-2 gap-8 mb-12 items-stretch lg:h-[430px]">
+        <ScoreCard score={score} businessName={businessName} address={address} />
         <BreakdownCard rules={rules} />
       </div>
+
+      {rawProfile && <DetailedAnalysis rules={rules} rawProfile={rawProfile} />}
 
       {problems.length > 0 && (
         <div className="mb-12">

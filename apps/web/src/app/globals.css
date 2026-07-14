@@ -197,6 +197,14 @@
   html {
     @apply font-sans;
   }
+  ::selection {
+    background-color: #2563eb !important;
+    color: #ffffff !important;
+  }
+  ::-moz-selection {
+    background-color: #2563eb !important;
+    color: #ffffff !important;
+  }
 }
 
 @layer utilities {

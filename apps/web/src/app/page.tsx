@@ -1,8 +1,8 @@
 'use client';
 
-import { Suspense, useEffect } from 'react';
+import { Suspense, useEffect, useRef } from 'react';
 import { Search, AlertTriangle } from 'lucide-react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { SearchForm } from '@/components/analysis/search-form';
 import { ResultsPanel } from '@/components/analysis/results-panel';
 import { useAnalysis } from '@/hooks/use-analysis';
@@ -10,25 +10,40 @@ import { addRecentSearch } from '@/lib/recent-searches';
 import type { AnalysisResult } from '@/lib/types/analysis';
 import type { Rule, Problem, Recommendation } from '@/types/models';
 
+import { formatRuleName } from '@/lib/utils/scoring';
+
 // ---------- Mapping helpers ----------
 
 function mapRules(breakdown: AnalysisResult['breakdown']): Rule[] {
-  return Object.entries(breakdown).map(([key, rule]) => {
+  return breakdown.map((rule) => {
+    // Default to true for backwards-compatibility with cached data that lacks the field
+    const applicable = rule.applicable !== false;
+    if (!applicable) {
+      return {
+        id: rule.ruleId,
+        name: formatRuleName(rule.ruleId),
+        earned: rule.score,
+        max: rule.weight,
+        status: 'na' as const,
+        applicable: false,
+      };
+    }
     const ratio = rule.weight > 0 ? rule.score / rule.weight : 0;
     const status: Rule['status'] = rule.passed ? (ratio >= 0.8 ? 'pass' : 'warn') : ratio > 0 ? 'warn' : 'fail';
     return {
-      id: rule.ruleId ?? key,
-      name: formatRuleName(rule.ruleId ?? key),
+      id: rule.ruleId,
+      name: formatRuleName(rule.ruleId),
       earned: rule.score,
       max: rule.weight,
       status,
+      applicable: true,
     };
   });
 }
 
 function mapProblems(issues: AnalysisResult['issues'], breakdown: AnalysisResult['breakdown']): Problem[] {
   return issues.map((issue, idx) => {
-    const rule = breakdown[issue.ruleId];
+    const rule = breakdown.find((r) => r.ruleId === issue.ruleId);
     const earned = rule?.score ?? 0;
     const max = rule?.weight ?? issue.potentialGain;
     const ratio = max > 0 ? earned / max : 0;
@@ -50,7 +65,7 @@ function mapRecommendations(
   breakdown: AnalysisResult['breakdown'],
 ): Recommendation[] {
   return issues.map((issue, idx) => {
-    const rule = breakdown[issue.ruleId];
+    const rule = breakdown.find((r) => r.ruleId === issue.ruleId);
     const earned = rule?.score ?? 0;
     const max = rule?.weight ?? issue.potentialGain;
     return {
@@ -65,31 +80,28 @@ function mapRecommendations(
   });
 }
 
-function formatRuleName(ruleId: string): string {
-  return ruleId
-    .replace(/_/g, ' ')
-    .replace(/([a-z])([A-Z])/g, '$1 $2')
-    .replace(/\b\w/g, (c) => c.toUpperCase());
-}
-
 // ---------- Page ----------
 
 function HomeContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const urlParam = searchParams.get('url');
+  const idParam = searchParams.get('id');
+  const initialQuery = urlParam || idParam;
 
   const { mutate, data, isPending, isError, error, reset } = useAnalysis();
+  const submittedQueryRef = useRef<string | null>(null);
 
-  const handleAnalyze = (url: string) => {
+  const executeAnalysis = (url: string) => {
     reset();
     mutate(
       { input: url },
       {
         onSuccess: (result) => {
-          console.log('[useAnalysis] Success — full AnalysisResult:', result);
-          console.log('[useAnalysis] breakdown keys:', Object.keys(result.breakdown ?? {}));
-          console.log('[useAnalysis] issues[]:', result.issues);
-          addRecentSearch(url, result.businessName);
+          // Update ref BEFORE router.replace so the URL change doesn't re-trigger the effect
+          submittedQueryRef.current = result.placeId;
+          router.replace(`/?id=${result.placeId}`);
+          addRecentSearch(result.placeId, result.businessName);
         },
         onError: (err) => {
           console.error('[useAnalysis] Error:', err);
@@ -98,12 +110,17 @@ function HomeContent() {
     );
   };
 
+  const handleSearchSubmit = (url: string) => {
+    executeAnalysis(url);
+  };
+
   useEffect(() => {
-    if (urlParam) {
-      handleAnalyze(urlParam);
+    if (initialQuery && initialQuery !== submittedQueryRef.current) {
+      submittedQueryRef.current = initialQuery;
+      executeAnalysis(initialQuery);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [urlParam]);
+  }, [initialQuery]);
 
   const rules: Rule[] = data ? mapRules(data.breakdown) : [];
   const problems: Problem[] = data ? mapProblems(data.issues, data.breakdown) : [];
@@ -111,15 +128,17 @@ function HomeContent() {
 
   return (
     <div className="flex-1 w-5xl max-w-full mx-auto px-4 md:px-0 py-12">
-      <SearchForm isLoading={isPending} onSubmit={handleAnalyze} defaultUrl={urlParam || ''} />
+      <SearchForm isLoading={isPending} onSubmit={handleSearchSubmit} currentUrl={initialQuery || ''} />
 
       {data && (
         <ResultsPanel
           score={data.score}
           businessName={data.businessName}
+          address={data.address}
           rules={rules}
           problems={problems}
           recommendations={recommendations}
+          rawProfile={data.rawProfile}
         />
       )}
 

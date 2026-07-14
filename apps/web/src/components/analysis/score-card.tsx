@@ -1,39 +1,19 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Label, PolarRadiusAxis, PolarAngleAxis, RadialBar, RadialBarChart } from 'recharts';
 import { type ChartConfig, ChartContainer } from '@/components/ui/chart';
 import { HelpTooltip } from '@/components/ui/help-tooltip';
 
+import { SCORE_BANDS } from '@/lib/constants/scoring';
+import { getScoreBand } from '@/lib/utils/scoring';
+
 function ScoreRing({ score }: { score: number }) {
-  const [displayScore, setDisplayScore] = useState(0);
+  const band = getScoreBand(score);
+  const color = band?.cssVar || 'var(--color-status-fail)';
 
-  useEffect(() => {
-    let start = 0;
-    const duration = 1000;
-    const increment = score / (duration / 16);
-
-    const timer = setInterval(() => {
-      start += increment;
-      if (start >= score) {
-        setDisplayScore(score);
-        clearInterval(timer);
-      } else {
-        setDisplayScore(Math.floor(start));
-      }
-    }, 16);
-
-    return () => clearInterval(timer);
-  }, [score]);
-
-  let color = '#22c55e'; // green-500
-  if (score <= 42)
-    color = '#ef4444'; // red-500
-  else if (score <= 74) color = '#f59e0b'; // amber-500
-
-  const chartData = [{ name: 'score', value: displayScore, fill: color }];
+  const chartData = [{ name: 'score', value: score, fill: color }];
 
   const chartConfig = {
     score: {
@@ -89,11 +69,11 @@ function ScoreRing({ score }: { score: number }) {
   );
 }
 
-type Props = { score: number; businessName: string };
+type Props = { score: number; businessName: string; address?: string };
 
-export function ScoreCard({ score, businessName }: Props) {
+export function ScoreCard({ score, businessName, address }: Props) {
   return (
-    <Card className="flex flex-col overflow-hidden h-full">
+    <Card className="flex flex-col gap-0 overflow-hidden h-full">
       <CardHeader className="px-6 py-4 border-b border-card-divider shrink-0">
         <CardTitle className="text-lg font-medium text-foreground flex items-center gap-2">
           Profile optimization score
@@ -102,44 +82,7 @@ export function ScoreCard({ score, businessName }: Props) {
             contentClassName="w-96 p-5"
             content={
               <div className="space-y-4">
-                {[
-                  {
-                    range: '0–24',
-                    color: 'bg-status-fail',
-                    label: 'Critical',
-                    desc: 'Major optimization issues detected.',
-                  },
-                  {
-                    range: '25–49',
-                    color: 'bg-status-fail',
-                    label: 'Poor',
-                    desc: 'Basic optimization exists, but many important elements are missing.',
-                  },
-                  {
-                    range: '50–64',
-                    color: 'bg-status-warn',
-                    label: 'Fair',
-                    desc: 'Profile is functional but requires several improvements.',
-                  },
-                  {
-                    range: '65–79',
-                    color: 'bg-status-warn',
-                    label: 'Good',
-                    desc: 'Well optimized with noticeable room for improvement.',
-                  },
-                  {
-                    range: '80–89',
-                    color: 'bg-status-pass',
-                    label: 'Very Good',
-                    desc: 'Strong profile with only minor recommendations.',
-                  },
-                  {
-                    range: '90–100',
-                    color: 'bg-status-pass',
-                    label: 'Excellent',
-                    desc: 'Profile is highly optimized and follows best practices.',
-                  },
-                ].map((band, idx, arr) => (
+                {SCORE_BANDS.map((band, idx, arr) => (
                   <div key={band.label}>
                     <div className="flex items-start gap-3 py-1">
                       <div className="w-16 text-right font-medium text-gray-900 shrink-0 text-sm pt-0.5 tabular-nums">
@@ -163,7 +106,7 @@ export function ScoreCard({ score, businessName }: Props) {
         <ScoreRing score={score} />
         <div className="mt-8 text-center">
           <div className="text-lg font-semibold text-gray-900">{businessName}</div>
-          <div className="text-sm text-gray-500 mt-1">Google Business Profile</div>
+          <div className="text-sm text-gray-500 mt-1">{address || 'Google Business Profile'}</div>
         </div>
       </CardContent>
     </Card>

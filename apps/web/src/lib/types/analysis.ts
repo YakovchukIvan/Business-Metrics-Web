@@ -10,14 +10,17 @@ export interface RuleBreakdown {
   weight: number;
   score: number;
   passed: boolean;
+  applicable: boolean;
 }
 
 export interface AnalysisResult {
+  placeId: string;
   businessName: string;
   address: string;
   score: number;
-  breakdown: Record<string, RuleBreakdown>;
+  breakdown: RuleBreakdown[];
   issues: RuleIssue[];
+  rawProfile: Record<string, unknown>;
 }
 
 export interface ApiResponse<T> {
@@ -37,4 +40,8 @@ export interface ApiErrorResponse {
     message: string;
     details?: unknown;
   };
+}
+
+export interface AnalyzeRequest {
+  input: string;
 }

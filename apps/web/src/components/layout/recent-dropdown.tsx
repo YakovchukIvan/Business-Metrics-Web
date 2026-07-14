@@ -27,7 +27,7 @@ export function RecentDropdown() {
   }, []);
 
   const handleSelect = (input: string) => {
-    router.push(`/?url=${encodeURIComponent(input)}`);
+    router.push(`/?id=${encodeURIComponent(input)}`);
   };
 
   return (

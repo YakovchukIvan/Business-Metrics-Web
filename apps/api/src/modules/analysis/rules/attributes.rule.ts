@@ -7,36 +7,70 @@ export const attributesRule: AnalysisRule = (profile: PlaceProfile): RuleResult 
   let score = 0;
   const issues: RuleIssue[] = [];
 
-  let relevantKeys = CATEGORY_TO_RELEVANT_ATTRIBUTES['universal'] as Array<keyof PlaceProfile>;
   const profileTypes = profile.types || [];
 
+  // Find the first type that has an explicit mapping (even if empty array)
+  let matchedKeys: string[] | undefined;
   for (const type of profileTypes) {
-    if (CATEGORY_TO_RELEVANT_ATTRIBUTES[type]) {
-      relevantKeys = CATEGORY_TO_RELEVANT_ATTRIBUTES[type] as Array<keyof PlaceProfile>;
+    if (Object.prototype.hasOwnProperty.call(CATEGORY_TO_RELEVANT_ATTRIBUTES, type)) {
+      matchedKeys = CATEGORY_TO_RELEVANT_ATTRIBUTES[type];
       break;
     }
   }
 
-  const pointsPerAttr = weight / relevantKeys.length;
+  // Fall back to universal if no specific match found
+  const relevantKeys = (matchedKeys ?? CATEGORY_TO_RELEVANT_ATTRIBUTES['universal']) as Array<keyof PlaceProfile>;
 
-  for (const key of relevantKeys) {
+  // If the matched category explicitly has no attributes (e.g. industrial types) → N/A
+  if (relevantKeys.length === 0) {
+    return {
+      ruleId: 'attributes',
+      weight,
+      score: weight,
+      passed: true,
+      applicable: false,
+      issues: [],
+    };
+  }
+
+  // Only consider attributes Google actually surfaces for this business (not undefined)
+  const applicableKeys = relevantKeys.filter((key) => profile[key] !== undefined);
+
+  // If Google doesn't surface any of these attributes at all → N/A
+  if (applicableKeys.length === 0) {
+    return {
+      ruleId: 'attributes',
+      weight,
+      score: weight,
+      passed: true,
+      applicable: false,
+      issues: [],
+    };
+  }
+
+  const pointsPerAttr = weight / applicableKeys.length;
+
+  for (const key of applicableKeys) {
     if (profile[key] === true) {
       score += pointsPerAttr;
     } else {
       issues.push({
         message: `Relevant attribute '${String(key)}' is missing or false`,
-        recommendation: `Add the '${String(key)}' attribute to your profile to improve visibility in niche searches.`,
+        recommendation:
+          `Add the '${String(key)}' attribute to your profile. Fleshing out all possible ` +
+          'attributes helps you rank for specific, long-tail voice searches and AI queries.',
       });
     }
   }
 
-  score = Math.min(Math.round(score * 100) / 100, weight);
+  score = Math.min(Math.round(score), weight);
 
   return {
     ruleId: 'attributes',
     weight,
     score,
     passed: score === weight,
+    applicable: true,
     issues,
   };
 };

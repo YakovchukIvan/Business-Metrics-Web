@@ -13,39 +13,80 @@ export class AnalysisService {
     const placeId = await this.googlePlacesPort.resolvePlaceId(inputUrlOrId);
     const profile = await this.googlePlacesPort.getPlaceProfile(placeId);
 
-    let totalScore = 0;
-    const breakdown = [];
-    const allIssues: Array<RuleIssue & { ruleId: string; potentialGain: number }> = [];
+    const results = ANALYSIS_RULES.map((rule) => rule(profile));
 
-    for (const rule of ANALYSIS_RULES) {
-      const result = rule(profile);
-      totalScore += result.score;
+    const applicableWeight = results.filter((r) => r.applicable).reduce((sum, r) => sum + r.weight, 0);
+
+    let rawScore = 0;
+    const breakdown = [];
+    const rawIssues: Array<RuleIssue & { ruleId: string; rawGain: number }> = [];
+
+    for (const result of results) {
+      if (result.applicable) {
+        rawScore += result.score;
+      }
 
       breakdown.push({
         ruleId: result.ruleId,
         weight: result.weight,
         score: result.score,
         passed: result.passed,
+        applicable: result.applicable,
       });
 
-      const gain = result.weight - result.score;
-      for (const issue of result.issues) {
-        allIssues.push({
-          ruleId: result.ruleId,
-          potentialGain: Number(gain.toFixed(2)),
-          ...issue,
+      if (result.applicable && result.issues.length > 0) {
+        let remainingGain = Math.round(result.weight - result.score);
+        const issuesCount = result.issues.length;
+
+        result.issues.forEach((issue, index) => {
+          const isLast = index === issuesCount - 1;
+          const issueGain = isLast ? remainingGain : Math.round(remainingGain / (issuesCount - index));
+          remainingGain -= issueGain;
+
+          rawIssues.push({
+            ruleId: result.ruleId,
+            rawGain: issueGain,
+            ...issue,
+          });
         });
       }
     }
 
-    totalScore = Math.round(totalScore);
+    const totalScore = applicableWeight > 0 ? Math.round((rawScore / applicableWeight) * 100) : 0;
+
+    let remainingNormalizedGain = 100 - totalScore;
+    const totalRawGain = rawIssues.reduce((sum, issue) => sum + issue.rawGain, 0);
+
+    const allIssues = rawIssues.map((issue, index) => {
+      const isLast = index === rawIssues.length - 1;
+      let normalizedGain = 0;
+
+      if (totalRawGain > 0) {
+        if (isLast) {
+          normalizedGain = remainingNormalizedGain;
+        } else {
+          // Distribute the 100-based missing points proportionally to the raw missing points
+          normalizedGain = Math.round((issue.rawGain / totalRawGain) * (100 - totalScore));
+          remainingNormalizedGain -= normalizedGain;
+        }
+      }
+
+      return {
+        ruleId: issue.ruleId,
+        message: issue.message,
+        recommendation: issue.recommendation,
+        potentialGain: normalizedGain,
+      };
+    });
 
     return {
+      placeId,
       businessName: profile.displayName,
       address: profile.formattedAddress || null,
       score: totalScore,
       breakdown,
       issues: allIssues,
+      rawProfile: profile,
     };
   }
 }

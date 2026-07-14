@@ -10,6 +10,7 @@ export interface RuleResult {
   weight: number;
   passed: boolean;
   score: number;
+  applicable: boolean;
   issues: RuleIssue[];
 }
 

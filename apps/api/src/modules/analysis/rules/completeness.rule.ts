@@ -14,7 +14,8 @@ export const completenessRule: AnalysisRule = (profile: PlaceProfile): RuleResul
   } else {
     issues.push({
       message: 'Phone number is missing',
-      recommendation: 'Add a primary phone number to allow customers to contact you directly.',
+      recommendation:
+        'Add a primary phone number. Ensure it perfectly matches (NAP consistency) the phone number on your website and local directories.',
     });
   }
 
@@ -23,7 +24,8 @@ export const completenessRule: AnalysisRule = (profile: PlaceProfile): RuleResul
   } else {
     issues.push({
       message: 'Website is missing',
-      recommendation: 'Add a link to your website to increase credibility and conversions.',
+      recommendation:
+        'Add a link to your website. Link directly to your local landing page and ensure you have LocalBusiness schema markup.',
     });
   }
 
@@ -32,17 +34,19 @@ export const completenessRule: AnalysisRule = (profile: PlaceProfile): RuleResul
   } else {
     issues.push({
       message: 'Address is missing',
-      recommendation: 'Ensure your business address is visible so customers can find your physical location.',
+      recommendation:
+        'Ensure your business address is visible. Maintain 100% NAP consistency (Name, Address, Phone) across the web.',
     });
   }
 
-  score = Math.min(Math.round(score * 100) / 100, weight);
+  score = Math.min(Math.round(score), weight);
 
   return {
     ruleId: 'completeness',
     weight,
     score,
     passed: score === weight,
+    applicable: true,
     issues,
   };
 };

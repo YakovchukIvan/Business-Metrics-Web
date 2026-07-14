@@ -183,3 +183,86 @@ Created reusable `HelpTooltip` component. Integrated it into `ScoreCard` and `Re
 ### 14.07.2026, 12:54:50
 
 Updated apps/web/README.md for TASK-7 and fixed a Prettier formatting issue in docs/page.tsx.
+
+### 14.07.2026, 13:02:48
+
+Made ScoreCard and BreakdownCard equal height (lg:h-[430px]), used hr instead of border-b for breakdown rules, and added black/white ::selection styling to globals.css.
+
+### 14.07.2026, 13:05:25
+
+Removed default gap-6 from score and breakdown cards. Fixed ::selection styling by using raw CSS variables instead of @apply.
+
+### 14.07.2026, 13:06:46
+
+Fixed text ::selection bug by replacing oklch CSS variables with absolute hex colors (#000 and #fff) to resolve browser compatibility issues.
+
+### 14.07.2026, 13:11:05
+
+Removed custom ::selection styling from globals.css entirely to restore the default browser text selection behavior (blue highlight).
+
+### 14.07.2026, 13:12:03
+
+Hardcoded explicit blue text selection styling (!important) to guarantee a visible blue highlight everywhere.
+
+### 14.07.2026, 14:03:31
+
+Added address display in ScoreCard instead of 'Google Business Profile'. Fixed issue mapping in page.tsx where breakdown was treated as an object instead of an array, causing earned/max points to default to 0/15 for rating issues.
+
+### 14.07.2026, 14:06:45
+
+Updated all backend analysis rules with dynamic values and modern SEO best practices (2026) for Google Business Profile optimization. Recommendations now include actionable steps (like NAP consistency, automated review generation, schema markup) instead of generic advice.
+
+### 14.07.2026, 14:09:41
+
+Fixed score and potentialGain calculation to always round to the nearest whole integer (e.g., 13.33 -> 13, 6.67 -> 7), preventing floating point numbers in the UI.
+
+### 14.07.2026, 14:16:07
+
+Created a custom `<TrickleProgress />` component to simulate a GitHub-style loading bar under the search input without requiring external routing libraries.
+
+### 14.07.2026, 14:16:53
+
+Sped up the completion animation (to 150ms) of TrickleProgress so it rapidly finishes and disappears immediately when the data arrives, preventing the loader from visibly lingering over newly loaded content.
+
+### 14.07.2026, 14:20:25
+
+- Removed the slow number counting animation on the frontend ScoreCard so the score text appears instantly.
+- Fixed a major bug on the backend where `potentialGain` was incorrectly assigning the total rule penalty to EVERY issue within that rule, resulting in wildly inflated scores. The penalty is now perfectly distributed across multiple issues.
+- Fixed logical error in the rating rule recommendation where it told users with >20 reviews to "get more reviews to reach 20+".
+
+### 14.07.2026, 14:22:05
+
+Fixed a bug where the search form did not update the browser URL, causing page refreshes to re-analyze the previously searched URL instead of the current one.
+
+### 14.07.2026, 14:41:07
+
+- Implemented frontend check in `search-form.tsx` to immediately return and do nothing if the user clicks Analyze with the identical URL currently loaded.
+- Fixed a major caching flaw in `google-places.adapter.ts`. Previously, only the final `PlaceProfile` was cached, meaning that `resolvePlaceId` (which translates short URLs to Place IDs) was still making expensive network calls to Google (HEAD redirects + searchText POST) on every cached request. Now, the `input -> placeId` mapping is also cached, ensuring completely zero-network-call responses for repeated searches.
+
+### 14.07.2026, 14:57:34
+
+- Changed SearchForm to immediately clear the input field upon successful search submission, matching the user's preference.
+- Removed `defaultUrl` passing logic to ensure the input field remains clean and empty even after page refreshes.
+
+### 14.07.2026, 14:58:41
+
+- Added a built-in custom toast underneath the SearchForm. If the user submits the exact same URL that is currently loaded, it shows "Це посилання вже проаналізовано і відображається нижче" and blocks the request.
+- The toast disappears immediately once the user starts typing a new URL.
+
+### 14.07.2026, 15:01:00
+
+Added backend fallback in `place-id-resolver.service.ts` to automatically detect alphanumeric strings of length 10-25 (e.g., `9dyVwjd6L5kj3kKf7`) and prepend `https://maps.app.goo.gl/` to them. This allows users to paste just the ID part of a short link and successfully analyze the profile without receiving a 400 Bad Request error.
+
+### 14.07.2026, 15:04:21
+
+- Implemented clean URLs (Option 2). The frontend no longer immediately syncs raw ugly URLs to the address bar. Instead, it waits for the backend to resolve the true Google Place ID (e.g. `ChIJ...`) and cleanly updates the address bar to `?id={PlaceID}` after success.
+- Added a 5-second `AbortSignal` timeout to `fetch` HEAD requests in `place-id-resolver.service.ts` to prevent the backend (and subsequently the frontend) from hanging indefinitely on Google Maps redirect URLs.
+
+### 14.07.2026, 15:06:54
+
+- Added `placeId` to the `AnalysisResultResDto` to fix a TS compiler error caused by the interface mismatch.
+- Changed the HTTP method from `HEAD` to `GET` for shortlink resolution to prevent Google's servers from hanging the connection, which caused the 502 Bad Gateway timeout errors.
+
+### 14.07.2026, 15:11:11
+
+- Fixed a critical hanging issue in `place-id-resolver.service.ts` where resolving new Google Maps short links would freeze. Changed `fetch` redirect mode from `follow` to `manual` and manually parsed the `Location` header to avoid downloading Google's large HTML body or encountering connection freezes.

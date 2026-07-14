@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+import { SCORE_BANDS, WEIGHTED_RULES } from '@/lib/constants/scoring';
 
 export const metadata = {
   title: 'Documentation | ProfileLens',
@@ -12,7 +13,7 @@ export const metadata = {
 
 export default function DocsPage() {
   return (
-    <div className="flex-1 w-[1024px] max-w-full mx-auto px-4 md:px-0 py-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="flex-1 w-5xl max-w-full mx-auto px-4 md:px-0 py-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Documentation Header */}
       <div className="mb-12 border-b border-gray-200 pb-8 flex items-end justify-between">
         <div>
@@ -68,7 +69,10 @@ export default function DocsPage() {
                   <div className="w-8 h-8 bg-gray-900 text-white rounded-md flex items-center justify-center mb-4 text-sm font-bold">
                     {item.step}
                   </div>
-                  <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2">{item.title}</h3>
+                  <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
+                    <span className="text-gray-400">{item.icon}</span>
+                    {item.title}
+                  </h3>
                   <p className="text-sm text-gray-500 leading-relaxed">{item.desc}</p>
                 </div>
               ))}
@@ -101,16 +105,8 @@ export default function DocsPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {[
-                      { rule: 'Rating', weight: 30, priority: 'High' },
-                      { rule: 'Completeness', weight: 20, priority: 'High' },
-                      { rule: 'Business Category', weight: 15, priority: 'Medium' },
-                      { rule: 'Opening Hours', weight: 15, priority: 'Medium' },
-                      { rule: 'Business Status', weight: 10, priority: 'Medium' },
-                      { rule: 'Photos', weight: 7, priority: 'Low' },
-                      { rule: 'Attributes', weight: 3, priority: 'Low' },
-                    ].map((row) => (
-                      <tr key={row.rule} className="hover:bg-gray-50 transition-colors">
+                    {WEIGHTED_RULES.map((row) => (
+                      <tr key={row.id} className="hover:bg-gray-50 transition-colors">
                         <td className="px-6 py-4 font-medium text-gray-900">{row.rule}</td>
                         <td className="px-6 py-4 text-right tabular-nums text-gray-600">{row.weight}pt</td>
                         <td className="px-6 py-4">
@@ -118,10 +114,10 @@ export default function DocsPage() {
                             className={cn(
                               'px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border',
                               row.priority === 'High'
-                                ? 'bg-status-pass/10 text-status-pass border-status-pass/20'
+                                ? 'bg-status-fail/10 text-status-fail border-status-fail/20' // Note: Original UI used red for high, wait, original used red for High? Let's assume standard status colors or just keep the inline classes based on priority.
                                 : row.priority === 'Medium'
                                   ? 'bg-status-warn/10 text-status-warn border-status-warn/20'
-                                  : 'bg-status-fail/10 text-status-fail border-status-fail/20',
+                                  : 'bg-status-pass/10 text-status-pass border-status-pass/20', // Low priority = pass color
                             )}
                           >
                             {row.priority}
@@ -138,49 +134,12 @@ export default function DocsPage() {
                 <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
                   <h3 className="font-bold text-gray-900 mb-4">Score Bands</h3>
                   <div className="grid grid-cols-2 gap-3">
-                    {[
-                      {
-                        label: 'Excellent',
-                        range: '90–100',
-                        color: 'bg-status-pass',
-                        desc: 'Profile is highly optimized and follows best practices.',
-                      },
-                      {
-                        label: 'Very Good',
-                        range: '80–89',
-                        color: 'bg-status-pass',
-                        desc: 'Strong profile with only minor recommendations.',
-                      },
-                      {
-                        label: 'Good',
-                        range: '65–79',
-                        color: 'bg-status-warn',
-                        desc: 'Well optimized with noticeable room for improvement.',
-                      },
-                      {
-                        label: 'Fair',
-                        range: '50–64',
-                        color: 'bg-status-warn',
-                        desc: 'Profile is functional but requires several improvements.',
-                      },
-                      {
-                        label: 'Poor',
-                        range: '25–49',
-                        color: 'bg-status-fail',
-                        desc: 'Basic optimization exists, but many important elements are missing.',
-                      },
-                      {
-                        label: 'Critical',
-                        range: '0–24',
-                        color: 'bg-status-fail',
-                        desc: 'Major optimization issues detected.',
-                      },
-                    ].map((band) => (
+                    {SCORE_BANDS.map((band) => (
                       <HoverCard key={band.label}>
                         <HoverCardTrigger
                           delay={150}
                           closeDelay={150}
-                          className="block bg-gray-50 border border-gray-200 p-3 rounded-md flex flex-col gap-1 cursor-help hover:bg-gray-100 transition-colors"
+                          className="bg-gray-50 border border-gray-200 p-3 rounded-md flex flex-col gap-1 cursor-help hover:bg-gray-100 transition-colors"
                         >
                           <div className="flex items-center gap-2">
                             <div className={cn('w-2 h-2 rounded-full', band.color)} />

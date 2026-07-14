@@ -12,7 +12,8 @@ export const businessCategoryRule: AnalysisRule = (profile: PlaceProfile): RuleR
   } else {
     issues.push({
       message: 'Business category is missing',
-      recommendation: 'Select the most accurate primary category for your business. This is the #1 ranking factor.',
+      recommendation:
+        'Select the most accurate primary category for your business. This is the #1 local ranking factor for relevancy. Also, add up to 9 relevant secondary categories.',
     });
   }
 
@@ -21,6 +22,7 @@ export const businessCategoryRule: AnalysisRule = (profile: PlaceProfile): RuleR
     weight,
     score,
     passed: score === weight,
+    applicable: true,
     issues,
   };
 };

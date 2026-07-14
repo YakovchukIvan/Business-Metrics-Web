@@ -12,7 +12,9 @@ export const photosRule: AnalysisRule = (profile: PlaceProfile): RuleResult => {
   } else {
     issues.push({
       message: `Profile has insufficient photos (${profile.photoCount} detected)`,
-      recommendation: 'Add more high-quality photos. Profiles with many photos get significantly more clicks.',
+      recommendation:
+        `You only have ${profile.photoCount} photos. Add more high-quality, real-world photos. ` +
+        'Avoid stock imagery; originality is a key ranking factor in 2026.',
     });
   }
 
@@ -21,6 +23,7 @@ export const photosRule: AnalysisRule = (profile: PlaceProfile): RuleResult => {
     weight,
     score,
     passed: score === weight,
+    applicable: true,
     issues,
   };
 };

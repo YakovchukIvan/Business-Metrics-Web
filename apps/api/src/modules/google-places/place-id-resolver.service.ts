@@ -38,19 +38,40 @@ export class PlaceIdResolverService {
       return this.resolveViaTextSearch(trimmed);
     }
 
+    // 5. Short link ID directly (e.g., 9dyVwjd6L5kj3kKf7)
+    if (/^[a-zA-Z0-9_-]{10,25}$/.test(trimmed)) {
+      const fullUrl = await this.followRedirect(`https://maps.app.goo.gl/${trimmed}`);
+      return this.resolvePlaceId(fullUrl);
+    }
+
     throw new BadRequestException('Invalid Place ID or Google Maps URL format');
   }
 
   private async followRedirect(url: string): Promise<string> {
     try {
       const targetUrl = url.startsWith('http') ? url : `https://${url}`;
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 7000);
+
       const response = await fetch(targetUrl, {
-        method: 'HEAD',
-        redirect: 'follow',
+        method: 'GET',
+        redirect: 'manual',
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
+
+      if (response.status >= 300 && response.status < 400) {
+        const location = response.headers.get('location');
+        if (location) {
+          return location;
+        }
+      }
+
       return response.url;
-    } catch {
-      throw new BadGatewayException('Failed to resolve short link');
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : 'Unknown error';
+      throw new BadGatewayException(`Failed to resolve short link: ${msg}`);
     }
   }
 

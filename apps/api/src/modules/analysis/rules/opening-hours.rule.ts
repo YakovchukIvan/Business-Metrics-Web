@@ -12,7 +12,8 @@ export const openingHoursRule: AnalysisRule = (profile: PlaceProfile): RuleResul
   } else {
     issues.push({
       message: 'Opening hours are missing',
-      recommendation: 'Add your regular opening hours. Profiles without hours lose potential visitors.',
+      recommendation:
+        'Add your regular opening hours. Consistent and accurate operating hours are a strong trust signal for Google. Update them for holidays to stay relevant.',
     });
   }
 
@@ -21,6 +22,7 @@ export const openingHoursRule: AnalysisRule = (profile: PlaceProfile): RuleResul
     weight,
     score,
     passed: score === weight,
+    applicable: true,
     issues,
   };
 };

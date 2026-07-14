@@ -1,9 +1,5 @@
 import { fetchApi } from './client';
-import type { AnalysisResult } from '../types/analysis';
-
-export interface AnalyzeRequest {
-  input: string;
-}
+import type { AnalysisResult, AnalyzeRequest } from '../types/analysis';
 
 export async function postAnalysis(data: AnalyzeRequest): Promise<AnalysisResult> {
   return fetchApi<AnalysisResult>('/api/analysis', {

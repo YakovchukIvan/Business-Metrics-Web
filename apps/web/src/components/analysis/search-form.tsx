@@ -1,33 +1,36 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Search, Loader2, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/hover-card';
 import { TOOLTIP_DELAY } from '@/components/ui/help-tooltip';
+import { TrickleProgress } from '@/components/ui/trickle-progress';
+import { toast } from 'sonner';
 
 type Props = {
   isLoading: boolean;
   onSubmit: (url: string) => void;
-  defaultUrl?: string;
+  currentUrl?: string;
 };
 
-export function SearchForm({ isLoading, onSubmit, defaultUrl = '' }: Props) {
-  const [inputValue, setInputValue] = useState(defaultUrl);
-
-  useEffect(() => {
-    if (defaultUrl) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setInputValue(defaultUrl);
-    }
-  }, [defaultUrl]);
+export function SearchForm({ isLoading, onSubmit, currentUrl = '' }: Props) {
+  const [inputValue, setInputValue] = useState('');
 
   const handleAnalyze = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inputValue.trim()) return;
-    onSubmit(inputValue);
+    const val = inputValue.trim();
+    if (!val) return;
+
+    if (val === currentUrl) {
+      toast.warning('This link has already been parsed and displayed.');
+      return;
+    }
+
+    setInputValue(''); // Clear input after search
+    onSubmit(val);
   };
 
   return (
@@ -40,7 +43,9 @@ export function SearchForm({ isLoading, onSubmit, defaultUrl = '' }: Props) {
           <Input
             type="text"
             value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
+            onChange={(e) => {
+              setInputValue(e.target.value);
+            }}
             disabled={isLoading}
             placeholder="paste google business profile url or place id..."
             className="pl-12 pr-12 h-14 text-base md:text-base bg-white shadow-sm transition-shadow rounded-lg w-full"
@@ -83,11 +88,9 @@ export function SearchForm({ isLoading, onSubmit, defaultUrl = '' }: Props) {
         </Button>
       </form>
 
-      {isLoading && (
-        <div className="w-full mt-4 h-1 bg-gray-200 rounded-full overflow-hidden">
-          <div className="h-full bg-gray-900 animate-pulse w-1/3 rounded-full" />
-        </div>
-      )}
+      <div className="mt-4 h-1.5 relative">
+        <TrickleProgress isAnimating={isLoading} />
+      </div>
     </Card>
   );
 }

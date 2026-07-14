@@ -40,7 +40,15 @@ export class GooglePlacesAdapter implements IGooglePlacesPort {
   }
 
   async resolvePlaceId(input: string): Promise<string> {
-    return this.placeIdResolver.resolvePlaceId(input);
+    const cacheKey = `resolve:${input}`;
+    const cached = await this.cacheService.get<string>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
+    const placeId = await this.placeIdResolver.resolvePlaceId(input);
+    await this.cacheService.set(cacheKey, placeId);
+    return placeId;
   }
 
   async getPlaceProfile(placeId: string): Promise<PlaceProfile> {

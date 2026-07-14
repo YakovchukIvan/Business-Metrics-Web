@@ -12,7 +12,8 @@ export const businessStatusRule: AnalysisRule = (profile: PlaceProfile): RuleRes
   } else {
     issues.push({
       message: `Business status is marked as ${profile.businessStatus || 'UNKNOWN'}`,
-      recommendation: 'Ensure your business is marked as OPERATIONAL. Closed profiles are severely demoted in search.',
+      recommendation:
+        'Ensure your business is marked as OPERATIONAL. Closed profiles are severely demoted in search and AI Overviews.',
     });
   }
 
@@ -21,6 +22,7 @@ export const businessStatusRule: AnalysisRule = (profile: PlaceProfile): RuleRes
     weight,
     score,
     passed: score === weight,
+    applicable: true,
     issues,
   };
 };
