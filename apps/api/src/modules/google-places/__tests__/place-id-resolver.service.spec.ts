@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing';
 import type { TestingModule } from '@nestjs/testing';
-import { PlaceIdResolverService } from './place-id-resolver.service';
+import { PlaceIdResolverService } from '../place-id-resolver.service';
 import { ConfigService } from '@nestjs/config';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 

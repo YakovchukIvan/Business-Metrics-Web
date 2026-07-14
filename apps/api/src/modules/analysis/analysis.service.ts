@@ -1,9 +1,40 @@
 import { Injectable, Inject } from '@nestjs/common';
 import type { IGooglePlacesPort } from '../google-places/interfaces/google-places-port.interface';
 import { GOOGLE_PLACES_PORT } from '../../common/constants/google-places.constants';
-import type { AnalysisResult } from './interfaces/analysis-result.interface';
+import type { AnalysisResult, RuleBreakdown } from './interfaces/analysis-result.interface';
 import { ANALYSIS_RULES } from './rules';
 import type { RuleIssue } from './interfaces/rule.interface';
+import { RULE_WEIGHTS } from './constants/analysis.constants';
+
+function distributePoints(weights: Record<string, number>, totalPoints = 100): Record<string, number> {
+  const totalBase = Object.values(weights).reduce((a, b) => a + b, 0);
+  if (totalBase === 0) {
+    return {};
+  }
+
+  const exactPoints = Object.entries(weights).map(([id, weight]) => ({
+    id,
+    exact: (weight / totalBase) * totalPoints,
+    floor: Math.floor((weight / totalBase) * totalPoints),
+  }));
+
+  const currentTotal = exactPoints.reduce((sum, item) => sum + item.floor, 0);
+  let remainder = totalPoints - currentTotal;
+
+  exactPoints.sort((a, b) => b.exact - b.floor - (a.exact - a.floor));
+
+  const result: Record<string, number> = {};
+  for (const item of exactPoints) {
+    if (remainder > 0) {
+      result[item.id] = item.floor + 1;
+      remainder--;
+    } else {
+      result[item.id] = item.floor;
+    }
+  }
+
+  return result;
+}
 
 @Injectable()
 export class AnalysisService {
@@ -15,69 +46,63 @@ export class AnalysisService {
 
     const results = ANALYSIS_RULES.map((rule) => rule(profile));
 
-    const applicableWeight = results.filter((r) => r.applicable).reduce((sum, r) => sum + r.weight, 0);
+    const applicableBaseWeights: Record<string, number> = {};
+    for (const r of results) {
+      if (r.applicable) {
+        const key = r.ruleId as keyof typeof RULE_WEIGHTS;
+        applicableBaseWeights[r.ruleId] = RULE_WEIGHTS[key] ?? 5;
+      }
+    }
 
-    let rawScore = 0;
-    const breakdown = [];
-    const rawIssues: Array<RuleIssue & { ruleId: string; rawGain: number }> = [];
+    const dynamicMaxWeights = distributePoints(applicableBaseWeights, 100);
 
-    for (const result of results) {
-      if (result.applicable) {
-        rawScore += result.score;
+    let totalScore = 0;
+    const breakdown: RuleBreakdown[] = [];
+    const allIssues: Array<RuleIssue & { ruleId: string; potentialGain: number }> = [];
+
+    for (const r of results) {
+      const key = r.ruleId as keyof typeof RULE_WEIGHTS;
+      if (!r.applicable) {
+        breakdown.push({
+          ruleId: r.ruleId,
+          weight: RULE_WEIGHTS[key] ?? 5,
+          score: 0,
+          passed: true,
+          applicable: false,
+        });
+        continue;
       }
 
+      const maxWeight = dynamicMaxWeights[r.ruleId] || 0;
+      const earned = Math.round(r.successRatio * maxWeight);
+
+      totalScore += earned;
+
       breakdown.push({
-        ruleId: result.ruleId,
-        weight: result.weight,
-        score: result.score,
-        passed: result.passed,
-        applicable: result.applicable,
+        ruleId: r.ruleId,
+        weight: maxWeight,
+        score: earned,
+        passed: r.passed,
+        applicable: true,
       });
 
-      if (result.applicable && result.issues.length > 0) {
-        let remainingGain = Math.round(result.weight - result.score);
-        const issuesCount = result.issues.length;
+      if (r.issues.length > 0) {
+        let remainingGain = maxWeight - earned;
+        const issuesCount = r.issues.length;
 
-        result.issues.forEach((issue, index) => {
+        r.issues.forEach((issue, index) => {
           const isLast = index === issuesCount - 1;
           const issueGain = isLast ? remainingGain : Math.round(remainingGain / (issuesCount - index));
           remainingGain -= issueGain;
 
-          rawIssues.push({
-            ruleId: result.ruleId,
-            rawGain: issueGain,
+          allIssues.push({
+            ruleId: r.ruleId,
+            potentialGain: issueGain,
             ...issue,
           });
         });
       }
     }
-
-    const totalScore = applicableWeight > 0 ? Math.round((rawScore / applicableWeight) * 100) : 0;
-
-    let remainingNormalizedGain = 100 - totalScore;
-    const totalRawGain = rawIssues.reduce((sum, issue) => sum + issue.rawGain, 0);
-
-    const allIssues = rawIssues.map((issue, index) => {
-      const isLast = index === rawIssues.length - 1;
-      let normalizedGain = 0;
-
-      if (totalRawGain > 0) {
-        if (isLast) {
-          normalizedGain = remainingNormalizedGain;
-        } else {
-          // Distribute the 100-based missing points proportionally to the raw missing points
-          normalizedGain = Math.round((issue.rawGain / totalRawGain) * (100 - totalScore));
-          remainingNormalizedGain -= normalizedGain;
-        }
-      }
-
-      return {
-        ruleId: issue.ruleId,
-        message: issue.message,
-        recommendation: issue.recommendation,
-        potentialGain: normalizedGain,
-      };
-    });
 
     return {
       placeId,

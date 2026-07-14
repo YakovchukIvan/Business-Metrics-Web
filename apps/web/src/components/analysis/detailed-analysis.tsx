@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { cn } from '@/lib/utils';
+import { HelpTooltip } from '@/components/ui/help-tooltip';
 import type { Rule, PlaceProfile } from '@/types/models';
 
 type Props = {
@@ -171,11 +172,18 @@ export function DetailedAnalysis({ rules, rawProfile }: Props) {
           return (
             <div key={rule.id} className={cn('p-6', !rule.applicable && 'opacity-60')}>
               <div className="flex items-center justify-between mb-4">
-                <h4 className="text-base font-semibold text-foreground">{rule.name}</h4>
+                <div className="flex items-center gap-2">
+                  <h4 className="text-base font-semibold text-foreground">{rule.name}</h4>
+                  <HelpTooltip
+                    icon="alert"
+                    content={<div className="text-sm text-muted-foreground">{rule.description}</div>}
+                    contentClassName="max-w-xs p-3"
+                  />
+                </div>
                 <span
                   className={cn('px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider border', badgeColor)}
                 >
-                  {!rule.applicable ? 'N/A' : `${rule.earned}/${rule.max} pts`}
+                  {!rule.applicable ? 'N/A' : `${rule.earned} / ${rule.max}`}
                 </span>
               </div>
               <div className="space-y-4">

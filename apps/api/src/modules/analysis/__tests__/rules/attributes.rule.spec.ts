@@ -1,5 +1,5 @@
-import { attributesRule } from './attributes.rule';
-import { createHoReCaProfile, createBaseProfile } from '../../../common/test-fixtures/place-profile.fixture';
+import { attributesRule } from '../../rules/attributes.rule';
+import { createHoReCaProfile, createBaseProfile } from '../../../../common/test-fixtures/place-profile.fixture';
 
 describe('attributesRule', () => {
   it('should pass for HoReCa profile with relevant attributes filled', () => {
@@ -29,7 +29,7 @@ describe('attributesRule', () => {
 
   it('should evaluate non-HoReCa profile against generic attributes', () => {
     const profile = createBaseProfile({
-      types: ['store'],
+      types: ['store', 'point_of_interest'],
       wheelchairAccessibleEntrance: true,
     });
     const result = attributesRule(profile);
@@ -38,7 +38,7 @@ describe('attributesRule', () => {
 
   it('should fail non-HoReCa profile if generic attributes are missing', () => {
     const profile = createBaseProfile({
-      types: ['store'],
+      types: ['store', 'point_of_interest'],
       wheelchairAccessibleEntrance: undefined,
     });
     const result = attributesRule(profile);

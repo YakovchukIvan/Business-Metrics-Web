@@ -1,10 +1,9 @@
 import type { AnalysisRule, RuleResult, RuleIssue } from '../interfaces/rule.interface';
 import type { PlaceProfile } from '../../google-places/interfaces/place-profile.interface';
-import { RULE_WEIGHTS, CATEGORY_TO_RELEVANT_ATTRIBUTES } from '../constants/analysis.constants';
+import { CATEGORY_TO_RELEVANT_ATTRIBUTES } from '../constants/analysis.constants';
 
 export const attributesRule: AnalysisRule = (profile: PlaceProfile): RuleResult => {
-  const weight = RULE_WEIGHTS['attributes'];
-  let score = 0;
+  let successRatio = 0;
   const issues: RuleIssue[] = [];
 
   const profileTypes = profile.types || [];
@@ -25,34 +24,32 @@ export const attributesRule: AnalysisRule = (profile: PlaceProfile): RuleResult 
   if (relevantKeys.length === 0) {
     return {
       ruleId: 'attributes',
-      weight,
-      score: weight,
+      successRatio: 1,
       passed: true,
       applicable: false,
       issues: [],
     };
   }
 
-  // Only consider attributes Google actually surfaces for this business (not undefined)
-  const applicableKeys = relevantKeys.filter((key) => profile[key] !== undefined);
+  const applicableKeys = relevantKeys;
 
-  // If Google doesn't surface any of these attributes at all → N/A
+  // If Google doesn't surface any of these attributes at all -> wait, no!
+  // If the category doesn't have ANY relevant keys, we already returned early above.
   if (applicableKeys.length === 0) {
     return {
       ruleId: 'attributes',
-      weight,
-      score: weight,
+      successRatio: 1,
       passed: true,
       applicable: false,
       issues: [],
     };
   }
 
-  const pointsPerAttr = weight / applicableKeys.length;
+  const ratioPerAttr = 1 / applicableKeys.length;
 
   for (const key of applicableKeys) {
     if (profile[key] === true) {
-      score += pointsPerAttr;
+      successRatio += ratioPerAttr;
     } else {
       issues.push({
         message: `Relevant attribute '${String(key)}' is missing or false`,
@@ -63,13 +60,12 @@ export const attributesRule: AnalysisRule = (profile: PlaceProfile): RuleResult 
     }
   }
 
-  score = Math.min(Math.round(score), weight);
+  successRatio = Math.min(successRatio, 1);
 
   return {
     ruleId: 'attributes',
-    weight,
-    score,
-    passed: score === weight,
+    successRatio,
+    passed: successRatio === 1,
     applicable: true,
     issues,
   };

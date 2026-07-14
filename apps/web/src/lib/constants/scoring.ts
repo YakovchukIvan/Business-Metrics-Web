@@ -56,11 +56,67 @@ export const SCORE_BANDS = [
 ];
 
 export const WEIGHTED_RULES = [
-  { id: 'rating', rule: 'Rating', weight: 30, priority: 'High' },
-  { id: 'completeness', rule: 'Completeness', weight: 20, priority: 'High' },
-  { id: 'business-category', rule: 'Business Category', weight: 15, priority: 'Medium' },
-  { id: 'opening-hours', rule: 'Opening Hours', weight: 15, priority: 'Medium' },
-  { id: 'business-status', rule: 'Business Status', weight: 10, priority: 'Medium' },
-  { id: 'photos', rule: 'Photos', weight: 7, priority: 'Low' },
-  { id: 'attributes', rule: 'Attributes', weight: 3, priority: 'Low' },
+  { 
+    id: 'rating', 
+    rule: 'Rating & Reviews', 
+    weight: 30, 
+    priority: 'High',
+    description: 'Evaluates if your business has a high enough average rating (4.0+) and a sufficient number of reviews to build trust and rank well.'
+  },
+  { 
+    id: 'completeness', 
+    rule: 'Profile Completeness', 
+    weight: 20, 
+    priority: 'High',
+    description: 'Checks if core profile fields (phone, website, description, etc.) are filled out. A complete profile is favored by Google algorithms.'
+  },
+  { 
+    id: 'business-category', 
+    rule: 'Business Categories', 
+    weight: 20, 
+    priority: 'Medium',
+    description: 'Verifies that you have selected an accurate primary category and at least one secondary category to maximize your search visibility.'
+  },
+  { 
+    id: 'opening-hours', 
+    rule: 'Opening Hours', 
+    weight: 15, 
+    priority: 'Medium',
+    description: 'Ensures your regular opening hours are specified. Profiles without hours are often hidden from "open now" searches.'
+  },
+  { 
+    id: 'business-status', 
+    rule: 'Business Status', 
+    weight: 10, 
+    priority: 'Medium',
+    description: 'Confirms your business is marked as permanently operational.'
+  },
+  { 
+    id: 'service-options', 
+    rule: 'Service Options', 
+    weight: 8, 
+    priority: 'Medium',
+    description: 'Checks for essential service attributes like Delivery, Dine-in, or Takeout (if applicable to your business type).'
+  },
+  { 
+    id: 'photos', 
+    rule: 'Photos', 
+    weight: 7, 
+    priority: 'Low',
+    description: 'Verifies that your profile has a healthy amount of photos (at least 3) to increase user engagement and CTR.'
+  },
+  { 
+    id: 'name-spam', 
+    rule: 'Name Optimization', 
+    weight: 5, 
+    priority: 'Low',
+    description: 'Checks if your business name is clear of spammy keywords, which can trigger Google penalties or suspensions.'
+  },
+  { 
+    id: 'attributes', 
+    rule: 'Attributes', 
+    weight: 3, 
+    priority: 'Low',
+    description: 'Ensures you have filled out relevant attributes (e.g. wheelchair accessibility) to capture long-tail and voice searches.'
+  },
 ];

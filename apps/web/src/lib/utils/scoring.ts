@@ -14,3 +14,9 @@ export function formatRuleName(ruleId: string): string {
     .replace(/([a-z])([A-Z])/g, '$1 $2')
     .replace(/\b\w/g, (c) => c.toUpperCase());
 }
+
+export function formatRuleDescription(ruleId: string): string {
+  const matchedRule = WEIGHTED_RULES.find((r) => r.id === ruleId);
+  if (matchedRule?.description) return matchedRule.description;
+  return 'No description available for this rule.';
+}

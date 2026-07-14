@@ -14,7 +14,7 @@ export function RecommendationCard({ rec }: Props) {
             <div className="flex items-center justify-between gap-2 mb-1.5">
               <span className="text-sm font-semibold text-gray-900">Recommended Action</span>
               <span className="text-[12px] font-bold px-2 py-1 rounded-full shrink-0 tabular-nums bg-status-pass/15 text-status-pass">
-                +{rec.max - rec.earned}pts
+                Impact: +{rec.max - rec.earned}
               </span>
             </div>
             <p className="text-sm text-gray-700 font-medium leading-relaxed">{rec.action}</p>

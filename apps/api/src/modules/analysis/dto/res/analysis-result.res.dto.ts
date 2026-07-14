@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import type { AnalysisResult } from '../../interfaces/analysis-result.interface';
-import type { RuleResult, RuleIssue } from '../../interfaces/rule.interface';
+import type { AnalysisResult, RuleBreakdown } from '../../interfaces/analysis-result.interface';
+import type { RuleIssue } from '../../interfaces/rule.interface';
 import type { PlaceProfile } from '../../../google-places/interfaces/place-profile.interface';
 
 export class RuleIssueDto implements RuleIssue {
@@ -18,11 +18,12 @@ export class RuleIssueDto implements RuleIssue {
 
   @ApiProperty({ description: 'ID of the rule that generated this issue', example: 'rating' })
   ruleId!: string;
+
   @ApiProperty({ description: 'Potential score gain if fixed', example: 15 })
   potentialGain!: number;
 }
 
-export class RuleResultDto implements Omit<RuleResult, 'issues'> {
+export class RuleBreakdownDto implements RuleBreakdown {
   @ApiProperty({ description: 'ID of the rule', example: 'completeness' })
   ruleId!: string;
 
@@ -52,8 +53,8 @@ export class AnalysisResultResDto implements AnalysisResult {
   @ApiProperty({ description: 'Total optimization score (0-100)', example: 85 })
   score!: number;
 
-  @ApiProperty({ type: [RuleResultDto], description: 'Detailed breakdown of score by rule' })
-  breakdown!: RuleResultDto[];
+  @ApiProperty({ type: [RuleBreakdownDto], description: 'Detailed scoring breakdown per rule' })
+  breakdown!: RuleBreakdownDto[];
 
   @ApiProperty({ type: [RuleIssueDto], description: 'List of all issues found' })
   issues!: RuleIssueDto[];

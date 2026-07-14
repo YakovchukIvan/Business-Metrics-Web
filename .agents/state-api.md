@@ -59,11 +59,15 @@ Reference: `profilelens-api-tasks.md` for full task descriptions.
 - [x] `rules/business-status.rule.ts` (weight 10)
 - [x] `rules/photos.rule.ts` (weight 7)
 - [x] `rules/attributes.rule.ts` (weight 3)
+- [x] `rules/name-spam.rule.ts` (weight 5)
+- [x] `rules/service-options.rule.ts` (weight 8)
+- [x] `rules/categories-count.rule.ts` (weight 5)
 - [x] `rules/index.ts` (ANALYSIS_RULES aggregator)
 - [x] `analysis.service.ts` (orchestration)
 - [x] `analysis.module.ts` (registration)
 - [x] Passed strict `eslint` and `typecheck` validations — done
       _Completed on 2026-07-12: Implemented 7 pure function rules with dynamic weights based on SEO research, plus the orchestrator AnalysisService._
+      _Refactored on 2026-07-14: Implemented Rule Engine 2.0 (Percentage System). Rules now return `successRatio`, and AnalysisService dynamically distributes percentages so they perfectly sum to 100% using Largest Remainder Method._
 
 ## TASK-6 — API layer: controllers + DTOs
 

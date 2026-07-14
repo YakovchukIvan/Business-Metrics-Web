@@ -31,6 +31,7 @@
 - [x] Analysis feature components (`search-form.tsx`, `results-panel.tsx`, `score-card.tsx`, etc.)
 - [x] Main page assembly (`src/app/page.tsx`)
 - [x] Static documentation page (`src/app/docs/page.tsx`)
+      _Refactored on 2026-07-14: Updated UI to display percentages (%) instead of raw points (pts) for rules breakdown and recommended impact, aligning with Rule Engine 2.0._
 
 ## TASK-4 — API Integration
 

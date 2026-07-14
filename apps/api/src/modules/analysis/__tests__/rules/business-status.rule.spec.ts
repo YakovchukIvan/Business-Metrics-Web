@@ -1,5 +1,5 @@
-import { businessStatusRule } from './business-status.rule';
-import { createBaseProfile } from '../../../common/test-fixtures/place-profile.fixture';
+import { businessStatusRule } from '../../rules/business-status.rule';
+import { createBaseProfile } from '../../../../common/test-fixtures/place-profile.fixture';
 
 describe('businessStatusRule', () => {
   it('should pass if status is OPERATIONAL', () => {

@@ -107,8 +107,11 @@ export default function DocsPage() {
                   <tbody className="divide-y divide-gray-200">
                     {WEIGHTED_RULES.map((row) => (
                       <tr key={row.id} className="hover:bg-gray-50 transition-colors">
-                        <td className="px-6 py-4 font-medium text-gray-900">{row.rule}</td>
-                        <td className="px-6 py-4 text-right tabular-nums text-gray-600">{row.weight}pt</td>
+                        <td className="px-6 py-4">
+                          <div className="font-medium text-gray-900">{row.rule}</div>
+                          <div className="text-xs text-gray-500 mt-1">{row.description}</div>
+                        </td>
+                        <td className="px-6 py-4 text-right tabular-nums text-gray-600">{row.weight}</td>
                         <td className="px-6 py-4">
                           <span
                             className={cn(
@@ -162,9 +165,8 @@ export default function DocsPage() {
                 <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
                   <h3 className="font-bold text-gray-900 mb-2">Algorithm Note</h3>
                   <p className="text-xs text-gray-500 leading-relaxed">
-                    The final score is a simple sum of earned points across all rules. Each rule is calculated based on
-                    presence, accuracy, and comparison against industry benchmarks (e.g., 4.5+ average rating for full
-                    points).
+                    The final score is calculated as a percentage of the total earned weight divided by the maximum possible weight for all applicable rules. Each rule is evaluated based on
+                    presence, accuracy, and comparison against industry benchmarks.
                   </p>
                 </div>
               </div>

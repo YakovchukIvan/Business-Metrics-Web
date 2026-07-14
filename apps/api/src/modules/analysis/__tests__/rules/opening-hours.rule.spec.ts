@@ -1,5 +1,5 @@
-import { openingHoursRule } from './opening-hours.rule';
-import { createBaseProfile } from '../../../common/test-fixtures/place-profile.fixture';
+import { openingHoursRule } from '../../rules/opening-hours.rule';
+import { createBaseProfile } from '../../../../common/test-fixtures/place-profile.fixture';
 
 describe('openingHoursRule', () => {
   it('should pass if opening hours are present', () => {

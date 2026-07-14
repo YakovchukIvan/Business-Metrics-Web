@@ -1,7 +1,7 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
-import { InMemoryCacheService } from './in-memory-cache.service';
+import { InMemoryCacheService } from '../../adapters/in-memory-cache.service';
 
 describe('InMemoryCacheService', () => {
   let service: InMemoryCacheService;

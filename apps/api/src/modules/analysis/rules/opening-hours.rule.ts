@@ -1,14 +1,12 @@
 import type { AnalysisRule, RuleResult, RuleIssue } from '../interfaces/rule.interface';
 import type { PlaceProfile } from '../../google-places/interfaces/place-profile.interface';
-import { RULE_WEIGHTS } from '../constants/analysis.constants';
 
 export const openingHoursRule: AnalysisRule = (profile: PlaceProfile): RuleResult => {
-  const weight = RULE_WEIGHTS['opening-hours'];
-  let score = 0;
+  let successRatio = 0;
   const issues: RuleIssue[] = [];
 
   if (profile.regularOpeningHours?.periods && profile.regularOpeningHours.periods.length > 0) {
-    score = weight;
+    successRatio = 1;
   } else {
     issues.push({
       message: 'Opening hours are missing',
@@ -19,9 +17,8 @@ export const openingHoursRule: AnalysisRule = (profile: PlaceProfile): RuleResul
 
   return {
     ruleId: 'opening-hours',
-    weight,
-    score,
-    passed: score === weight,
+    successRatio,
+    passed: successRatio === 1,
     applicable: true,
     issues,
   };

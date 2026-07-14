@@ -10,7 +10,7 @@ import { addRecentSearch } from '@/lib/recent-searches';
 import type { AnalysisResult } from '@/lib/types/analysis';
 import type { Rule, Problem, Recommendation } from '@/types/models';
 
-import { formatRuleName } from '@/lib/utils/scoring';
+import { formatRuleName, formatRuleDescription } from '@/lib/utils/scoring';
 
 // ---------- Mapping helpers ----------
 
@@ -22,6 +22,7 @@ function mapRules(breakdown: AnalysisResult['breakdown']): Rule[] {
       return {
         id: rule.ruleId,
         name: formatRuleName(rule.ruleId),
+        description: formatRuleDescription(rule.ruleId),
         earned: rule.score,
         max: rule.weight,
         status: 'na' as const,
@@ -33,6 +34,7 @@ function mapRules(breakdown: AnalysisResult['breakdown']): Rule[] {
     return {
       id: rule.ruleId,
       name: formatRuleName(rule.ruleId),
+      description: formatRuleDescription(rule.ruleId),
       earned: rule.score,
       max: rule.weight,
       status,

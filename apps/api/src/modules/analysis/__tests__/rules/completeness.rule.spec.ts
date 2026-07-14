@@ -1,5 +1,5 @@
-import { completenessRule } from './completeness.rule';
-import { createBaseProfile, createEmptyProfile } from '../../../common/test-fixtures/place-profile.fixture';
+import { completenessRule } from '../../rules/completeness.rule';
+import { createBaseProfile, createEmptyProfile } from '../../../../common/test-fixtures/place-profile.fixture';
 
 describe('completenessRule', () => {
   it('should pass if phone, website, and address are present', () => {

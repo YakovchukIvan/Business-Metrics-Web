@@ -1,5 +1,5 @@
-import { photosRule } from './photos.rule';
-import { createBaseProfile } from '../../../common/test-fixtures/place-profile.fixture';
+import { photosRule } from '../../rules/photos.rule';
+import { createBaseProfile } from '../../../../common/test-fixtures/place-profile.fixture';
 
 describe('photosRule', () => {
   it('should pass if photoCount is >= 3', () => {

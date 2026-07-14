@@ -1,8 +1,8 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import { AnalysisService } from './analysis.service';
-import { GOOGLE_PLACES_PORT } from '../../common/constants/google-places.constants';
-import { createBaseProfile } from '../../common/test-fixtures/place-profile.fixture';
+import { AnalysisService } from '../analysis.service';
+import { GOOGLE_PLACES_PORT } from '../../../common/constants/google-places.constants';
+import { createBaseProfile } from '../../../common/test-fixtures/place-profile.fixture';
 
 describe('AnalysisService', () => {
   let service: AnalysisService;

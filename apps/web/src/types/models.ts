@@ -27,6 +27,7 @@ export interface PlaceProfile {
 export interface Rule {
   id: string;
   name: string;
+  description: string;
   earned: number;
   max: number;
   status: 'pass' | 'warn' | 'fail' | 'na';

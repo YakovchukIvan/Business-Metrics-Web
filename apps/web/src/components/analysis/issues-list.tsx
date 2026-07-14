@@ -28,7 +28,7 @@ export function IssueCard({ problem }: Props) {
                     : 'bg-severity-warning-bg text-severity-warning-text',
                 )}
               >
-                {problem.earned}/{problem.max}pts
+                {problem.earned} / {problem.max}
               </span>
             </div>
             <p className="text-sm text-gray-600 leading-relaxed">{problem.explanation}</p>
