@@ -31,8 +31,8 @@ Do not add fields outside this list without checking pricing first:
 
 ## Known Limitations (must be documented in README, not hidden)
 
-- **`photoCount`** is the number of photo references returned in one API response (capped by pagination), NOT the real number of photos on the profile. Treat as a boolean threshold (sufficient/insufficient), never as an exact count.
-- **Attributes** (`delivery`, `dineIn`, etc.) are only relevant for certain business categories — check `CATEGORY_TO_RELEVANT_ATTRIBUTES` in `analysis.constants.ts` before penalizing a profile for missing an attribute that doesn't apply to its type.
+- **`photoCount`** is the number of photo references returned in one API response (capped by pagination), NOT the real number of photos on the profile. Treat as a boolean threshold (≥3 photos = 100% rule success), never as an exact count.
+- **Service Options & Attributes** (`delivery`, `dineIn`, etc.) are only relevant for certain business categories (like restaurants). Check `CATEGORY_TO_RELEVANT_ATTRIBUTES` in `analysis.constants.ts`. If they do not apply, the rule MUST return `{ applicable: false }` — the Rule Engine 2.0 (Percentage System) will automatically redistribute its weight.
 
 ## Error Handling Expectations
 

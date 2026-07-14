@@ -85,18 +85,20 @@
 
 **Goal:** The heart of the product — profile evaluation and scoring.
 
-- [x] `interfaces/rule.interface.ts` — `AnalysisRule`, `RuleResult`
+- [x] `interfaces/rule.interface.ts` — `AnalysisRule`, `RuleResult` (returns `successRatio`)
 - [x] `interfaces/analysis-result.interface.ts` — result format including business name and potential points gain
-- [x] `analysis.constants.ts` — current weights (Rating: 30, Completeness: 20, Category: 15, Hours: 15, Status: 10, Photos: 7, Attributes: 3) and `CATEGORY_TO_RELEVANT_ATTRIBUTES` map
+- [x] `analysis.constants.ts` — current weights (Rating: 30, Completeness: 20, Category: 20, Hours: 15, Status: 10, Service Options: 8, Photos: 7, Name Spam: 5, Attributes: 3) and `CATEGORY_TO_RELEVANT_ATTRIBUTES` map
 - [x] `rules/completeness.rule.ts` (weight 20)
 - [x] `rules/rating.rule.ts` (weight 30)
 - [x] `rules/opening-hours.rule.ts` (weight 15)
 - [x] `rules/photos.rule.ts` (weight 7) — boolean threshold (≥3 photos)
-- [x] `rules/business-category.rule.ts` (weight 15)
-- [x] `rules/attributes.rule.ts` (weight 3) — checks only attributes relevant to the profile's category (e.g., HoReCa vs Universal)
+- [x] `rules/business-category.rule.ts` (weight 20)
+- [x] `rules/attributes.rule.ts` (weight 3) — checks only attributes relevant to the profile's category
 - [x] `rules/business-status.rule.ts` (weight 10)
-- [x] `rules/index.ts` — `ANALYSIS_RULES: AnalysisRule[]` (7 implemented rules)
-- [x] `analysis.service.ts` — orchestration: score calculation and adding `potentialGain` (weight minus current score) to each found issue
+- [x] `rules/name-spam.rule.ts` (weight 5) — penalizes keyword stuffing
+- [x] `rules/service-options.rule.ts` (weight 8) — checks delivery/dine-in/takeout for food places
+- [x] `rules/index.ts` — `ANALYSIS_RULES: AnalysisRule[]` (9 implemented rules)
+- [x] `analysis.service.ts` — orchestration: dynamic percentage score allocation using Largest Remainder Method
 - [x] `analysis.module.ts` — module wiring
 
 ---
@@ -135,11 +137,12 @@
 **Type:** Tests
 
 - [x] Test fixtures (`place-profile.fixture.ts`) adapted for real API interface structures
-- [x] Unit tests for each of the 7 rules (`passed`/`failed` cases, error message assertions)
+- [x] Unit tests for each of the 9 rules (`passed`/`failed` cases, error message assertions)
 - [x] Unit test for `attributes.rule.ts` specifically separating HoReCa and non-HoReCa flows
 - [x] Unit test for score aggregation (`AnalysisService`)
 - [x] Unit test for `place-id-resolver` (mocking the global `fetch` API for short links)
-- [x] All 35 tests passing (`npm run test`)
+- [x] All `.spec.ts` files moved cleanly into `__tests__` folders per module
+- [x] All 36 tests passing (`npm run test`)
 - [x] Strict validations (`eslint` and `typecheck`) pass successfully
 
 ---
@@ -151,14 +154,14 @@
 **Goal:** A CTO drops into the repository and within 5 minutes understands the product, setup, and limitations.
 
 - [x] Product description + what is analyzed
-- [x] Architecture overview (modularity, independence, clean rules)
+- [x] Architecture overview (Highly Scalable Monorepo, Microservices-Ready)
 - [x] Honest "What is NOT analyzed" section (Posts, NAP, Q&A, reviews)
 - [x] Technical field nuances (`photoCount`, `attributes`)
 - [x] Startup instructions: Local and Docker
-- [x] Example `.env` configuration
+- [x] Example `.env` configuration (port 3001)
 - [x] `POST /analysis` request example + explanation of UI fields (`potentialGain`, `businessName`)
 - [x] FieldMask without `places.reviews` explained
-- [x] Evaluation algorithm table: Current 7 rules and weights
+- [x] Evaluation algorithm table: Current 9 rules and weights
 - [x] "Consciously Postponed" section
 
 ---
@@ -167,6 +170,6 @@
 
 - **TASK-3:** Dropped `cache-manager` dependency in favor of a lightweight custom `InMemoryCacheService`.
 - **TASK-4:** Decided to avoid "Generic Text Search" (e.g., just typing "McDonald's") to save API quota.
-- **TASK-5:** Implemented 7 rules (instead of 8). Adjusted rule weights to better reflect real-world SEO priorities.
+- **TASK-5:** Implemented Rule Engine 2.0 (Percentage System) with dynamic scaling of 9 rules. Dropped `categories-count` by merging it into `business-category` (now 20 pts).
 - **TASK-6:** Added `businessName`, `address`, and `potentialGain` (lost points) to DTOs and the service specifically to support UI mockup rendering requirements.
-- **TASK-8:** Fixtures were heavily typed to match the strict real API interface. All tests passing.
+- **TASK-8:** Fixtures were heavily typed to match the strict real API interface. All tests moved to `__tests__` directories for structural cleanliness. All 36 tests passing.

@@ -12,7 +12,6 @@
 - [x] Create empty project structure for strict architectural boundaries (app, components, lib, hooks, config)
 - [x] Setup `.env.example`
 - [x] Passed strict `eslint` and `typecheck` validations — done
-      _Completed on 2026-07-13: Basic setup, strict configs, docker integration, and empty file scaffolding._
 
 ## TASK-2 — Web API Layer & Types
 
@@ -23,6 +22,7 @@
 - [x] `src/lib/api/analysis.ts` (typed postAnalysis call)
 - [x] `src/hooks/use-analysis.ts` (TanStack Query integration)
 - [x] `src/lib/recent-searches.ts` (localStorage adapter)
+- [x] Passed strict `eslint` and `typecheck` validations — done
 
 ## TASK-3 — Web UI Components & Pages
 
@@ -31,7 +31,9 @@
 - [x] Analysis feature components (`search-form.tsx`, `results-panel.tsx`, `score-card.tsx`, etc.)
 - [x] Main page assembly (`src/app/page.tsx`)
 - [x] Static documentation page (`src/app/docs/page.tsx`)
-      _Refactored on 2026-07-14: Updated UI to display percentages (%) instead of raw points (pts) for rules breakdown and recommended impact, aligning with Rule Engine 2.0._
+- [x] Dynamic rule tooltips (`detailed-analysis.tsx` and `help-tooltip.tsx`)
+- [x] `ResultsPanel` — Score card, rule breakdown, issues, recommendations
+- [x] Passed strict `eslint` and `typecheck` validations — done
 
 ## TASK-4 — API Integration
 
@@ -40,28 +42,30 @@
 - [x] `src/lib/api/client.ts` & `errors.ts` (Fetch wrapper)
 - [x] `src/lib/api/analysis.ts` (API functions)
 - [x] `src/hooks/use-analysis.ts` (TanStack React Query mutation)
+- [x] Passed strict `eslint` and `typecheck` validations — done
 
 ## TASK-5 — State & Storage
 
 - [x] Client-side recent searches state (`localStorage`)
+- [x] Passed strict `eslint` and `typecheck` validations — done
 
 ## TASK-6 — Documentation Page
 
 - [x] `app/docs/page.tsx` — documentation page
 - [x] Section: "How it works"
-- [x] Section: "Scoring algorithm"
+- [x] Section: "Scoring algorithm" (dynamically mapped with rule descriptions)
 - [x] Section: "What is NOT analyzed"
 - [x] Section: "Technical notes"
 - [x] Navigation link to `/docs` in the header
+- [x] Passed strict `eslint` and `typecheck` validations — done
 
 ## TASK-7 — README
 
 - [x] Product description + link to live api (`/api/docs`)
-- [x] Tech stack table
+- [x] Tech stack table (Updated with `tw-animate-css`, `Sonner`, `Lucide React`)
 - [x] Local setup instructions
 - [x] Example `.env.local`
-- [x] Architecture overview
+- [x] Architecture overview (Emphasizing pure presentation layer)
 - [x] Explicit note on `localStorage`
 - [x] "Consciously Postponed" section
 - [x] Passed strict `eslint` and `typecheck` validations — done
-      _Completed on 2026-07-14: Updated README with project details and guidelines._

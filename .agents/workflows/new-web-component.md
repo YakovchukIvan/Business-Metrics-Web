@@ -46,6 +46,7 @@ Place the component in the correct directory (paths relative to `apps/web/`):
 4. **Build the UI:** Use primitives from `src/components/ui/` (Tailwind classes for layout).
 5. **Add Types:** Interface/type definitions for props at the top of the file.
 6. **Export:** Export as a `default` or `named` export (standardize across the team).
+7. **Update State:** Once the component is done and tested, tick the corresponding box in `.agents/state-web.md`.
 
 ## Example: Client Component wrapping a Server Component (Composition)
 
@@ -64,6 +65,7 @@ export default function Page() {
 
 // Client Component (client-wrapper.tsx)
 ('use client');
+
 import { useState } from 'react';
 
 export default function ClientWrapper({ children }: { children: React.ReactNode }) {

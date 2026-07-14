@@ -165,8 +165,9 @@ export default function DocsPage() {
                 <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
                   <h3 className="font-bold text-gray-900 mb-2">Algorithm Note</h3>
                   <p className="text-xs text-gray-500 leading-relaxed">
-                    The final score is calculated as a percentage of the total earned weight divided by the maximum possible weight for all applicable rules. Each rule is evaluated based on
-                    presence, accuracy, and comparison against industry benchmarks.
+                    The final score is calculated as a percentage of the total earned weight divided by the maximum
+                    possible weight for all applicable rules. Each rule is evaluated based on presence, accuracy, and
+                    comparison against industry benchmarks.
                   </p>
                 </div>
               </div>

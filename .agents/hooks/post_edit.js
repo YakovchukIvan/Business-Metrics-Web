@@ -21,14 +21,17 @@ if (filePath && typeof filePath === 'string' && filePath.match(/\.(ts|js|json)$/
 
     // Run eslint for JS/TS files
     if (filePath.match(/\.(ts|js)$/)) {
-      execSync(`npx eslint --fix "${filePath}"`, { stdio: 'ignore' });
+      let cwd = process.cwd();
+      const match = filePath.match(/.*?[\\/]apps[\\/][^\\/]+/);
+      if (match) {
+        cwd = match[0];
+      }
+      execSync(`npx eslint --fix "${filePath}"`, { stdio: 'ignore', cwd });
     }
 
-    const logPath = path.join(__dirname, 'test.log');
-    fs.appendFileSync(logPath, `Auto-formatted: ${filePath}\n`);
+    console.log(`Auto-formatted: ${filePath}`);
   } catch (e) {
-    const logPath = path.join(__dirname, 'test.log');
-    fs.appendFileSync(logPath, `Linting failed for ${filePath}: ${e.message}\n`);
+    console.error(`Linting failed for ${filePath}: ${e.message}`);
   }
 }
 

@@ -1,12 +1,12 @@
 # Web Architecture (Next.js)
 
-> Paths below are relative to `apps/web/`, since `.agents/` lives at the monorepo root. See `.agents/rules/global.md` for workflow, commit, and changelog rules that also apply here — not repeated below.
+> Paths below are relative to `apps/web/`, since `.agents/` lives at the monorepo root. See `.agents/rules/global.md` for workflow and commit rules that also apply here — not repeated below.
 
 ## 1. Core Stack
 
 - **Framework:** Next.js 16 (App Router) + TypeScript 7 (strict mode, `noUncheckedIndexedAccess` enabled).
 - **Styling:** Tailwind CSS v4 — config lives entirely in CSS variables inside `globals.css`; no `tailwind.config.ts` file.
-- **Components:** shadcn/ui with Base UI as the default primitive library. Components are copied into `src/components/ui/` — we own the source.
+- **Components:** shadcn/ui with Radix UI as the default primitive library. Components are copied into `src/components/ui/` — we own the source. Includes Lucide React for icons, tw-animate-css for micro-animations, and Sonner for toast notifications.
 - **Charts:** Recharts 3.x — use `RadialBarChart` for the circular score visualization.
 - **Data Fetching:** TanStack Query v5 — `useMutation` for the analysis call; never use raw `fetch` inside components.
 - **Env:** `src/config/env.ts` typed getter — never access `process.env.NEXT_PUBLIC_*` directly outside this file.
@@ -49,6 +49,7 @@
 - `src/components/layout/` — App shell: header, footer, recent-dropdown.
 - `src/components/analysis/` — Feature components: search-form, results-panel, score-card, breakdown-card, issues-list, recommendations-list.
 - `src/lib/api/` — The single network layer: `client.ts` (fetch wrapper + envelope parsing), `analysis.ts` (typed API call), `errors.ts` (status → message map).
+- `src/lib/constants/scoring.ts` — Single source of truth mapping backend rule IDs to UI presentation (names, icons, descriptions, priority).
 - `src/lib/types/` — TypeScript interfaces that mirror api DTOs (`AnalysisResult`, `RuleBreakdown`, `RuleIssue`). Manual for MVP; extracted to `packages/shared-types` when types diverge.
 - `src/lib/recent-searches.ts` — `localStorage` adapter. Interface (`getRecentSearches`, `addRecentSearch`) must stay stable — it is the only file that changes when a DB-backed history is introduced later.
 - `src/hooks/` — Thin React wrappers over lib functions (`use-analysis.ts`). No business logic — just state management with TanStack Query.
@@ -62,7 +63,7 @@ Component → Hook (useMutation) → lib/api/analysis.ts → lib/api/client.ts �
 
 - Components never skip a layer. A component must not call `lib/api/analysis.ts` directly — it always goes through the hook.
 - On success: typed `AnalysisResult` flows up to the component for rendering; `lib/recent-searches.ts` is called to persist to `localStorage`.
-- On error: `ApiError` (typed, from `lib/api/errors.ts`) flows up to the component for inline display — never a toast, never a separate page.
+- On error: `ApiError` (typed, from `lib/api/errors.ts`) flows up to the component for inline display or via a Sonner toast — never a separate page.
 
 ## 5. API Response Contract
 

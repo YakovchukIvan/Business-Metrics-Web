@@ -114,10 +114,14 @@ export const ANALYSIS_RULES: AnalysisRule[] = [
   businessCategoryRule,
   attributesRule,
   businessStatusRule,
+  nameSpamRule,
+  serviceOptionsRule,
 ];
 ```
 
 No other file changes when adding a new rule (Open/Closed principle).
+
+**Rule Engine 2.0 (Percentage System):** Rules now return a `successRatio` (0.0 to 1.0) rather than hardcoded points. The `AnalysisService` uses the **Largest Remainder Method** to dynamically allocate exactly 100 points among all _applicable_ rules. If a rule doesn't apply (e.g., `serviceOptionsRule` for a plumber), its weight is redistributed seamlessly.
 
 **Attributes depend on the business category.** `attributesRule` is the only rule that first determines a relevant set of attributes for the profile via the `CATEGORY_TO_RELEVANT_ATTRIBUTES` map (`analysis.constants.ts`): `delivery`/`dineIn`/`takeout` make sense for HoReCa, but not for service businesses. For an unrecognized category — fallback to a universal subset (`wheelchairAccessibleEntrance` and similar). The rule remains a pure function (the map is just another constant, not an external call), but the systematic score lowering for non-HoReCa businesses disappears.
 
@@ -261,7 +265,9 @@ src/
             ├── photos.rule.ts
             ├── business-category.rule.ts
             ├── attributes.rule.ts
-            └── business-status.rule.ts
+            ├── business-status.rule.ts
+            ├── name-spam.rule.ts
+            └── service-options.rule.ts
 ```
 
 **Note regarding monorepo:** currently, this is a standalone Nest project (without Nx/Turborepo — excessive for a single api). When the web is connected, the current code will move to `apps/api`, and `apps/web` will sit alongside it via simple npm/pnpm workspaces. Heavy monorepo tools (Nx) will be connected only if there is a real need for shared packages between apps.
@@ -380,15 +386,19 @@ Basic service liveness check (for Docker healthcheck and future monitoring).
 
 Sum of weights = 100. Each rule is a separate pure function with a fixed weight.
 
-| Rule                | Weight | What it checks                                            | Why it's important                                               |
-| ------------------- | ------ | --------------------------------------------------------- | ---------------------------------------------------------------- |
-| `rating`            | 30     | Rating exists and number of reviews ≥ threshold (e.g. 10) | Most important controllable factor: rating + consistent reviews  |
-| `completeness`      | 20     | Phone, website, address are filled                        | Basic contacts are the main reason a client cannot get in touch  |
-| `business-category` | 15     | Business category/type is specified                       | Industry's #1 ranking factor; affects niche search visibility    |
-| `opening-hours`     | 15     | Opening hours are specified                               | Missing hours is a frequent reason for lost visitors             |
-| `business-status`   | 10     | Status is `OPERATIONAL`, not `CLOSED_*`                   | Top 5 ranking factor; closed profiles are severely demoted       |
-| `photos`            | 7      | Number of photos ≥ threshold (e.g. 3)                     | Basic proxy metric to ensure profile is not completely empty     |
-| `attributes`        | 3      | Attributes relevant to the business category are filled   | A minor secondary detail that boosts relevance in niche searches |
+| Rule                | Base Weight | What it checks                                            | Why it's important                                                |
+| ------------------- | ----------- | --------------------------------------------------------- | ----------------------------------------------------------------- |
+| `rating`            | 30          | Rating exists and number of reviews ≥ threshold (e.g. 10) | Most important controllable factor: rating + consistent reviews   |
+| `completeness`      | 20          | Phone, website, address are filled                        | Basic contacts are the main reason a client cannot get in touch   |
+| `business-category` | 20          | Business category/type is specified (primary + count)     | Industry's #1 ranking factor; affects niche search visibility     |
+| `opening-hours`     | 15          | Opening hours are specified                               | Missing hours is a frequent reason for lost visitors              |
+| `business-status`   | 10          | Status is `OPERATIONAL`, not `CLOSED_*`                   | Top 5 ranking factor; closed profiles are severely demoted        |
+| `service-options`   | 8           | Delivery, takeout, dine-in for relevant HoReCa businesses | Critical for food/restaurant discovery in Maps                    |
+| `photos`            | 7           | Number of photos ≥ threshold (e.g. 3)                     | Basic proxy metric to ensure profile is not completely empty      |
+| `name-spam`         | 5           | Absence of keyword stuffing in the business name          | Name spam violates Google guidelines and risks profile suspension |
+| `attributes`        | 3           | Attributes relevant to the business category are filled   | A minor secondary detail that boosts relevance in niche searches  |
+
+_Note: Base weights are dynamically scaled. If `service-options` does not apply to a business, its 8 points are proportionally distributed to the other rules._
 
 > **Technical metric limitations:** `photos` — threshold is calculated from the number of photo references returned by the API per request (limited by response quota, not the real number of photos in the profile) — suitable for "has/doesn't have enough", not for a graded scale. `attributes` — only attributes relevant to the business category are checked (`CATEGORY_TO_RELEVANT_ATTRIBUTES`), rather than a fixed HoReCa set for all types.
 

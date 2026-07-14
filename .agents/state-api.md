@@ -36,7 +36,6 @@ Reference: `profilelens-api-tasks.md` for full task descriptions.
 - [x] `CacheModule` exported and registered in `app.module.ts` — done
 - [x] Unit tests for set/get/delete and TTL expiration — done
 - [x] Passed strict `eslint` and `typecheck` validations — done
-      _Completed on 2026-07-12: Removed cache-manager dependencies and implemented pure custom adapter. Fixed strict linting/typing issues post-implementation._
 
 ## TASK-4 — GooglePlacesModule (port/adapter)
 
@@ -51,27 +50,25 @@ Reference: `profilelens-api-tasks.md` for full task descriptions.
 ## TASK-5 — AnalysisModule: rules engine
 
 - [x] `interfaces/rule.interface.ts` and `analysis-result.interface.ts`
-- [x] `analysis.constants.ts` (weights: rating 30, completeness 20, category 15, hours 15, status 10, photos 7, attributes 3)
+- [x] `analysis.constants.ts` (weights updated: rating 30, completeness 20, category 20, hours 15, status 10, service-options 8, photos 7, name-spam 5, attributes 3)
 - [x] `rules/rating.rule.ts` (weight 30)
 - [x] `rules/completeness.rule.ts` (weight 20)
-- [x] `rules/business-category.rule.ts` (weight 15)
+- [x] `rules/business-category.rule.ts` (weight 20)
 - [x] `rules/opening-hours.rule.ts` (weight 15)
 - [x] `rules/business-status.rule.ts` (weight 10)
-- [x] `rules/photos.rule.ts` (weight 7)
-- [x] `rules/attributes.rule.ts` (weight 3)
-- [x] `rules/name-spam.rule.ts` (weight 5)
 - [x] `rules/service-options.rule.ts` (weight 8)
-- [x] `rules/categories-count.rule.ts` (weight 5)
+- [x] `rules/photos.rule.ts` (weight 7)
+- [x] `rules/name-spam.rule.ts` (weight 5)
+- [x] `rules/attributes.rule.ts` (weight 3)
+- [x] `rules/categories-count.rule.ts` (Removed and merged into business-category)
 - [x] `rules/index.ts` (ANALYSIS_RULES aggregator)
-- [x] `analysis.service.ts` (orchestration)
+- [x] `analysis.service.ts` (orchestration via Largest Remainder Method)
 - [x] `analysis.module.ts` (registration)
 - [x] Passed strict `eslint` and `typecheck` validations — done
-      _Completed on 2026-07-12: Implemented 7 pure function rules with dynamic weights based on SEO research, plus the orchestrator AnalysisService._
-      _Refactored on 2026-07-14: Implemented Rule Engine 2.0 (Percentage System). Rules now return `successRatio`, and AnalysisService dynamically distributes percentages so they perfectly sum to 100% using Largest Remainder Method._
 
 ## TASK-6 — API layer: controllers + DTOs
 
-- [ ] Not started
+- [x] Passed strict `eslint` and `typecheck` validations — done
 
 ## TASK-7 — Swagger
 
@@ -82,29 +79,28 @@ Reference: `profilelens-api-tasks.md` for full task descriptions.
 - [x] Swagger UI on /api/docs
 - [x] Environment variables for Swagger config
 - [x] Passed strict `eslint` and `typecheck` validations — done
-      _Completed on 2026-07-13: Implemented Swagger documentation with custom envelope response decorators._
 
 ## TASK-8 — Unit-tests
 
 - [x] Test fixtures (`place-profile.fixture.ts`) — done
-- [x] Unit tests for all 7 rules — done
+- [x] Unit tests for all 9 rules — done
 - [x] Unit test for `attributes.rule.ts` with HoReCa and generic paths — done
 - [x] Unit test for score aggregation (`AnalysisService` testing) — done
 - [x] Unit test for `PlaceIdResolverService` (fetch mock for short links and redirects) — done
+- [x] Reorganized all `.spec.ts` files into module-specific `__tests__` directories for cleaner structure — done
 - [x] `npm run test` is completely green — done
 - [x] Passed strict `eslint` and `typecheck` validations — done
-      _Completed on 2026-07-13: Wrote comprehensive unit tests for business rules, orchestration service, and fetch-mocked resolver._
 
 ## TASK-9 — README
 
 - [x] Опис продукту + що аналізується — done
-- [x] Короткий опис архітектури — done
+- [x] Короткий опис архітектури (Scalable Monorepo, Microservices-Ready, Domain-Driven Design) — done
 - [x] Чесний розділ "Що НЕ аналізується" (Posts, NAP, Q&A, reviews) — done
-- [x] Технічні нюанси полів (`photoCount`, `attributes`) — done
+- [x] Технічні нюанси полів (`photoCount`, `attributes`, Context-Aware Rules) — done
 - [x] Інструкція запуску: локально і Docker — done
-- [x] Приклад `.env` — done
+- [x] Приклад `.env` (порт оновлено на 3001) — done
 - [x] Приклад запиту до `POST /analysis` + пояснення нових полів (`potentialGain`, `businessName`) — done
 - [x] FieldMask без `places.reviews` — done
-- [x] Таблиця алгоритму оцінки: поточні 7 правил та їх ваги — done
+- [x] Таблиця алгоритму оцінки: поточні 9 правил та їх ваги — done
 - [x] Розділ "Свідомо відкладено". Реалізуй і створи це в apps/api/README.md. — done
-      _Completed on 2026-07-13: Created comprehensive README.md in apps/api/README.md detailing architecture, rules, and setup._
+- [x] Passed strict `eslint` and `typecheck` validations — done

@@ -33,13 +33,14 @@ This directory serves as the "AI brain" of the project. It stores all instructio
   - Read `.agents/context/api-architecture.md` (Why decisions were made — consult if api rules are unclear)
   - Read `.agents/context/web-architecture.md` (Why decisions were made — consult if web rules are unclear)
   - Read `.agents/context/google-places-limitations.md` (API quirks and quotas)
+  - Read `.agents/context/google-places-api-tasks.md` (API specific tasks and features)
+  - Read `.agents/context/google-places-web-tasks.md` (Web UI/UX tasks and features)
 - **`skills/`** — Detailed instructions for specialized domain implementations.
   - Read `.agents/skills/google-places.md` (How to interact with Google API)
 - **`workflows/`** — Step-by-step guides for repeatable processes.
   - Follow `.agents/workflows/new-rule.md` (Creating a new api analysis rule)
   - Follow `.agents/workflows/new-api-module.md` (Creating a new api NestJS module)
   - Follow `.agents/workflows/new-web-component.md` (Creating a new web Next.js component)
-- **`changelog/`** — History logs. Contains `current_task.txt` (active subtask) and `history.md`.
 - **`state-api.md` & `state-web.md`** — The single sources of truth for tracking implementation progress.
 
 ## 5. Progress Tracking

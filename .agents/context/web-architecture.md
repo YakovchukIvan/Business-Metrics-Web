@@ -13,7 +13,9 @@
 | Framework         | Next.js (App Router)             | **16.2.x** (LTS: 15.x)   | Server and Client Components, file-system routing                                          |
 | Language          | TypeScript (strict mode)         | **7.0.x**                | TS 7 компілятор переписано на Go — значно швидша збірка; strict mode обов'язковий          |
 | Styling           | Tailwind CSS v4                  | **4.3.x**                | Utility-first, co-located with components; конфіг через CSS-змінні (без `tailwind.config`) |
-| Component Library | shadcn/ui (Base UI as default)   | CLI `@latest`            | Copied primitives — we own the code. Default primitive: Base UI; Radix UI supported        |
+| Component Library | shadcn/ui (Radix)                | CLI `@latest`            | Copied primitives — we own the code. Default primitive: Base UI / Radix UI                 |
+| Animations        | tw-animate-css                   | **1.4.x**                | Fluid micro-animations (e.g., staggered fade-ins) without heavy JS libraries.              |
+| Notifications     | Sonner                           | **2.0.x**                | Elegant toast notifications for error handling and UX feedback.                            |
 | Charts            | Recharts                         | **3.9.x**                | `RadialBarChart` for circular score visualization; requires React 16.8+, TS 5+             |
 | Data Fetching     | TanStack Query v5                | **5.101.x**              | `useMutation` for analysis, handles loading/error/success states, request deduping         |
 | Env Validation    | `config/env.ts` (custom, no Zod) | —                        | Single typed getter — no scattered `process.env.X!` across the codebase                    |
@@ -81,7 +83,18 @@ components/analysis/    ← feature components (score-card, breakdown, issues)
 
 **Rule:** `ui/` never imports from `analysis/` or `layout/`. `layout/` never imports from `analysis/`. Dependency flows in one direction only — feature components build on primitives, never the reverse. ESLint `import/no-restricted-paths` enforces this, same as on the api.
 
-### 2.5 `localStorage` for Recent search history — a deliberate MVP decision
+### 2.5 Dynamic Rules Mapping (`scoring.ts` & Tooltips)
+
+The frontend never calculates scores or weights. However, it needs to know how to present the rules beautifully. `src/lib/constants/scoring.ts` is the single source of truth for the UI. It maps each backend `ruleId` to:
+
+- A human-readable `name`
+- An `icon` (Lucide React)
+- A `description` (rendered in dynamic `HelpTooltip` components)
+- A `priority` (High, Medium, Low for color-coding recommendations)
+
+This allows the UI (like `detailed-analysis.tsx` and `app/docs/page.tsx`) to dynamically render rule descriptions and icons without hardcoding them into multiple components.
+
+### 2.6 `localStorage` for Recent search history — a deliberate MVP decision
 
 The "Recent" dropdown in the header shows previously analyzed businesses (name + cached indicator). This data is stored in `localStorage` exclusively on the client side.
 
@@ -91,7 +104,7 @@ The "Recent" dropdown in the header shows previously analyzed businesses (name +
 
 **Migration path:** When authentication and a database are introduced in a future iteration, `lib/recent-searches.ts` is the only file that changes — its interface (`getRecentSearches`, `addRecentSearch`) remains identical. The components that consume it require no modifications.
 
-### 2.6 `config/env.ts` — typed environment access
+### 2.7 `config/env.ts` — typed environment access
 
 No raw `process.env.NEXT_PUBLIC_API_URL!` scattered across the codebase. A single typed getter centralizes access and provides a clear startup error if the variable is missing:
 
@@ -106,7 +119,7 @@ export function getApiUrl(): string {
 
 This is the web equivalent of the api's Zod `configSchema` — lighter, but the same principle: fail loudly at the boundary, not silently mid-request.
 
-### 2.7 Shared types — manual mirror, consciously postponed extraction
+### 2.8 Shared types — manual mirror, consciously postponed extraction
 
 `lib/types/analysis.ts` contains TypeScript types that manually mirror the api DTOs:
 
@@ -149,6 +162,8 @@ apps/web/
 │   │   └── analysis/
 │   │       ├── search-form.tsx           # Input + button + inline loading/error states
 │   │       ├── results-panel.tsx         # Conditional wrapper — shown only when data is available
+│   │       ├── detailed-analysis.tsx     # Displays raw data with HelpTooltip components
+│   │       ├── help-tooltip.tsx          # Reusable hover tooltip for rule descriptions
 │   │       ├── score-card.tsx            # Circular chart (Recharts) + businessName + score guide collapsible
 │   │       ├── breakdown-card.tsx        # Rule-by-rule progress bars (score / weight)
 │   │       ├── issues-list.tsx           # Identified problems with weight badges
@@ -161,6 +176,8 @@ apps/web/
 │   │   │   └── errors.ts                 # ApiError type + status code → user message mapping
 │   │   ├── types/
 │   │   │   └── analysis.ts               # AnalysisResult, RuleBreakdown, RuleIssue — mirrors api DTOs
+│   │   ├── constants/
+│   │   │   └── scoring.ts                # Maps ruleIds to names, icons, descriptions, and priorities
 │   │   ├── recent-searches.ts            # localStorage adapter + RecentSearch type
 │   │   └── utils.ts                      # cn() and other shadcn/ui helpers
 │   │
