@@ -16,6 +16,11 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 # Вимикаємо телеметрію Next.js під час білду
 ENV NEXT_TELEMETRY_DISABLED=1
+
+# Next.js потребує NEXT_PUBLIC_ змінних під час білду
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:5000}
+
 RUN npm run build
 
 # ---------- Production image (Runner) ----------

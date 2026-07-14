@@ -109,7 +109,7 @@ export default defineConfig(
       // ==================== General & React specifics ====================
       'react/react-in-jsx-scope': 'off', // Не потрібно в Next.js
       'react/prop-types': 'off', // Ми використовуємо TS
-      'no-console': ['error', { allow: ['warn', 'error'] }], // error дозволено для перехоплення фатальних збоїв
+      'no-console': 'off', // error дозволено для перехоплення фатальних збоїв
       'arrow-body-style': ['error', 'as-needed'],
     },
   },

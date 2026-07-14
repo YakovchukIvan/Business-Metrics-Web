@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import { getAppConfig } from './config/app.config';
 import { setupSwagger } from './config/swagger.config';
+import { getCorsConfig } from './config/cors.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -11,6 +12,7 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const appConfig = getAppConfig(configService);
 
+  app.enableCors(getCorsConfig(configService));
   app.setGlobalPrefix(appConfig.globalPrefix);
 
   setupSwagger(app, appConfig);

@@ -1,18 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Label, PolarRadiusAxis, PolarAngleAxis, RadialBar, RadialBarChart } from 'recharts';
-import { ChartConfig, ChartContainer } from '@/components/ui/chart';
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+import { type ChartConfig, ChartContainer } from '@/components/ui/chart';
+import { HelpTooltip } from '@/components/ui/help-tooltip';
 
 function ScoreRing({ score }: { score: number }) {
   const [displayScore, setDisplayScore] = useState(0);
-  const radius = 60;
-  const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - (displayScore / 100) * circumference;
 
   useEffect(() => {
     let start = 0;
@@ -48,10 +44,18 @@ function ScoreRing({ score }: { score: number }) {
 
   return (
     <div className="flex flex-col items-center">
-      <ChartContainer config={chartConfig} className="mx-auto aspect-square w-[180px] h-[180px]">
-        <RadialBarChart data={chartData} innerRadius={70} outerRadius={85} startAngle={90} endAngle={-270} barSize={12}>
+      <ChartContainer config={chartConfig} className="mx-auto aspect-square w-45 h-45">
+        <RadialBarChart
+          data={chartData}
+          innerRadius={70}
+          outerRadius={85}
+          startAngle={90}
+          endAngle={-270}
+          barSize={12}
+          className="score-ring-chart"
+        >
           <PolarAngleAxis type="number" domain={[0, 100]} tick={false} />
-          <RadialBar dataKey="value" background={{ fill: '#e5e7eb' }} cornerRadius={10} />
+          <RadialBar dataKey="value" background cornerRadius={10} />
           <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
             <Label
               content={({ viewBox }) => {
@@ -64,7 +68,7 @@ function ScoreRing({ score }: { score: number }) {
                         className="text-5xl font-bold tracking-tighter"
                         style={{ fill: color }}
                       >
-                        {chartData[0].value}
+                        {chartData[0]!.value}
                       </tspan>
                       <tspan
                         x={viewBox.cx}
@@ -85,73 +89,74 @@ function ScoreRing({ score }: { score: number }) {
   );
 }
 
-export function ScoreCard({ score, businessName }: { score: number; businessName: string }) {
+type Props = { score: number; businessName: string };
+
+export function ScoreCard({ score, businessName }: Props) {
   return (
     <Card className="flex flex-col overflow-hidden h-full">
-      <CardHeader className="px-6 py-4 border-b border-gray-300/80 shrink-0">
-        <CardTitle className="text-lg font-medium text-gray-900 flex items-center gap-2">
+      <CardHeader className="px-6 py-4 border-b border-card-divider shrink-0">
+        <CardTitle className="text-lg font-medium text-foreground flex items-center gap-2">
           Profile optimization score
-          <HoverCard openDelay={200} closeDelay={200}>
-            <HoverCardTrigger asChild>
-              <button className="text-gray-400 hover:text-gray-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 rounded-full cursor-help">
-                <AlertCircle className="w-4 h-4" />
-                <span className="sr-only">Score guide</span>
-              </button>
-            </HoverCardTrigger>
-            <HoverCardContent side="top" align="center" className="w-96 p-5 shadow-xl border-gray-200">
+          <HelpTooltip
+            icon="alert"
+            contentClassName="w-96 p-5"
+            content={
               <div className="space-y-4">
                 {[
                   {
                     range: '0–24',
-                    color: 'bg-red-500',
+                    color: 'bg-status-fail',
                     label: 'Critical',
                     desc: 'Major optimization issues detected.',
                   },
                   {
                     range: '25–49',
-                    color: 'bg-red-500',
+                    color: 'bg-status-fail',
                     label: 'Poor',
                     desc: 'Basic optimization exists, but many important elements are missing.',
                   },
                   {
                     range: '50–64',
-                    color: 'bg-amber-500',
+                    color: 'bg-status-warn',
                     label: 'Fair',
                     desc: 'Profile is functional but requires several improvements.',
                   },
                   {
                     range: '65–79',
-                    color: 'bg-amber-500',
+                    color: 'bg-status-warn',
                     label: 'Good',
                     desc: 'Well optimized with noticeable room for improvement.',
                   },
                   {
                     range: '80–89',
-                    color: 'bg-green-500',
+                    color: 'bg-status-pass',
                     label: 'Very Good',
                     desc: 'Strong profile with only minor recommendations.',
                   },
                   {
                     range: '90–100',
-                    color: 'bg-green-500',
+                    color: 'bg-status-pass',
                     label: 'Excellent',
                     desc: 'Profile is highly optimized and follows best practices.',
                   },
-                ].map((band) => (
-                  <div key={band.label} className="flex items-start gap-3">
-                    <div className="w-16 text-right font-medium text-gray-900 shrink-0 text-sm pt-0.5 tabular-nums">
-                      {band.range}
+                ].map((band, idx, arr) => (
+                  <div key={band.label}>
+                    <div className="flex items-start gap-3 py-1">
+                      <div className="w-16 text-right font-medium text-gray-900 shrink-0 text-sm pt-0.5 tabular-nums">
+                        {band.range}
+                      </div>
+                      <div className={cn('w-2 h-2 rounded-full shrink-0 mt-2', band.color)} />
+                      <div className="flex-1">
+                        <div className="text-sm font-medium text-gray-900 leading-none mb-1">{band.label}</div>
+                        <div className="text-xs text-gray-500 leading-tight">{band.desc}</div>
+                      </div>
                     </div>
-                    <div className={cn('w-2 h-2 rounded-full shrink-0 mt-2', band.color)} />
-                    <div className="flex-1">
-                      <div className="text-sm font-medium text-gray-900 leading-none mb-1">{band.label}</div>
-                      <div className="text-xs text-gray-500 leading-tight">{band.desc}</div>
-                    </div>
+                    {idx !== arr.length - 1 && <hr className="border-card-divider" />}
                   </div>
                 ))}
               </div>
-            </HoverCardContent>
-          </HoverCard>
+            }
+          />
         </CardTitle>
       </CardHeader>
       <CardContent className="p-6 flex flex-col items-center justify-center flex-1">

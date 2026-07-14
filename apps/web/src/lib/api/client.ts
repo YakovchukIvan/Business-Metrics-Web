@@ -1,6 +1,6 @@
 import { env } from '@/config/env';
 import { ApiError } from './errors';
-import { ApiResponse, ApiErrorResponse } from '../types/analysis';
+import type { ApiResponse, ApiErrorResponse } from '../types/analysis';
 
 export async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const url = `${env.NEXT_PUBLIC_API_URL}${endpoint}`;
@@ -17,6 +17,7 @@ export async function fetchApi<T>(endpoint: string, options?: RequestInit): Prom
     let errorMessage = 'An unexpected error occurred';
     try {
       const errorData = (await response.json()) as ApiErrorResponse;
+      console.error('[API] Error response:', errorData);
       errorMessage = errorData.error?.message || errorMessage;
     } catch {
       // Ignore JSON parse error on error responses
@@ -25,5 +26,7 @@ export async function fetchApi<T>(endpoint: string, options?: RequestInit): Prom
   }
 
   const result = (await response.json()) as ApiResponse<T>;
+  console.log('[API] Raw response envelope:', result);
+  console.log('[API] Parsed data:', result.data);
   return result.data;
 }

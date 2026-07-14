@@ -4,6 +4,7 @@ import './globals.css';
 import { cn } from '@/lib/utils';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
+import { BackgroundLayout } from '@/components/layout/background-layout';
 import { Providers } from './providers';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
@@ -20,8 +21,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={cn('h-full antialiased font-sans', inter.variable)}>
-      <body className="min-h-screen flex flex-col bg-white font-sans text-gray-900 selection:bg-gray-200 selection:text-gray-900">
+      <body className="min-h-screen flex flex-col font-sans text-foreground selection:bg-muted selection:text-foreground">
         <Providers>
+          <BackgroundLayout />
           <Header />
           <main className="flex-1 pt-16 flex flex-col">{children}</main>
           <Footer />

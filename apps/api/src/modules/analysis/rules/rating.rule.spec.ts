@@ -12,20 +12,20 @@ describe('ratingRule', () => {
     const profile = createBaseProfile({ rating: undefined, userRatingCount: undefined });
     const result = ratingRule(profile);
     expect(result.passed).toBe(false);
-    expect(result.issues[0].message).toContain('Rating is too low or there are not enough reviews');
+    expect(result.issues[0]!.message).toContain('Rating is too low or there are not enough reviews');
   });
 
   it('should fail if rating is below 4.0', () => {
     const profile = createBaseProfile({ rating: 3.8, userRatingCount: 50 });
     const result = ratingRule(profile);
     expect(result.passed).toBe(false);
-    expect(result.issues[0].message).toContain('Rating is too low or there are not enough reviews');
+    expect(result.issues[0]!.message).toContain('Rating is too low or there are not enough reviews');
   });
 
   it('should fail if rating is good but reviews count is below 10', () => {
     const profile = createBaseProfile({ rating: 4.8, userRatingCount: 5 });
     const result = ratingRule(profile);
     expect(result.passed).toBe(false);
-    expect(result.issues[0].message).toContain('Good rating but not enough reviews');
+    expect(result.issues[0]!.message).toContain('Good rating but not enough reviews');
   });
 });

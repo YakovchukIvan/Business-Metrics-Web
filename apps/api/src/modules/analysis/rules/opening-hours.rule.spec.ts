@@ -16,6 +16,6 @@ describe('openingHoursRule', () => {
     const result = openingHoursRule(profile);
     expect(result.passed).toBe(false);
     expect(result.issues).toHaveLength(1);
-    expect(result.issues[0].message).toContain('Opening hours are missing');
+    expect(result.issues[0]!.message).toContain('Opening hours are missing');
   });
 });

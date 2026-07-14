@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { ChevronDown, Clock } from 'lucide-react';
-import { getRecentSearches, RecentSearch } from '@/lib/recent-searches';
+import { getRecentSearches } from '@/lib/recent-searches';
+import type { RecentSearch } from '@/types/models';
 import { useRouter } from 'next/navigation';
 import {
   DropdownMenu,
@@ -14,11 +15,14 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
+import { HelpTooltip } from '@/components/ui/help-tooltip';
+
 export function RecentDropdown() {
   const [recent, setRecent] = useState<RecentSearch[]>([]);
   const router = useRouter();
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setRecent(getRecentSearches());
   }, []);
 
@@ -40,6 +44,12 @@ export function RecentDropdown() {
           <DropdownMenuGroup>
             <DropdownMenuLabel className="text-xs text-gray-500 font-medium flex items-center gap-1.5 py-2">
               <Clock className="w-3.5 h-3.5" /> Cached 24h
+              <HelpTooltip
+                icon="help"
+                className="w-3.5 h-3.5 opacity-60"
+                contentClassName="w-64"
+                content="Repeated views do not make additional requests to the Google Places API, so your quota is not consumed."
+              />
             </DropdownMenuLabel>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
@@ -48,7 +58,7 @@ export function RecentDropdown() {
               <DropdownMenuItem
                 key={idx}
                 onClick={() => handleSelect(item.input)}
-                className="cursor-pointer py-2 text-sm font-medium"
+                className="cursor-pointer py-2.5 text-sm font-medium hover:bg-gray-900 hover:text-white focus:bg-gray-900 focus:text-white transition-colors"
               >
                 {item.businessName}
               </DropdownMenuItem>

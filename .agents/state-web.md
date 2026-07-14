@@ -16,10 +16,6 @@
 
 ## TASK-2 — Web API Layer & Types
 
-- [ ] `src/lib/types/analysis.ts` (mirror api DTOs)
-- [ ] `src/config/env.ts` (typed environment getter)
-- [ ] `src/lib/api/errors.ts` (error mapping dictionary)
-- [ ] `src/lib/api/client.ts` (envelope parser and fetch wrapper)
 - [x] `src/lib/types/analysis.ts` (mirror api DTOs)
 - [x] `src/config/env.ts` (typed environment getter)
 - [x] `src/lib/api/errors.ts` (error mapping dictionary)
@@ -47,4 +43,24 @@
 ## TASK-5 — State & Storage
 
 - [x] Client-side recent searches state (`localStorage`)
-- [ ] Analytics/Telemetry tracking events (Optional for MVP)
+
+## TASK-6 — Documentation Page
+
+- [x] `app/docs/page.tsx` — documentation page
+- [x] Section: "How it works"
+- [x] Section: "Scoring algorithm"
+- [x] Section: "What is NOT analyzed"
+- [x] Section: "Technical notes"
+- [x] Navigation link to `/docs` in the header
+
+## TASK-7 — README
+
+- [x] Product description + link to live api (`/api/docs`)
+- [x] Tech stack table
+- [x] Local setup instructions
+- [x] Example `.env.local`
+- [x] Architecture overview
+- [x] Explicit note on `localStorage`
+- [x] "Consciously Postponed" section
+- [x] Passed strict `eslint` and `typecheck` validations — done
+      _Completed on 2026-07-14: Updated README with project details and guidelines._

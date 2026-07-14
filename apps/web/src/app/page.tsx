@@ -1,94 +1,102 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
 import { Search, AlertTriangle } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { SearchForm } from '@/components/analysis/search-form';
 import { ResultsPanel } from '@/components/analysis/results-panel';
-import { Rule } from '@/components/analysis/breakdown-card';
-import { Problem, Recommendation } from '@/components/analysis/issues-list';
+import { useAnalysis } from '@/hooks/use-analysis';
 import { addRecentSearch } from '@/lib/recent-searches';
+import type { AnalysisResult } from '@/lib/types/analysis';
+import type { Rule, Problem, Recommendation } from '@/types/models';
 
-type AppState = 'idle' | 'loading' | 'success' | 'error';
-type ErrorType = 400 | 404 | 429 | 502 | null;
+// ---------- Mapping helpers ----------
 
-// Mock Data
-const MOCK_RULES: Rule[] = [
-  { id: '1', name: 'Completeness', earned: 20, max: 20, status: 'pass' },
-  { id: '2', name: 'Rating', earned: 15, max: 20, status: 'warn' },
-  { id: '3', name: 'Opening hours', earned: 5, max: 15, status: 'fail' },
-  { id: '4', name: 'Photos', earned: 10, max: 15, status: 'warn' },
-  { id: '5', name: 'Business category', earned: 10, max: 10, status: 'pass' },
-  { id: '6', name: 'Description', earned: 10, max: 10, status: 'pass' },
-  { id: '7', name: 'Attributes', earned: 5, max: 5, status: 'pass' },
-  { id: '8', name: 'Business status', earned: 5, max: 5, status: 'pass' },
-];
+function mapRules(breakdown: AnalysisResult['breakdown']): Rule[] {
+  return Object.entries(breakdown).map(([key, rule]) => {
+    const ratio = rule.weight > 0 ? rule.score / rule.weight : 0;
+    const status: Rule['status'] = rule.passed ? (ratio >= 0.8 ? 'pass' : 'warn') : ratio > 0 ? 'warn' : 'fail';
+    return {
+      id: rule.ruleId ?? key,
+      name: formatRuleName(rule.ruleId ?? key),
+      earned: rule.score,
+      max: rule.weight,
+      status,
+    };
+  });
+}
 
-const MOCK_PROBLEMS: Problem[] = [
-  {
-    id: 'p1',
-    ruleId: '3',
-    ruleName: 'Opening hours',
-    severity: 'critical',
-    explanation: 'regularOpeningHours is empty on this profile',
-    earned: 0,
-    max: 15,
-  },
-  {
-    id: 'p2',
-    ruleId: '2',
-    ruleName: 'Rating',
-    severity: 'warning',
-    explanation: 'averageRating is below 4.5 threshold (currently 4.1)',
-    earned: 15,
-    max: 20,
-  },
-  {
-    id: 'p3',
-    ruleId: '4',
-    ruleName: 'Photos',
-    severity: 'warning',
-    explanation: 'photoCount is below recommended minimum of 10',
-    earned: 10,
-    max: 15,
-  },
-];
+function mapProblems(issues: AnalysisResult['issues'], breakdown: AnalysisResult['breakdown']): Problem[] {
+  return issues.map((issue, idx) => {
+    const rule = breakdown[issue.ruleId];
+    const earned = rule?.score ?? 0;
+    const max = rule?.weight ?? issue.potentialGain;
+    const ratio = max > 0 ? earned / max : 0;
+    console.log(`[MAP] Issue[${idx}]:`, issue, '→ breakdown entry:', rule);
+    return {
+      id: `p-${issue.ruleId}-${idx}`,
+      ruleId: issue.ruleId,
+      ruleName: formatRuleName(issue.ruleId),
+      severity: ratio < 0.5 ? 'critical' : 'warning',
+      explanation: issue.message,
+      earned,
+      max,
+    };
+  });
+}
 
-const MOCK_RECOMMENDATIONS: Recommendation[] = [
-  {
-    id: 'r1',
-    problemId: 'p1',
-    action: 'Add comprehensive operating hours including holidays',
-    severity: 'critical',
-    earned: 0,
-    max: 15,
-  },
-  {
-    id: 'r2',
-    problemId: 'p2',
-    action: 'Implement a review generation strategy to improve rating',
-    severity: 'warning',
-    earned: 15,
-    max: 20,
-  },
-  {
-    id: 'r3',
-    problemId: 'p3',
-    action: 'Upload at least 5 new high-quality interior/exterior photos',
-    severity: 'warning',
-    earned: 10,
-    max: 15,
-  },
-];
+function mapRecommendations(
+  issues: AnalysisResult['issues'],
+  breakdown: AnalysisResult['breakdown'],
+): Recommendation[] {
+  return issues.map((issue, idx) => {
+    const rule = breakdown[issue.ruleId];
+    const earned = rule?.score ?? 0;
+    const max = rule?.weight ?? issue.potentialGain;
+    return {
+      id: `r-${issue.ruleId}-${idx}`,
+      problemId: `p-${issue.ruleId}-${idx}`,
+      action: issue.recommendation,
+      severity: (max > 0 ? earned / max : 0) < 0.5 ? 'critical' : 'warning',
+      earned,
+      max,
+      docsUrl: undefined,
+    };
+  });
+}
 
-const SCORE = 99;
+function formatRuleName(ruleId: string): string {
+  return ruleId
+    .replace(/_/g, ' ')
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+// ---------- Page ----------
 
 function HomeContent() {
-  const [state, setState] = useState<AppState>('idle');
-  const [errorType, setErrorType] = useState<ErrorType>(null);
-
   const searchParams = useSearchParams();
   const urlParam = searchParams.get('url');
+
+  const { mutate, data, isPending, isError, error, reset } = useAnalysis();
+
+  const handleAnalyze = (url: string) => {
+    reset();
+    mutate(
+      { input: url },
+      {
+        onSuccess: (result) => {
+          console.log('[useAnalysis] Success — full AnalysisResult:', result);
+          console.log('[useAnalysis] breakdown keys:', Object.keys(result.breakdown ?? {}));
+          console.log('[useAnalysis] issues[]:', result.issues);
+          addRecentSearch(url, result.businessName);
+        },
+        onError: (err) => {
+          console.error('[useAnalysis] Error:', err);
+        },
+      },
+    );
+  };
 
   useEffect(() => {
     if (urlParam) {
@@ -97,46 +105,28 @@ function HomeContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [urlParam]);
 
-  const handleAnalyze = (url: string) => {
-    setState('loading');
-    setErrorType(null);
-
-    // Simulate API call
-    setTimeout(() => {
-      if (url.includes('error400')) {
-        setState('error');
-        setErrorType(400);
-      } else if (url.includes('error404')) {
-        setState('error');
-        setErrorType(404);
-      } else if (url.includes('error502')) {
-        setState('error');
-        setErrorType(502);
-      } else {
-        setState('success');
-        addRecentSearch(url, 'Acme Corp (Mocked)');
-      }
-    }, 2000);
-  };
+  const rules: Rule[] = data ? mapRules(data.breakdown) : [];
+  const problems: Problem[] = data ? mapProblems(data.issues, data.breakdown) : [];
+  const recommendations: Recommendation[] = data ? mapRecommendations(data.issues, data.breakdown) : [];
 
   return (
-    <div className="flex-1 w-[1024px] max-w-full mx-auto px-4 md:px-0 py-12">
-      <SearchForm isLoading={state === 'loading'} onSubmit={handleAnalyze} defaultUrl={urlParam || ''} />
+    <div className="flex-1 w-5xl max-w-full mx-auto px-4 md:px-0 py-12">
+      <SearchForm isLoading={isPending} onSubmit={handleAnalyze} defaultUrl={urlParam || ''} />
 
-      {state === 'success' && (
+      {data && (
         <ResultsPanel
-          score={SCORE}
-          businessName="Acme Corp"
-          rules={MOCK_RULES}
-          problems={MOCK_PROBLEMS}
-          recommendations={MOCK_RECOMMENDATIONS}
+          score={data.score}
+          businessName={data.businessName}
+          rules={rules}
+          problems={problems}
+          recommendations={recommendations}
         />
       )}
 
-      {state === 'error' && (
+      {isError && (
         <div className="max-w-lg mx-auto mt-12 text-center animate-in fade-in duration-300">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-50 mb-6 border border-gray-200">
-            {errorType === 400 || errorType === 404 ? (
+            {error?.statusCode === 400 || error?.statusCode === 404 ? (
               <Search className="w-8 h-8 text-gray-400" />
             ) : (
               <AlertTriangle className="w-8 h-8 text-amber-500" />
@@ -144,22 +134,24 @@ function HomeContent() {
           </div>
 
           <h3 className="text-lg font-medium text-gray-900 mb-2">
-            {errorType === 400 && 'Invalid input'}
-            {errorType === 404 && 'Profile not found'}
-            {(errorType === 429 || errorType === 502) && 'Service unavailable'}
+            {error?.statusCode === 400 && 'Invalid input'}
+            {error?.statusCode === 404 && 'Profile not found'}
+            {(error?.statusCode === 429 || error?.statusCode === 502) && 'Service unavailable'}
+            {!error?.statusCode && 'Something went wrong'}
           </h3>
 
           <p className="text-gray-500 text-base">
-            {errorType === 400 &&
+            {error?.statusCode === 400 &&
               "That doesn't look like a Google Business Profile link or Place ID. Check the link and try again."}
-            {errorType === 404 && 'No profile found for this link.'}
-            {(errorType === 429 || errorType === 502) &&
+            {error?.statusCode === 404 && 'No profile found for this link.'}
+            {(error?.statusCode === 429 || error?.statusCode === 502) &&
               "Google's API is temporarily unavailable. Try again in a moment."}
+            {!error?.statusCode && error?.message}
           </p>
         </div>
       )}
 
-      {state === 'idle' && (
+      {!data && !isError && !isPending && (
         <div className="flex items-center justify-center h-[40vh]">
           <p className="text-gray-400 text-sm">Enter a profile link to begin the audit.</p>
         </div>

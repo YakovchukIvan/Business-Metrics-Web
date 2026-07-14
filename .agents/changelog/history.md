@@ -163,3 +163,23 @@ Stage 4 (Results Components): Extracted the analysis results UI into small, modu
 ### 13.07.2026, 21:32:12
 
 Stage 5 (API Integration): Replaced mock logic with real TanStack Query implementations. Created API types (`analysis.ts`), HTTP client wrapper (`client.ts`), and standard hooks (`use-analysis.ts`). Integrated `QueryClientProvider` into root layout. Wired `page.tsx` to actually send requests to `NEXT_PUBLIC_API_URL`. Implemented LocalStorage history tracking in `recent-searches.ts` and connected it to `RecentDropdown`.
+
+### 14.07.2026, 09:38:00
+
+Fixed CORS issue by enabling `app.enableCors()` in the API's `main.ts`. Fixed double `/api/api` path issue in frontend requests by correcting `NEXT_PUBLIC_API_URL` in web `.env` and `.env.example` to point to `http://localhost:5000` without the trailing `/api`.
+
+### 14.07.2026, 10:25:00
+
+Fixed Zod schema deprecation warnings, cleaned up unnecessary CORS headers, fixed frontend API request path (`/api/analysis`), updated Docker build to accept `NEXT_PUBLIC_API_URL`, and fixed DTO property mismatch (`url` -> `input`).
+
+### 14.07.2026, 10:35:00
+
+Refactored `ResultsPanel` to render `IssueCard` and `RecommendationCard` in a shared responsive grid, ensuring Problem and Recommendation cards strictly match heights row-by-row on desktop, and interleave logically on mobile.
+
+### 14.07.2026, 10:40:00
+
+Created reusable `HelpTooltip` component. Integrated it into `ScoreCard` and `RecentDropdown`. Fixed `page.tsx` to auto-trigger analysis when navigating to `/?url=...` from the Recent Dropdown.
+
+### 14.07.2026, 12:54:50
+
+Updated apps/web/README.md for TASK-7 and fixed a Prettier formatting issue in docs/page.tsx.

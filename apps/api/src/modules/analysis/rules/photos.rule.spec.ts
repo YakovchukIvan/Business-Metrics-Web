@@ -12,7 +12,7 @@ describe('photosRule', () => {
     const profile = createBaseProfile({ photoCount: 2 });
     const result = photosRule(profile);
     expect(result.passed).toBe(false);
-    expect(result.issues[0].message).toContain('insufficient photos (2 detected)');
+    expect(result.issues[0]!.message).toContain('insufficient photos (2 detected)');
   });
 
   it('should fail if photoCount is 0', () => {

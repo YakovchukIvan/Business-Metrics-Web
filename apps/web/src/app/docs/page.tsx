@@ -20,11 +20,8 @@ export default function DocsPage() {
           <p className="text-gray-500 text-lg">Detailed guide on the Google Business Profile audit process.</p>
         </div>
         <Link href="/">
-          <Button
-            variant="outline"
-            className="text-sm font-medium border-gray-200 px-4 py-2 hover:bg-gray-50 flex items-center gap-2"
-          >
-            &larr; Back to Auditor
+          <Button className="text-sm font-medium px-4 py-2 bg-transparent border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition-colors flex items-center gap-2">
+            ← Back to Auditor
           </Button>
         </Link>
       </div>
@@ -121,10 +118,10 @@ export default function DocsPage() {
                             className={cn(
                               'px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border',
                               row.priority === 'High'
-                                ? 'bg-green-50 text-green-700 border-green-100'
+                                ? 'bg-status-pass/10 text-status-pass border-status-pass/20'
                                 : row.priority === 'Medium'
-                                  ? 'bg-amber-50 text-amber-700 border-amber-100'
-                                  : 'bg-red-50 text-red-700 border-red-100',
+                                  ? 'bg-status-warn/10 text-status-warn border-status-warn/20'
+                                  : 'bg-status-fail/10 text-status-fail border-status-fail/20',
                             )}
                           >
                             {row.priority}
@@ -145,49 +142,51 @@ export default function DocsPage() {
                       {
                         label: 'Excellent',
                         range: '90–100',
-                        color: 'bg-green-500',
+                        color: 'bg-status-pass',
                         desc: 'Profile is highly optimized and follows best practices.',
                       },
                       {
                         label: 'Very Good',
                         range: '80–89',
-                        color: 'bg-green-500',
+                        color: 'bg-status-pass',
                         desc: 'Strong profile with only minor recommendations.',
                       },
                       {
                         label: 'Good',
                         range: '65–79',
-                        color: 'bg-amber-500',
+                        color: 'bg-status-warn',
                         desc: 'Well optimized with noticeable room for improvement.',
                       },
                       {
                         label: 'Fair',
                         range: '50–64',
-                        color: 'bg-amber-500',
+                        color: 'bg-status-warn',
                         desc: 'Profile is functional but requires several improvements.',
                       },
                       {
                         label: 'Poor',
                         range: '25–49',
-                        color: 'bg-red-500',
+                        color: 'bg-status-fail',
                         desc: 'Basic optimization exists, but many important elements are missing.',
                       },
                       {
                         label: 'Critical',
                         range: '0–24',
-                        color: 'bg-red-500',
+                        color: 'bg-status-fail',
                         desc: 'Major optimization issues detected.',
                       },
                     ].map((band) => (
-                      <HoverCard key={band.label} openDelay={150} closeDelay={150}>
-                        <HoverCardTrigger asChild>
-                          <div className="bg-gray-50 border border-gray-200 p-3 rounded-md flex flex-col gap-1 cursor-help hover:bg-gray-100 transition-colors">
-                            <div className="flex items-center gap-2">
-                              <div className={cn('w-2 h-2 rounded-full', band.color)} />
-                              <span className="text-xs font-bold text-gray-900">{band.label}</span>
-                            </div>
-                            <span className="text-lg font-bold text-gray-900 ml-4 tabular-nums">{band.range}</span>
+                      <HoverCard key={band.label}>
+                        <HoverCardTrigger
+                          delay={150}
+                          closeDelay={150}
+                          className="block bg-gray-50 border border-gray-200 p-3 rounded-md flex flex-col gap-1 cursor-help hover:bg-gray-100 transition-colors"
+                        >
+                          <div className="flex items-center gap-2">
+                            <div className={cn('w-2 h-2 rounded-full', band.color)} />
+                            <span className="text-xs font-bold text-gray-900">{band.label}</span>
                           </div>
+                          <span className="text-lg font-bold text-gray-900 ml-4 tabular-nums">{band.range}</span>
                         </HoverCardTrigger>
                         <HoverCardContent
                           side="top"

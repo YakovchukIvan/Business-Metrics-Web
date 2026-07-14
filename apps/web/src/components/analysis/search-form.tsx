@@ -6,18 +6,20 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/hover-card';
+import { TOOLTIP_DELAY } from '@/components/ui/help-tooltip';
 
-interface SearchFormProps {
+type Props = {
   isLoading: boolean;
   onSubmit: (url: string) => void;
   defaultUrl?: string;
-}
+};
 
-export function SearchForm({ isLoading, onSubmit, defaultUrl = '' }: SearchFormProps) {
+export function SearchForm({ isLoading, onSubmit, defaultUrl = '' }: Props) {
   const [inputValue, setInputValue] = useState(defaultUrl);
 
   useEffect(() => {
     if (defaultUrl) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setInputValue(defaultUrl);
     }
   }, [defaultUrl]);
@@ -44,22 +46,22 @@ export function SearchForm({ isLoading, onSubmit, defaultUrl = '' }: SearchFormP
             className="pl-12 pr-12 h-14 text-base md:text-base bg-white shadow-sm transition-shadow rounded-lg w-full"
           />
           {inputValue && !isLoading && (
-            <HoverCard openDelay={200} closeDelay={200}>
-              <HoverCardTrigger asChild>
-                <button
-                  type="button"
-                  onClick={() => setInputValue('')}
-                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-900 focus:outline-none cursor-pointer transition-colors"
-                >
-                  <X className="h-5 w-5" />
-                </button>
+            <HoverCard>
+              <HoverCardTrigger
+                delay={TOOLTIP_DELAY}
+                closeDelay={TOOLTIP_DELAY}
+                type="button"
+                onClick={() => setInputValue('')}
+                className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-900 focus:outline-none cursor-pointer transition-colors"
+              >
+                <X className="h-5 w-5" />
               </HoverCardTrigger>
               <HoverCardContent
                 side="top"
                 align="center"
                 className="w-auto p-2 text-sm font-medium border-gray-200 shadow-md"
               >
-                Очистити пошук
+                Clear search
               </HoverCardContent>
             </HoverCard>
           )}

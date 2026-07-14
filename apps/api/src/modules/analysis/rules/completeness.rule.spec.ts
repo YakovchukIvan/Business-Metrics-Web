@@ -38,6 +38,6 @@ describe('completenessRule', () => {
     const result = completenessRule(profile);
     expect(result.passed).toBe(false);
     expect(result.issues).toHaveLength(1);
-    expect(result.issues[0].message).toBe('Website is missing');
+    expect(result.issues[0]!.message).toBe('Website is missing');
   });
 });

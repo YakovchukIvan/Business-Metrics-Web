@@ -43,6 +43,6 @@ describe('attributesRule', () => {
     });
     const result = attributesRule(profile);
     expect(result.passed).toBe(false);
-    expect(result.issues[0].message).toContain('wheelchairAccessibleEntrance');
+    expect(result.issues[0]!.message).toContain('wheelchairAccessibleEntrance');
   });
 });

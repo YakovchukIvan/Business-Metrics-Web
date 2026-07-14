@@ -12,6 +12,6 @@ describe('businessCategoryRule', () => {
     const profile = createEmptyProfile({ types: [] });
     const result = businessCategoryRule(profile);
     expect(result.passed).toBe(false);
-    expect(result.issues[0].message).toContain('Business category is missing');
+    expect(result.issues[0]!.message).toContain('Business category is missing');
   });
 });

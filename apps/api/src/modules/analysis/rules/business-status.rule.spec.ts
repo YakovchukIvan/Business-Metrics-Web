@@ -12,14 +12,14 @@ describe('businessStatusRule', () => {
     const profile = createBaseProfile({ businessStatus: 'CLOSED_TEMPORARILY' });
     const result = businessStatusRule(profile);
     expect(result.passed).toBe(false);
-    expect(result.issues[0].message).toContain('CLOSED_TEMPORARILY');
+    expect(result.issues[0]!.message).toContain('CLOSED_TEMPORARILY');
   });
 
   it('should fail if status is CLOSED_PERMANENTLY', () => {
     const profile = createBaseProfile({ businessStatus: 'CLOSED_PERMANENTLY' });
     const result = businessStatusRule(profile);
     expect(result.passed).toBe(false);
-    expect(result.issues[0].message).toContain('CLOSED_PERMANENTLY');
+    expect(result.issues[0]!.message).toContain('CLOSED_PERMANENTLY');
   });
 
   it('should fail if status is UNKNOWN', () => {
