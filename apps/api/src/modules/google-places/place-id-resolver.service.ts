@@ -21,8 +21,8 @@ export class PlaceIdResolverService {
       return trimmed;
     }
 
-    // 2. Short link (maps.app.goo.gl/... or g.page/...)
-    if (trimmed.includes('maps.app.goo.gl/') || trimmed.includes('g.page/')) {
+    // 2. Short link (maps.app.goo.gl/... or g.page/... or share.google/...)
+    if (trimmed.includes('maps.app.goo.gl/') || trimmed.includes('g.page/') || trimmed.includes('share.google')) {
       const fullUrl = await this.followRedirect(trimmed);
       return this.resolvePlaceId(fullUrl); // Recursive call to handle the resolved long URL
     }
@@ -76,8 +76,15 @@ export class PlaceIdResolverService {
   }
 
   private async resolveViaTextSearch(query: string): Promise<string> {
+    let searchString = query;
     const nameMatch = query.match(/\/place\/([^/]+)/);
-    const searchString = nameMatch && nameMatch[1] ? decodeURIComponent(nameMatch[1].replace(/\+/g, ' ')) : query;
+    const searchMatch = query.match(/[?&]q=([^&]+)/);
+
+    if (nameMatch && nameMatch[1]) {
+      searchString = decodeURIComponent(nameMatch[1].replace(/\+/g, ' '));
+    } else if (query.includes('google.com/search') && searchMatch && searchMatch[1]) {
+      searchString = decodeURIComponent(searchMatch[1].replace(/\+/g, ' '));
+    }
 
     const url = 'https://places.googleapis.com/v1/places:searchText';
 
