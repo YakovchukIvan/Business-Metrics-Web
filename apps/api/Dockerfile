@@ -11,7 +11,7 @@ RUN npm ci --ignore-scripts
 FROM base AS build
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npm run build
+RUN npm --prefix apps/api run build
 
 # ---------- Production dependencies ----------
 FROM base AS prod-deps
@@ -24,8 +24,8 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 COPY --from=prod-deps /app/node_modules ./node_modules
-COPY --from=build /app/dist ./dist
-COPY package.json ./
+COPY --from=build /app/apps/api/dist ./dist
+COPY apps/api/package.json ./
 
 USER node
 ENV PORT=5000
