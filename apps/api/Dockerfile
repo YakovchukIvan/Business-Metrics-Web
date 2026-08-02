@@ -5,8 +5,7 @@ WORKDIR /app
 # ---------- Dependencies ----------
 FROM base AS deps
 COPY package.json package-lock.json ./
-# Змінено ci на install
-RUN npm install --ignore-scripts 
+RUN npm ci --ignore-scripts
 
 # ---------- Build ----------
 FROM base AS build
@@ -17,8 +16,7 @@ RUN npm run build
 # ---------- Production dependencies ----------
 FROM base AS prod-deps
 COPY package.json package-lock.json ./
-# Змінено ci на install
-RUN npm install --omit=dev --ignore-scripts 
+RUN npm ci --omit=dev --ignore-scripts
 
 # ---------- Production image ----------
 FROM node:22-alpine AS production
