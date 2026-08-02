@@ -14,3 +14,22 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
+
+# Future Postgres:
+#   db:
+#     image: postgres:16-alpine
+#     environment:
+#       POSTGRES_USER: ${POSTGRES_USER:-postgres}
+#       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+#       POSTGRES_DB: ${POSTGRES_DB:-profilelens}
+#     volumes:
+#       - pgdata:/var/lib/postgresql/data
+#     healthcheck:
+#       test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-postgres}']
+#
+# Future Redis:
+#   redis:
+#     image: redis:7-alpine
+#
+# volumes:
+#   pgdata:

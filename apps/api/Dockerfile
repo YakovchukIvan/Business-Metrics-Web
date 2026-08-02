@@ -5,8 +5,6 @@ WORKDIR /app
 # ---------- Dependencies ----------
 FROM base AS deps
 COPY package.json package-lock.json ./
-COPY apps/api/package.json ./apps/api/
-COPY apps/web/package.json ./apps/web/
 RUN npm ci --ignore-scripts
 
 # ---------- Build ----------
@@ -18,8 +16,6 @@ RUN npm --prefix apps/api run build
 # ---------- Production dependencies ----------
 FROM base AS prod-deps
 COPY package.json package-lock.json ./
-COPY apps/api/package.json ./apps/api/
-COPY apps/web/package.json ./apps/web/
 RUN npm ci --omit=dev --ignore-scripts
 
 # ---------- Production image ----------
