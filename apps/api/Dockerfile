@@ -16,6 +16,7 @@ COPY . .
 RUN npm --prefix apps/api run build
 
 # ---------- Production dependencies ----------
+# test 2
 FROM base AS prod-deps
 COPY package.json package-lock.json ./
 COPY apps/api/package.json ./apps/api/
