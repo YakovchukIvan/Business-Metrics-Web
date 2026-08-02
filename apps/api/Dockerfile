@@ -5,20 +5,22 @@ WORKDIR /app
 # ---------- Dependencies ----------
 FROM base AS deps
 COPY package.json package-lock.json ./
-# Змінено ci на install
-RUN npm install --ignore-scripts 
+COPY apps/api/package.json ./apps/api/
+COPY apps/web/package.json ./apps/web/
+RUN npm ci --ignore-scripts
 
 # ---------- Build ----------
 FROM base AS build
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npm run build
+RUN npm --prefix apps/api run build
 
 # ---------- Production dependencies ----------
 FROM base AS prod-deps
 COPY package.json package-lock.json ./
-# Змінено ci на install
-RUN npm install --omit=dev --ignore-scripts 
+COPY apps/api/package.json ./apps/api/
+COPY apps/web/package.json ./apps/web/
+RUN npm ci --omit=dev --ignore-scripts
 
 # ---------- Production image ----------
 FROM node:22-alpine AS production
@@ -26,8 +28,8 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 COPY --from=prod-deps /app/node_modules ./node_modules
-COPY --from=build /app/dist ./dist
-COPY package.json ./
+COPY --from=build /app/apps/api/dist ./dist
+COPY apps/api/package.json ./
 
 USER node
 ENV PORT=5000
