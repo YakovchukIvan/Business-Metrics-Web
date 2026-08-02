@@ -5,17 +5,23 @@ WORKDIR /app
 # ---------- Dependencies ----------
 FROM base AS deps
 COPY package.json package-lock.json ./
+# Копіюємо конфіги воркспейсів, щоб npm ci їх побачив
+COPY apps/api/package.json ./apps/api/
+COPY apps/web/package.json ./apps/web/
 RUN npm ci --ignore-scripts
 
 # ---------- Build ----------
 FROM base AS build
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npm run build
+# Білдимо тільки бекенд з кореня
+RUN npm --prefix apps/api run build
 
 # ---------- Production dependencies ----------
 FROM base AS prod-deps
 COPY package.json package-lock.json ./
+COPY apps/api/package.json ./apps/api/
+COPY apps/web/package.json ./apps/web/
 RUN npm ci --omit=dev --ignore-scripts
 
 # ---------- Production image ----------
@@ -24,8 +30,10 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 COPY --from=prod-deps /app/node_modules ./node_modules
-COPY --from=build /app/dist ./dist
-COPY package.json ./
+# Беремо скомпільований код саме з папки бекенду
+COPY --from=build /app/apps/api/dist ./dist
+# Для запуску потрібен package.json бекенду
+COPY apps/api/package.json ./
 
 USER node
 ENV PORT=5000
